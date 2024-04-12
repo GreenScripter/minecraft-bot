@@ -11,7 +11,7 @@ public class ClientStatusPacket extends Packet {
 	public int actionID = 0;
 
 	public static final int RESPAWN = 0;
-	public static final int STATS = 0;
+	public static final int STATS = 1;
 	/*
 	 0	Perform respawn	Sent when the client is ready to complete login and when the client is ready to respawn after death.
 	 1	Request stats	Sent when the client opens the Statistics menu.

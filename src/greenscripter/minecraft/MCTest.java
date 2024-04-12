@@ -14,7 +14,6 @@ import greenscripter.minecraft.play.handler.DeathPlayHandler;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
-import greenscripter.minecraft.play.other.CirclePlayHandler;
 
 public class MCTest {
 
