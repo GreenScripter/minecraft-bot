@@ -16,6 +16,10 @@ public class NBTTagCompound extends NBTComponent {
 		return TAG_Compound;
 	}
 
+	public NBTComponent get(String s) {
+		return components.get(s);
+	}
+
 	public NBTComponent read(MCInputStream in) throws IOException {
 		byte type = in.readByte();
 		while (type != TAG_End) {

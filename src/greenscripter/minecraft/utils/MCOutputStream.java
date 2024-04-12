@@ -112,6 +112,10 @@ public class MCOutputStream extends DataOutputStream {
 		NBTComponent.writeNetworkNBT(this, nbt);
 	}
 
+	public void writePosition(Position p) throws IOException {
+		writeLong(((p.x & 0x3FFFFFF) << 38) | ((p.z & 0x3FFFFFF) << 12) | (p.y & 0xFFF));
+	}
+
 	public OutputStream wrapped() {
 		return out;
 	}

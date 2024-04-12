@@ -10,6 +10,8 @@ public class PlayState {
 
 	static {
 		PlayState.playState.put(PositionState.class, PositionState::new);
+		PlayState.playState.put(RegistryState.class, RegistryState::new);
+		PlayState.playState.put(WorldState.class, WorldState::new);
 	}
 	
 	@SuppressWarnings("unchecked")

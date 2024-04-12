@@ -19,10 +19,12 @@ import greenscripter.minecraft.packet.c2s.handshake.HandshakePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginAcknowledgePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginStartPacket;
 import greenscripter.minecraft.packet.s2c.configuration.KeepAliveConfigPacket;
+import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
 import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.state.PlayState;
+import greenscripter.minecraft.play.state.RegistryState;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.PeekInputStream;
@@ -54,7 +56,7 @@ public class ServerConnection {
 	private List<PlayHandler> ticking = new ArrayList<>();
 
 	SocketChannel channel;
-	
+
 	PeekInputStream peeker;
 
 	public ServerConnection(String hostname, int port, String name, UUID uuid, List<PlayHandler> playHandler) throws IOException {
@@ -154,6 +156,10 @@ public class ServerConnection {
 				if (p.id == 3) {
 					out.writePacket(new KeepAliveReplyConfigPacket(p.convert(new KeepAliveConfigPacket()).value));
 				}
+				if (p.id == 5) {
+					RegistryConfigPacket rp = p.convert(new RegistryConfigPacket());
+					getState(RegistryState.class).configuredRegistry = rp.data;
+				}
 			}
 
 			case PLAY -> {
@@ -189,6 +195,10 @@ public class ServerConnection {
 	}
 
 	public static enum State {
-		HANDSHAKE, LOGIN, CONFIGURATION, PLAY;
+		HANDSHAKE, LOGIN, CONFIGURATION, PLAY, DISCONNECTED;
+	}
+
+	public String toString() {
+		return name;
 	}
 }

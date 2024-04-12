@@ -17,6 +17,14 @@ public class NBTTagList<T extends NBTComponent> extends NBTComponent {
 		return TAG_List;
 	}
 
+	public T get(int i) {
+		return value.get(i);
+	}
+	
+	public int size() {
+		return value.size();
+	}
+
 	@SuppressWarnings("unchecked")
 	public NBTComponent read(MCInputStream in) throws IOException {
 		listType = in.readByte();

@@ -80,6 +80,64 @@ public abstract class NBTComponent {
 		return getType() == TAG_Long_Array;
 	}
 
+	public NBTTagEnd asEnd() {
+		return (NBTTagEnd) this;
+	}
+
+	public NBTTagByte asByte() {
+		return (NBTTagByte) this;
+	}
+
+	public NBTTagShort asShort() {
+		return (NBTTagShort) this;
+	}
+
+	public NBTTagInt asInt() {
+		return (NBTTagInt) this;
+	}
+
+	public NBTTagLong asLong() {
+		return (NBTTagLong) this;
+	}
+
+	public NBTTagFloat asFloat() {
+		return (NBTTagFloat) this;
+	}
+
+	public NBTTagDouble asDouble() {
+		return (NBTTagDouble) this;
+	}
+
+	public NBTTagByteArray asByteArray() {
+		return (NBTTagByteArray) this;
+	}
+
+	public NBTTagString asString() {
+		return (NBTTagString) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends NBTComponent> NBTTagList<T> asList() {
+		return (NBTTagList<T>) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends NBTComponent> NBTTagList<T> asList(Class<T> c) {
+		return (NBTTagList<T>) this;
+	}
+
+	public NBTTagCompound asCompound() {
+		return (NBTTagCompound) this;
+	}
+
+	public NBTTagIntArray asIntArray() {
+		return (NBTTagIntArray) this;
+	}
+
+	public NBTTagLongArray asLongArray() {
+		return (NBTTagLongArray) this;
+	}
+
 	public static NBTComponent getType(byte id) {
 		switch (id) {
 			case TAG_End -> {
@@ -136,7 +194,11 @@ public abstract class NBTComponent {
 
 	public static NBTTagCompound readNetworkNBT(MCInputStream in) throws IOException {
 		byte id = in.readByte();
-		if (id != TAG_Compound) throw new IOException("No wrapper compound on NBT");
+		if (id==0) return null;
+		if (id != TAG_Compound) {
+			System.err.println(id);
+			throw new IOException("No wrapper compound on NBT");
+		}
 		return (NBTTagCompound) getType(id).read(in);
 	}
 

@@ -75,6 +75,8 @@ public class MCInputStream extends DataInputStream {
 			uncompressedLength = readVarInt();
 			length -= MCOutputStream.varIntSize(uncompressedLength);
 		}
+		
+		boolean compressed = false;
 		byte[] packet;
 
 		if (uncompressedLength != 0) {
@@ -89,6 +91,7 @@ public class MCInputStream extends DataInputStream {
 				offset += read;
 			}
 			lis.skipRemaining();
+			compressed = true;
 		} else {
 			packet = new byte[length];
 			this.readFully(packet);
@@ -99,7 +102,7 @@ public class MCInputStream extends DataInputStream {
 		var bin = new ByteIn(packet);
 		var in = new MCInputStream(bin);
 		int id = in.readVarInt();
-		UnknownPacket p = new UnknownPacket(id, packet, bin.getPos(), bin.available());
+		UnknownPacket p = new UnknownPacket(id, packet, bin.getPos(), bin.available(), compressed);
 		return p;
 	}
 
@@ -107,7 +110,7 @@ public class MCInputStream extends DataInputStream {
 		var bin = new ByteIn(data);
 		var in = new MCInputStream(bin);
 		int id = in.readVarInt();
-		UnknownPacket p = new UnknownPacket(id, data, bin.getPos(), bin.available());
+		UnknownPacket p = new UnknownPacket(id, data, bin.getPos(), bin.available(), false);
 		return p;
 	}
 
@@ -140,7 +143,16 @@ public class MCInputStream extends DataInputStream {
 	}
 
 	public NBTTagCompound readNBT() throws IOException {
-		return NBTComponent.readNetworkNBT(this);
+		NBTTagCompound tag = NBTComponent.readNetworkNBT(this);
+		return tag;
+	}
+
+	public Position readPosition() throws IOException {
+		long val = readLong();
+		int x = (int) (val >> 38);
+		int y = (int) (val << 52 >> 52);
+		int z = (int) (val << 26 >> 38);
+		return new Position(x, y, z);
 	}
 
 	public InputStream wrapped() {

@@ -12,16 +12,18 @@ public class UnknownPacket extends Packet {
 	public byte[] data;
 	public int offset = 0;
 	public int length = 0;
+	public boolean compressed;
 
 	public UnknownPacket() {
 
 	}
 
-	public UnknownPacket(int id, byte[] data, int offset, int length) {
+	public UnknownPacket(int id, byte[] data, int offset, int length, boolean compressed) {
 		this.id = id;
 		this.data = data;
 		this.offset = offset;
 		this.length = length;
+		this.compressed = compressed;
 	}
 
 	public int id() {

@@ -14,6 +14,7 @@ import greenscripter.minecraft.play.handler.DeathPlayHandler;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
+import greenscripter.minecraft.play.handler.WorldPlayHandler;
 
 public class MCTest {
 
@@ -89,11 +90,12 @@ public class MCTest {
 		List<PlayHandler> handler = List.of(//
 				new KeepAlivePlayHandler(), //
 				new DeathPlayHandler(), //
+				new WorldPlayHandler(), //
 				new TeleportRequestPlayHandler()//
 		);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;
-		for (int i = 0 + start; i < 10 + start; i++) {
+		for (int i = 0 + start; i < 1 + start; i++) {
 			int c = i;
 			new Thread(() -> {
 				try {

@@ -7,5 +7,7 @@ public class PositionState extends PlayState {
 	public double z;
 	public float pitch;
 	public float yaw;
+	
+	public String dimension;
 
 }
