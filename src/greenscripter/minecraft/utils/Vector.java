@@ -61,8 +61,60 @@ public class Vector {
 		return this;
 	}
 
+	public double distanceTo(Vector vec) {
+		double d = vec.x - this.x;
+		double e = vec.y - this.y;
+		double f = vec.z - this.z;
+		return Math.sqrt(d * d + e * e + f * f);
+	}
+
+	public double squaredDistanceTo(Vector vec) {
+		double d = vec.x - this.x;
+		double e = vec.y - this.y;
+		double f = vec.z - this.z;
+		return d * d + e * e + f * f;
+	}
+
+	public double squaredDistanceTo(double x, double y, double z) {
+		double d = x - this.x;
+		double e = y - this.y;
+		double f = z - this.z;
+		return d * d + e * e + f * f;
+	}
+
 	public Vector copy() {
 		return new Vector(x, y, z);
+	}
+
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Vector)) {
+			return false;
+		}
+		Vector vec3d = (Vector) o;
+		if (Double.compare(vec3d.x, this.x) != 0) {
+			return false;
+		}
+		if (Double.compare(vec3d.y, this.y) != 0) {
+			return false;
+		}
+		return Double.compare(vec3d.z, this.z) == 0;
+	}
+
+	public int hashCode() {
+		long l = Double.doubleToLongBits(this.x);
+		int i = (int) (l ^ l >>> 32);
+		l = Double.doubleToLongBits(this.y);
+		i = 31 * i + (int) (l ^ l >>> 32);
+		l = Double.doubleToLongBits(this.z);
+		i = 31 * i + (int) (l ^ l >>> 32);
+		return i;
+	}
+
+	public String toString() {
+		return x + " " + y + " " + z;
 	}
 
 }

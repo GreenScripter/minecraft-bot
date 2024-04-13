@@ -18,6 +18,7 @@ public class RegistryTags {
 	public static void main(String[] args) throws InterruptedException {
 		Registries.registries.getClass();
 		BlockStates.blockStates.getClass();
+		Thread.sleep(20000);
 	}
 
 	public static Map<String, Set<String>> blockTags = new HashMap<>();

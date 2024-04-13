@@ -1,11 +1,8 @@
 package greenscripter.minecraft.play.handler;
 
-import java.util.Arrays;
 import java.util.List;
 
 import java.io.IOException;
-
-import com.google.gson.Gson;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.nbt.NBTTagCompound;
@@ -18,12 +15,13 @@ import greenscripter.minecraft.play.state.PositionState;
 import greenscripter.minecraft.play.state.RegistryState;
 import greenscripter.minecraft.play.state.WorldState;
 import greenscripter.minecraft.world.Chunk;
+import greenscripter.minecraft.world.ChunkDataDecoder;
 import greenscripter.minecraft.world.World;
 import greenscripter.minecraft.world.Worlds;
 
 public class WorldPlayHandler extends PlayHandler {
 
-	Worlds worlds = new Worlds();
+	public Worlds worlds = new Worlds();
 
 	int chunkDataId = new ChunkDataPacket().id();
 	int respawnId = new RespawnPacket().id();
@@ -70,6 +68,7 @@ public class WorldPlayHandler extends PlayHandler {
 			if (worldState.world == null) {
 				World world = new World();
 				world.id = respawn.dimensionName;
+				System.out.println("Loaded world " + world.id);
 				world.dimensionType = respawn.dimensionType;
 				world.worlds = worlds;
 
@@ -95,15 +94,16 @@ public class WorldPlayHandler extends PlayHandler {
 			WorldState worldState = sc.getState(WorldState.class);
 			if (worldState.world != null) {
 				if (worldState.world.isChunkLoaded(chunk.chunkX, chunk.chunkZ)) {
-					System.out.println("Chunk " + chunk.chunkX + " " + chunk.chunkZ + " already loaded");
+//					System.out.println("Chunk " + chunk.chunkX + " " + chunk.chunkZ + " already loaded");
 					worldState.world.addChunkLoader(worldState.world.getChunk(chunk.chunkX, chunk.chunkZ), sc);
 				} else {
-					System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
+//					System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
 					Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldState.world.min_y, worldState.world.height, worldState.world);
 					worldState.world.addChunkLoader(c, sc);
+
+					ChunkDataDecoder.decode(c, chunk.data);
 				}
 			}
-			System.out.println(worldState.world);
 			sc.out.writePacket(new AckChunksPacket());
 		}
 	}
