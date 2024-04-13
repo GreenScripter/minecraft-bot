@@ -15,6 +15,7 @@ import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
+import greenscripter.minecraft.play.other.PointlessPathfindHandler;
 
 public class MCTest {
 
@@ -32,8 +33,9 @@ public class MCTest {
 				long start = System.currentTimeMillis();
 				synchronized (next) {
 					ClientInfoPacket p = new ClientInfoPacket();
-					p.viewDistance = 4;
+					p.viewDistance = 10;
 					next.forEach(sc -> {
+						if (!sc.name.equals("bot0")) return;
 						try {
 							sc.out.writePacket(p);
 						} catch (IOException e) {
@@ -86,12 +88,13 @@ public class MCTest {
 				}
 			}
 		}).start();
-
+		WorldPlayHandler worldHandler = new WorldPlayHandler();
 		List<PlayHandler> handler = List.of(//
 				new KeepAlivePlayHandler(), //
 				new DeathPlayHandler(), //
-				new WorldPlayHandler(), //
-				new TeleportRequestPlayHandler()//
+				worldHandler, //
+				new TeleportRequestPlayHandler(),//
+				new PointlessPathfindHandler(worldHandler)//
 		);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;

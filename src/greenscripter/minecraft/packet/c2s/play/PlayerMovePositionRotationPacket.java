@@ -17,6 +17,14 @@ public class PlayerMovePositionRotationPacket extends Packet {
 
 	public PlayerMovePositionRotationPacket() {}
 
+	public PlayerMovePositionRotationPacket(double x2, double y2, double z2, float yaw2, float pitch2) {
+		this.x = x2;
+		this.y = y2;
+		this.z = z2;
+		this.yaw = yaw2;
+		this.pitch = pitch2;
+	}
+
 	public int id() {
 		return 0x18;
 	}
