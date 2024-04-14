@@ -1,9 +1,12 @@
 package greenscripter.minecraft.world;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import greenscripter.minecraft.ServerConnection;
+import greenscripter.minecraft.utils.Position;
 
 public class Chunk {
 
@@ -13,6 +16,7 @@ public class Chunk {
 	public int height;
 	public World world;
 	public Set<ServerConnection> players = new HashSet<>();
+	public Map<Position, BlockEntity> blockEntities = new HashMap<>();
 
 	int[][][] blocks;//stored in y,z,x order to match chunk data from the server.
 
@@ -23,6 +27,27 @@ public class Chunk {
 		this.chunkX = chunkX;
 		this.chunkZ = chunkZ;
 		this.world = world;
+	}
+
+	public BlockEntity getBlockEntity(int x, int y, int z) {
+		return blockEntities.get(new Position(x, y, z));
+	}
+
+	public void setBlockEntity(int x, int y, int z, BlockEntity e) {
+		e.pos = new Position(x, y, z);
+		blockEntities.put(e.pos, e);
+	}
+
+	public void addBlockEntity(BlockEntity e) {
+		blockEntities.put(e.pos, e);
+	}
+
+	public void removeBlockEntity(BlockEntity e) {
+		blockEntities.remove(e.pos);
+	}
+
+	public void removeBlockEntity(int x, int y, int z) {
+		blockEntities.remove(new Position(x, y, z));
 	}
 
 	public int getBlock(int x, int y, int z) {

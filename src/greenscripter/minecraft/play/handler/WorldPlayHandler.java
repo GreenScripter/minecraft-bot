@@ -10,6 +10,7 @@ import greenscripter.minecraft.gameinfo.BlockStates;
 import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.play.AckChunksPacket;
+import greenscripter.minecraft.packet.s2c.play.BlockEntityDataPacket;
 import greenscripter.minecraft.packet.s2c.play.BlockUpdatePacket;
 import greenscripter.minecraft.packet.s2c.play.ChunkDataPacket;
 import greenscripter.minecraft.packet.s2c.play.ExplosionPacket;
@@ -17,10 +18,12 @@ import greenscripter.minecraft.packet.s2c.play.LoginPlayPacket;
 import greenscripter.minecraft.packet.s2c.play.RespawnPacket;
 import greenscripter.minecraft.packet.s2c.play.SectionUpdatePacket;
 import greenscripter.minecraft.packet.s2c.play.UnloadChunkPacket;
+import greenscripter.minecraft.play.state.ClientConfigState;
 import greenscripter.minecraft.play.state.PositionState;
 import greenscripter.minecraft.play.state.RegistryState;
 import greenscripter.minecraft.play.state.WorldState;
 import greenscripter.minecraft.utils.Position;
+import greenscripter.minecraft.world.BlockEntity;
 import greenscripter.minecraft.world.Chunk;
 import greenscripter.minecraft.world.ChunkDataDecoder;
 import greenscripter.minecraft.world.World;
@@ -37,6 +40,7 @@ public class WorldPlayHandler extends PlayHandler {
 	int explosionId = new ExplosionPacket().id();
 	int blockUpdateId = new BlockUpdatePacket().id();
 	int sectionUpdateId = new SectionUpdatePacket().id();
+	int blockEntityDataId = new BlockEntityDataPacket().id();
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		WorldState worldState = sc.getState(WorldState.class);
@@ -115,9 +119,19 @@ public class WorldPlayHandler extends PlayHandler {
 					worldState.world.addChunkLoader(c, sc);
 
 					ChunkDataDecoder.decode(c, chunk.data);
+
+					for (ChunkDataPacket.BlockEntity e : chunk.blockEntities) {
+						BlockEntity en = new BlockEntity();
+						en.pos = new Position(e.xinchunk + chunk.chunkX * 16, e.y, e.zinchunk + chunk.chunkZ * 16);
+						c.addBlockEntity(en);
+					}
 				}
 			}
-			sc.out.writePacket(new AckChunksPacket());
+			AckChunksPacket ack = new AckChunksPacket();
+			if (sc.getState(ClientConfigState.class).viewDistance <= 1) {
+				ack.chunksPerTick = 0.01f;
+			}
+			sc.out.writePacket(ack);
 		} else if (p.id == unloadChunkId) {
 			UnloadChunkPacket chunkunload = p.convert(new UnloadChunkPacket());
 			Chunk chunk = worldState.world.getChunk(chunkunload.x, chunkunload.z);
@@ -156,10 +170,18 @@ public class WorldPlayHandler extends PlayHandler {
 
 				}
 			}
+		} else if (p.id == blockEntityDataId) {
+			BlockEntityDataPacket update = p.convert(new BlockEntityDataPacket());
+			BlockEntity en = new BlockEntity();
+			en.data = update.nbt;
+			en.pos = update.pos;
+			en.type = update.type;
+			worldState.world.addBlockEntity(en);
+			//			System.out.println("Added " + en.pos + " " + en.type + " " + en.data);
 		}
 	}
 
 	public List<Integer> handlesPackets() {//needs to handle respawn, chunk data, section update and block updates
-		return List.of(chunkDataId, respawnId, loginPlayId, unloadChunkId, explosionId, blockUpdateId, sectionUpdateId);
+		return List.of(chunkDataId, respawnId, loginPlayId, unloadChunkId, explosionId, blockUpdateId, sectionUpdateId, blockEntityDataId);
 	}
 }

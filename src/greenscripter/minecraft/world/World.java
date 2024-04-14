@@ -40,6 +40,15 @@ public class World {
 		}
 	}
 
+	public BlockEntity getBlockEntity(int x, int y, int z) {
+		Chunk c = getBlockChunk(x, z);
+		if (c != null) {
+			return c.getBlockEntity(x, y, z);
+		} else {
+			return null;
+		}
+	}
+
 	public boolean isPassible(int x, int y, int z, boolean[] noCollides) {
 		int block = getBlock(x, y, z);
 		if (block == -2) {
@@ -59,6 +68,21 @@ public class World {
 		Chunk c = getBlockChunk(x, z);
 		if (c != null) {
 			c.setBlock(x, y, z, block);
+			c.removeBlockEntity(x, y, z);
+		}
+	}
+
+	public void setBlockEntity(int x, int y, int z, BlockEntity block) {
+		Chunk c = getBlockChunk(x, z);
+		if (c != null) {
+			c.setBlockEntity(x, y, z, block);
+		}
+	}
+
+	public void addBlockEntity(BlockEntity block) {
+		Chunk c = getBlockChunk(block.pos.x, block.pos.z);
+		if (c != null) {
+			c.setBlockEntity(block.pos.x, block.pos.y, block.pos.z, block);
 		}
 	}
 

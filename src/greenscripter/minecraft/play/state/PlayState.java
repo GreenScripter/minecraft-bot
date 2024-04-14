@@ -12,6 +12,7 @@ public class PlayState {
 		PlayState.playState.put(PositionState.class, PositionState::new);
 		PlayState.playState.put(RegistryState.class, RegistryState::new);
 		PlayState.playState.put(WorldState.class, WorldState::new);
+		PlayState.playState.put(ClientConfigState.class, ClientConfigState::new);
 	}
 	
 	@SuppressWarnings("unchecked")

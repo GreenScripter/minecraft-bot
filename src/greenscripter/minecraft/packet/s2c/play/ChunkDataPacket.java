@@ -59,13 +59,13 @@ public class ChunkDataPacket extends Packet {
 		  packed_xz = ((blockX & 15) << 4) | (blockZ & 15) // encode
 		  x = packed_xz >> 4, z = packed_xz & 15 // decode
 		 */
-		byte xinchunk;
-		byte zinchunk;
+		public byte xinchunk;
+		public byte zinchunk;
 
-		short y;
-		int type;
+		public short y;
+		public int type;
 
-		NBTTagCompound data;
+		public NBTTagCompound data;
 
 	}
 }

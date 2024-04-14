@@ -33,7 +33,7 @@ public class MCTest {
 				long start = System.currentTimeMillis();
 				synchronized (next) {
 					ClientInfoPacket p = new ClientInfoPacket();
-					p.viewDistance = 10;
+					p.viewDistance = 0;
 					next.forEach(sc -> {
 						try {
 							if (!sc.name.equals("bot0")) return;
