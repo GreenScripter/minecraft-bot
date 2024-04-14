@@ -13,7 +13,7 @@ public class World {
 	public String id;
 	public Worlds worlds;
 
-	Map<Long, Chunk> chunks = new HashMap<>();
+	public Map<Long, Chunk> chunks = new HashMap<>();
 
 	public boolean isChunkLoaded(int x, int z) {
 		return chunks.containsKey(Chunk.mergeCoords(x, z));

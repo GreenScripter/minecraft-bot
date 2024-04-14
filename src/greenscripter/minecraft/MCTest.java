@@ -35,8 +35,8 @@ public class MCTest {
 					ClientInfoPacket p = new ClientInfoPacket();
 					p.viewDistance = 10;
 					next.forEach(sc -> {
-						if (!sc.name.equals("bot0")) return;
 						try {
+							if (!sc.name.equals("bot0")) return;
 							sc.out.writePacket(p);
 						} catch (IOException e) {
 							e.printStackTrace();

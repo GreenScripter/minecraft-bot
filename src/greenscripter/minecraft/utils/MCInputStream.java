@@ -75,7 +75,7 @@ public class MCInputStream extends DataInputStream {
 			uncompressedLength = readVarInt();
 			length -= MCOutputStream.varIntSize(uncompressedLength);
 		}
-		
+
 		boolean compressed = false;
 		byte[] packet;
 
@@ -153,6 +153,25 @@ public class MCInputStream extends DataInputStream {
 		int y = (int) (val << 52 >> 52);
 		int z = (int) (val << 26 >> 38);
 		return new Position(x, y, z);
+	}
+
+	public long readVarLong() throws IOException {
+		long value = 0;
+		int position = 0;
+		byte currentByte;
+
+		while (true) {
+			currentByte = readByte();
+			value |= (long) (currentByte & 0x7F) << position;
+
+			if ((currentByte & 0x80) == 0) break;
+
+			position += 7;
+
+			if (position >= 64) throw new RuntimeException("VarLong is too big");
+		}
+
+		return value;
 	}
 
 	public InputStream wrapped() {

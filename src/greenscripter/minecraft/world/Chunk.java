@@ -48,7 +48,15 @@ public class Chunk {
 	}
 
 	public static long mergeCoords(int x, int z) {
-		return ((0xFFFFFFFFl & x) << 32) | (0xFFFFFFFFl & z);
+		return ((0xFFFFFFFFl & z) << 32) | (0xFFFFFFFFl & x);
+	}
+
+	public static int getZ(long merged) {
+		return (int) (0xFFFFFFFFl & merged);
+	}
+
+	public static int getX(long merged) {
+		return (int) (merged >>> 32);
 	}
 
 	public String toString() {

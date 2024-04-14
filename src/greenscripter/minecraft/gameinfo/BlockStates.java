@@ -98,6 +98,9 @@ public class BlockStates {
 
 	public static record BlockState(int id, String block, Map<String, String> properties, boolean isDefault, boolean noCollision) {
 
+		public String format() {
+			return block + "" + properties.toString().replace("{", "[").replace("}", "]");
+		}
 	}
 
 	/*

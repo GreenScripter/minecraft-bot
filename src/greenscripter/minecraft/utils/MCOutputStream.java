@@ -116,6 +116,20 @@ public class MCOutputStream extends DataOutputStream {
 		writeLong(((p.x & 0x3FFFFFF) << 38) | ((p.z & 0x3FFFFFF) << 12) | (p.y & 0xFFF));
 	}
 
+	public void writeVarLong(long value) throws IOException {
+		while (true) {
+			if ((value & ~((long) 0x7F)) == 0) {
+				writeByte((int) value);
+				return;
+			}
+
+			writeByte((int) ((value & 0x7F) | 0x80));
+
+			// Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
+			value >>>= 7;
+		}
+	}
+
 	public OutputStream wrapped() {
 		return out;
 	}
