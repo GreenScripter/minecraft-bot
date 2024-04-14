@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import greenscripter.minecraft.ServerConnection;
-import greenscripter.minecraft.gameinfo.BlockStates;
 
 public class World {
 
@@ -41,7 +40,7 @@ public class World {
 		}
 	}
 
-	public boolean isPassible(int x, int y, int z) {
+	public boolean isPassible(int x, int y, int z, boolean[] noCollides) {
 		int block = getBlock(x, y, z);
 		if (block == -2) {
 			return true;
@@ -49,11 +48,11 @@ public class World {
 		if (block == -1) {
 			return false;
 		}
-		return BlockStates.noCollideIds[block];
+		return noCollides[block];
 	}
 
-	public boolean isPassiblePlayer(int x, int y, int z) {
-		return isPassible(x, y, z) && isPassible(x, y + 1, z);
+	public boolean isPassiblePlayer(int x, int y, int z, boolean[] noCollides) {
+		return isPassible(x, y, z, noCollides) && isPassible(x, y + 1, z, noCollides);
 	}
 
 	public void setBlock(int x, int y, int z, int block) {
