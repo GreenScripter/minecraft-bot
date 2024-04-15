@@ -15,10 +15,10 @@ import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
-import greenscripter.minecraft.play.other.SearchPlayHandler;
+import greenscripter.minecraft.play.other.PointlessPathfindHandler;
 import greenscripter.minecraft.play.state.ClientConfigState;
 
-public class MCTest {
+public class PathfindTest {
 
 	public static void main(String[] args) throws Exception {
 		List<ServerConnection> next = new ArrayList<>();
@@ -34,10 +34,10 @@ public class MCTest {
 				long start = System.currentTimeMillis();
 				synchronized (next) {
 					ClientInfoPacket p = new ClientInfoPacket();
-					p.viewDistance = 4;
+					p.viewDistance = 0;
 					next.forEach(sc -> {
 						try {
-//							if (!sc.name.equals("bot0")) return;
+							if (!sc.name.equals("bot0")) return;
 							sc.out.writePacket(p);
 							sc.getState(ClientConfigState.class).viewDistance = p.viewDistance;
 						} catch (IOException e) {
@@ -96,11 +96,11 @@ public class MCTest {
 				new DeathPlayHandler(), //
 				worldHandler, //
 				new TeleportRequestPlayHandler(),//
-				new SearchPlayHandler()//
+				new PointlessPathfindHandler(worldHandler)//
 		);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;
-		for (int i = 0 + start; i < 100 + start; i++) {
+		for (int i = 0 + start; i < 1 + start; i++) {
 			int c = i;
 			new Thread(() -> {
 				try {

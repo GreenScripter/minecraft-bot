@@ -14,6 +14,12 @@ public class Vector {
 		this.z = z;
 	}
 
+	public Vector(Position p) {
+		this.x = p.x + 0.5;
+		this.y = p.y;
+		this.z = p.z + 0.5;
+	}
+
 	public Vector add(Vector v) {
 		this.x += v.x;
 		this.y += v.y;

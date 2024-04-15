@@ -23,7 +23,7 @@ public class PathFinder {
 	public int pathRetainDistance = 10;
 
 	public boolean infiniteVClipAllowed = true;
-
+	public long timeout = 1000;
 	private AtomicBoolean running = new AtomicBoolean(false);
 
 	public List<Vector> pathFind(Vector start, Vector end, double radius) {
@@ -127,14 +127,22 @@ public class PathFinder {
 		}
 		running.set(true);
 
-		Set<Integer> endPoints = new HashSet<>();
+		Set<Long> endPoints = new HashSet<>();
 		for (Vector pos : endNear) {
-			endPoints.add(((int) Math.floor(pos.x) << 16) + (int) Math.floor(pos.z));
+			endPoints.add(((long) Math.floor(pos.x) << 32) + (long) Math.floor(pos.z));
 		}
 		if (endBlock != null)
-			endPoints.add((endBlock.x << 16) + endBlock.z);
+			endPoints.add(((long) endBlock.x << 32) + endBlock.z);
 		else
 			endBlock = new Position((int) Math.floor(endNear.get(0).x), (int) Math.floor(endNear.get(0).y), (int) Math.floor(endNear.get(0).z));
+
+		for (int i = 0; i < endNear.size(); i++) {
+			Vector end = endNear.get(i);
+			if (Math.abs(startBlock.x + 0.5 - end.x) < nearLength && Math.abs(startBlock.y + 0.5 - end.y) < nearLength && Math.abs(startBlock.z + 0.5 - end.z) < nearLength) {
+				endBlock = startBlock;
+				return new ArrayList<>();
+			}
+		}
 
 		MaxHeap nodes = new MaxHeap(1000);
 
@@ -151,7 +159,7 @@ public class PathFinder {
 
 		List<AStarNode> next = new ArrayList<>();
 		loop: while (nodes.size() > 0) {
-			if (System.currentTimeMillis() - start > 1000) {
+			if (System.currentTimeMillis() - start > timeout) {
 				return null;
 			}
 			AStarNode current = nodes.extractMax();
@@ -215,7 +223,7 @@ public class PathFinder {
 		}
 	}
 
-	public void aStarNeighbors(AStarNode parent, List<AStarNode> blocks, Set<Integer> endpoint) {
+	public void aStarNeighbors(AStarNode parent, List<AStarNode> blocks, Set<Long> endpoint) {
 		Position current = parent.pos;
 		double basePriority = 1;
 		if (world.isPassiblePlayer(current.x + 1, current.y, current.z, noCollides)) blocks.add(new AStarNode(new Position(current.x + 1, current.y, current.z), parent, -basePriority));
@@ -234,7 +242,7 @@ public class PathFinder {
 				blocks.add(newNode);
 			}
 		}
-		if (infiniteVClipAllowed && endpoint.contains((current.x << 16) + current.z)) {
+		if (infiniteVClipAllowed && endpoint.contains(((long) current.x << 32) + current.z)) {
 			for (int i = -66; i < 323; i += 1) {
 				if (world.isPassiblePlayer(current.x, i, current.z, noCollides)) {
 					basePriority = 1;
