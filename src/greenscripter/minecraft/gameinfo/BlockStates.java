@@ -42,6 +42,67 @@ public class BlockStates {
 		return idsToStates.get(id);
 	}
 
+	public static boolean[] getBlockSet() {
+		return new boolean[noCollideIds.length];
+	}
+
+	public static boolean[] addToBlockSet(boolean[] set, String blockId) {
+		System.out.println(blockStates.get(blockId));
+		for (BlockState s : blockStates.get(blockId)) {
+			set[s.id] = true;
+		}
+		return set;
+	}
+
+	public static boolean[] addTagToBlockSet(boolean[] set, String blockTag) {
+		for (String blockId : RegistryTags.getBlockTag(blockTag)) {
+			for (BlockState s : blockStates.get(blockId)) {
+				set[s.id] = true;
+			}
+		}
+		return set;
+	}
+
+	public static boolean[] removeTagFromBlockSet(boolean[] set, String blockTag) {
+		for (String blockId : RegistryTags.getBlockTag(blockTag)) {
+			for (BlockState s : blockStates.get(blockId)) {
+				set[s.id] = false;
+			}
+		}
+		return set;
+	}
+
+	public static boolean[] removeFromBlockSet(boolean[] set, String blockId) {
+		for (BlockState s : blockStates.get(blockId)) {
+			set[s.id] = false;
+		}
+		return set;
+	}
+
+	public static boolean[] unionBlockSet(boolean[] set, boolean[] other) {
+		boolean[] union = getBlockSet();
+		for (int i = 0; i < union.length; i++) {
+			union[i] = set[i] | other[i];
+		}
+		return union;
+	}
+
+	public static boolean[] intersectBlockSet(boolean[] set, boolean[] other) {
+		boolean[] intersection = getBlockSet();
+		for (int i = 0; i < intersection.length; i++) {
+			intersection[i] = set[i] && other[i];
+		}
+		return intersection;
+	}
+
+	public static boolean[] subtractBlockSet(boolean[] set, boolean[] other) {
+		boolean[] subtract = getBlockSet();
+		for (int i = 0; i < subtract.length; i++) {
+			subtract[i] = set[i] && !other[i];
+		}
+		return subtract;
+	}
+
 	static {
 		long start = System.currentTimeMillis();
 		try {
@@ -81,6 +142,7 @@ public class BlockStates {
 						defaultStates.put(block, blockState);
 					}
 					idsToStates.put(blockState.id, blockState);
+					states.add(blockState);
 				}
 				blockStates.put(block, states);
 			}

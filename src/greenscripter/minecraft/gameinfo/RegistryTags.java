@@ -16,8 +16,10 @@ import com.google.gson.JsonParser;
 public class RegistryTags {
 
 	public static void main(String[] args) throws InterruptedException {
+		System.out.println(blockTags.keySet());
 		Registries.registries.getClass();
 		BlockStates.blockStates.getClass();
+//		System.out.println(BlockStates.blockStates.keySet());
 		Thread.sleep(20000);
 	}
 
