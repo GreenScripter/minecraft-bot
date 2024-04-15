@@ -47,7 +47,7 @@ public class BlockStates {
 	}
 
 	public static boolean[] addToBlockSet(boolean[] set, String blockId) {
-		System.out.println(blockStates.get(blockId));
+		//		System.out.println(blockStates.get(blockId));
 		for (BlockState s : blockStates.get(blockId)) {
 			set[s.id] = true;
 		}
