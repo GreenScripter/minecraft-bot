@@ -113,7 +113,7 @@ public class MCOutputStream extends DataOutputStream {
 	}
 
 	public void writePosition(Position p) throws IOException {
-		writeLong(((p.x & 0x3FFFFFF) << 38) | ((p.z & 0x3FFFFFF) << 12) | (p.y & 0xFFF));
+		writeLong(((p.x & 0x3FFFFFFl) << 38) | ((p.z & 0x3FFFFFFl) << 12) | (p.y & 0xFFFl));
 	}
 
 	public void writeVarLong(long value) throws IOException {
