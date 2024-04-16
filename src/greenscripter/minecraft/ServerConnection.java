@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
 
+import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.configuration.AckFinishConfigPacket;
 import greenscripter.minecraft.packet.c2s.configuration.ClientInfoConfigPacket;
@@ -181,6 +182,14 @@ public class ServerConnection {
 				}
 			}
 			default -> throw new IllegalArgumentException("Unexpected value: " + connectionState);
+		}
+	}
+
+	public void sendPacket(Packet p) {
+		try {
+			this.out.writePacket(p);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

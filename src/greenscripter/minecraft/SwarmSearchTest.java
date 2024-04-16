@@ -18,7 +18,7 @@ import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
 import greenscripter.minecraft.play.other.SearchPlayHandler;
 
-public class MCTest {
+public class SwarmSearchTest {
 
 	public static void main(String[] args) throws Exception {
 		List<ServerConnection> next = new ArrayList<>();
@@ -95,7 +95,8 @@ public class MCTest {
 				new KeepAlivePlayHandler(), //
 				new DeathPlayHandler(), //
 				worldHandler, //
-				new TeleportRequestPlayHandler()//
+				new TeleportRequestPlayHandler(),//
+				new SearchPlayHandler()//
 		);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;
