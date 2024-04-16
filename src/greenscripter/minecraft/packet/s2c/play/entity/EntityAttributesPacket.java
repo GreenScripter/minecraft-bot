@@ -8,12 +8,12 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class EntityAttributtesPacket extends Packet {
+public class EntityAttributesPacket extends Packet {
 
 	public int entityID;
 	public Attribute[] attributes;
 
-	public EntityAttributtesPacket() {}
+	public EntityAttributesPacket() {}
 
 	public int id() {
 		return 0x71;

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.utils.Position;
+import greenscripter.minecraft.world.entity.Entity;
 
 public class World {
 
@@ -19,6 +20,7 @@ public class World {
 	public Worlds worlds;
 
 	public Map<Long, Chunk> chunks = new HashMap<>();
+	public Map<Integer, Entity> entities = new HashMap<>();
 
 	public boolean isChunkLoaded(int x, int z) {
 		return chunks.containsKey(Chunk.mergeCoords(x, z));
