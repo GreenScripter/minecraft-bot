@@ -61,13 +61,25 @@ public class State<T> {
 		}
 	}
 
-	public State<T> run(StateTickCallback<T> c) {
-		tickCallbacks.add(c);
+	public State<T> init(StateChangeCallback<T> c) {
+		return onInit(c);
+	}
+
+	public State<T> onInit(StateChangeCallback<T> c) {
+		initCallbacks.add(c);
 		return this;
 	}
 
-	public State<T> init(StateChangeCallback<T> c) {
-		initCallbacks.add(c);
+	public State<T> run(StateTickCallback<T> c) {
+		return onTick(c);
+	}
+
+	public State<T> onRun(StateTickCallback<T> c) {
+		return onTick(c);
+	}
+
+	public State<T> onTick(StateTickCallback<T> c) {
+		tickCallbacks.add(c);
 		return this;
 	}
 
