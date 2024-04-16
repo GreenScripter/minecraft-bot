@@ -34,6 +34,10 @@ public class World {
 		return chunks.get(Chunk.mergeCoords(x, z));
 	}
 
+	public Entity getEntity(int id) {
+		return entities.get(id);
+	}
+
 	public Chunk getBlockChunk(int x, int z) {
 		return getChunk(x >> 4, z >> 4);
 	}
@@ -159,9 +163,23 @@ public class World {
 	}
 
 	public void unloadChunk(Chunk c, ServerConnection sc) {
+		if (c == null) return;
 		c.players.remove(sc);
 		if (c.players.size() == 0) {
 			chunks.remove(Chunk.mergeCoords(c.chunkX, c.chunkZ));
+		}
+	}
+
+	public void addEntityLoader(Entity e, ServerConnection sc) {
+		entities.put(e.entityId, e);
+		e.players.add(sc);
+	}
+
+	public void unloadEntity(Entity e, ServerConnection sc) {
+		if (e == null) return;
+		e.players.remove(sc);
+		if (e.players.size() == 0) {
+			entities.remove(e.entityId);
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
+import greenscripter.minecraft.play.handler.EntityPlayHandler;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
@@ -18,7 +19,8 @@ public class MCTest {
 				new DeathPlayHandler(), //
 				new WorldPlayHandler(), //
 				new TeleportRequestPlayHandler(),//
-				new SearchPlayHandler()//
+				new SearchPlayHandler(),//
+				new EntityPlayHandler()//
 		);
 
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
