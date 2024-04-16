@@ -13,6 +13,7 @@ import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
+import greenscripter.minecraft.play.inventory.Slot;
 
 public class MCInputStream extends DataInputStream {
 
@@ -172,6 +173,17 @@ public class MCInputStream extends DataInputStream {
 		}
 
 		return value;
+	}
+
+	public Slot readSlot() throws IOException {
+		Slot slot = new Slot();
+		slot.present = readBoolean();
+		if (slot.present) {
+			slot.itemId = readVarInt();
+			slot.itemCount = readByte();
+			slot.nbt = readNBT();
+		}
+		return slot;
 	}
 
 	public InputStream wrapped() {
