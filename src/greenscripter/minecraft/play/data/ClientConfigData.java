@@ -1,6 +1,6 @@
-package greenscripter.minecraft.play.state;
+package greenscripter.minecraft.play.data;
 
-public class ClientConfigState extends PlayState {
+public class ClientConfigData extends PlayData {
 
 	public String locale = "en_US";
 	public byte viewDistance = 0;

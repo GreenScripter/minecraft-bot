@@ -7,10 +7,10 @@ import java.io.IOException;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
+import greenscripter.minecraft.play.data.PlayData;
+import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
-import greenscripter.minecraft.play.state.PlayState;
-import greenscripter.minecraft.play.state.PositionState;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.utils.Vector;
 import greenscripter.minecraft.world.PathFinder;
@@ -25,10 +25,10 @@ public class PointlessPathfindHandler extends PlayHandler {
 		this.world = world;
 		finder = new PathFinder();
 		finder.infiniteVClipAllowed = false;
-		PlayState.playState.put(PathFindState.class, PathFindState::new);
+		PlayData.playData.put(PathFindData.class, PathFindData::new);
 	}
 
-	static class PathFindState extends PlayState {
+	static class PathFindData extends PlayData {
 
 		List<PlayerMovePositionRotationPacket> queue = new ArrayList<>();
 		Position oldPos = new Position(0, 72, 0);
@@ -39,11 +39,11 @@ public class PointlessPathfindHandler extends PlayHandler {
 
 	public void tick(ServerConnection sc) throws IOException {
 
-		PositionState pos = sc.getState(PositionState.class);
-		PathFindState pathState = sc.getState(PathFindState.class);
+		PositionData pos = sc.getData(PositionData.class);
+		PathFindData pathData = sc.getData(PathFindData.class);
 //		pathState.tick++;
 //		if (pathState.tick % 2 != 0) return;
-		if (pathState.errored) return;
+		if (pathData.errored) return;
 
 		if (pos.dimension == null) {
 			return;
@@ -51,8 +51,8 @@ public class PointlessPathfindHandler extends PlayHandler {
 		if (finder.world == null || !finder.world.id.equals(pos.dimension)) {
 			finder.world = world.worlds.getWorld(pos.dimension);
 		}
-		if (!pathState.queue.isEmpty()) {
-			PlayerMovePositionRotationPacket p = pathState.queue.remove(0);
+		if (!pathData.queue.isEmpty()) {
+			PlayerMovePositionRotationPacket p = pathData.queue.remove(0);
 			//			System.out.println(pos.x + " " + pos.y + " " + pos.z + " move to " + p.x + " " + p.y + " " + p.z);
 			pos.x = p.x;
 			pos.y = p.y;
@@ -65,19 +65,19 @@ public class PointlessPathfindHandler extends PlayHandler {
 		//			return;
 		//		}
 		long start = System.currentTimeMillis();
-		List<Vector> path = finder.pathFind(new Vector(pos.x, pos.y, pos.z), pathState.oldPos);
+		List<Vector> path = finder.pathFind(new Vector(pos.x, pos.y, pos.z), pathData.oldPos);
 		if (path == null) {
 			if (System.currentTimeMillis() - start > 900) {
-				System.out.println(pos.x + " " + pos.y + " " + pos.z + " -> " + pathState.oldPos.x + " " + pathState.oldPos.y + " " + pathState.oldPos.z);
+				System.out.println(pos.x + " " + pos.y + " " + pos.z + " -> " + pathData.oldPos.x + " " + pathData.oldPos.y + " " + pathData.oldPos.z);
 				System.out.println(new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z)));
 				System.out.println(sc.name);
-				pathState.errored = true;
+				pathData.errored = true;
 			}
 			return;
 		}
 		finder.mergeStraightLines(path, 10);
-		pathState.queue.addAll(finder.getPackets(path, new Vector(pos.x, pos.y, pos.z), pos.pitch, pos.yaw));
-		pathState.oldPos = new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+		pathData.queue.addAll(finder.getPackets(path, new Vector(pos.x, pos.y, pos.z), pos.pitch, pos.yaw));
+		pathData.oldPos = new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
 		//		Collections.reverse(queue);
 	}
 

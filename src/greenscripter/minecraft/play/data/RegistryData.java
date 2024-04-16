@@ -1,8 +1,8 @@
-package greenscripter.minecraft.play.state;
+package greenscripter.minecraft.play.data;
 
 import greenscripter.minecraft.nbt.NBTTagCompound;
 
-public class RegistryState extends PlayState {
+public class RegistryData extends PlayData {
 
 	public NBTTagCompound configuredRegistry;
 

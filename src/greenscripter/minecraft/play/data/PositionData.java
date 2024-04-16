@@ -1,6 +1,6 @@
-package greenscripter.minecraft.play.state;
+package greenscripter.minecraft.play.data;
 
-public class PositionState extends PlayState {
+public class PositionData extends PlayData {
 
 	public double x;
 	public double y;

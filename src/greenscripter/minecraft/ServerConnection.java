@@ -22,9 +22,9 @@ import greenscripter.minecraft.packet.s2c.configuration.KeepAliveConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
 import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
+import greenscripter.minecraft.play.data.PlayData;
+import greenscripter.minecraft.play.data.RegistryData;
 import greenscripter.minecraft.play.handler.PlayHandler;
-import greenscripter.minecraft.play.state.PlayState;
-import greenscripter.minecraft.play.state.RegistryState;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.PeekInputStream;
@@ -43,13 +43,13 @@ public class ServerConnection {
 
 	public boolean bungeeMode = false;
 
-	public State state = State.LOGIN;
+	public ConnectionState connectionState = ConnectionState.LOGIN;
 
 	public boolean blocking = false;
 
 	private List<PlayHandler> handlers = new ArrayList<>();
 
-	private Map<Class<? extends PlayState>, PlayState> playState = new HashMap<>();
+	private Map<Class<? extends PlayData>, PlayData> playData = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	private List<PlayHandler>[] packetTypes = new List[200];
@@ -68,7 +68,7 @@ public class ServerConnection {
 		peeker = new PeekInputStream(socket.getInputStream(), channel);
 		in = new MCInputStream(peeker);
 		out = new MCOutputStream(socket.getOutputStream());
-		state = State.HANDSHAKE;
+		connectionState = ConnectionState.HANDSHAKE;
 		this.name = name;
 		this.uuid = uuid;
 		this.hostname = hostname;
@@ -104,24 +104,24 @@ public class ServerConnection {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends PlayState> T getState(Class<T> type) {
-		PlayState s = playState.get(type);
+	public <T extends PlayData> T getData(Class<T> type) {
+		PlayData s = playData.get(type);
 		if (s == null) {
-			s = PlayState.createState(type);
-			playState.put((Class<? extends PlayState>) type, s);
+			s = PlayData.createData(type);
+			playData.put((Class<? extends PlayData>) type, s);
 		}
 		return (T) s;
 	}
 
 	public void step() throws IOException {
-		switch (state) {
+		switch (connectionState) {
 			case HANDSHAKE -> {
 				String hostname = this.hostname;
 				if (bungeeMode) {
 					hostname += "\u0000" + "127.0.0.1" + "\u0000" + uuid;
 				}
 				out.writePacket(new HandshakePacket(hostname, port, 2));
-				state = State.LOGIN;
+				connectionState = ConnectionState.LOGIN;
 			}
 			case LOGIN -> {
 				out.writePacket(new LoginStartPacket(name, uuid));
@@ -142,7 +142,7 @@ public class ServerConnection {
 				LoginSuccessPacket success = p.convert(new LoginSuccessPacket());
 				System.out.println("Logged in " + success.name + " " + success.uuid + " " + success.properties);
 				out.writePacket(new LoginAcknowledgePacket());
-				state = State.CONFIGURATION;
+				connectionState = ConnectionState.CONFIGURATION;
 				//				System.out.println("Finished Login");
 			}
 			case CONFIGURATION -> {
@@ -150,7 +150,7 @@ public class ServerConnection {
 				UnknownPacket p = in.readGeneralPacket();
 				if (p.id == 2) {
 					out.writePacket(new AckFinishConfigPacket());
-					state = State.PLAY;
+					connectionState = ConnectionState.PLAY;
 					//					System.out.println("Finished Configuration");
 				}
 				if (p.id == 3) {
@@ -158,7 +158,7 @@ public class ServerConnection {
 				}
 				if (p.id == 5) {
 					RegistryConfigPacket rp = p.convert(new RegistryConfigPacket());
-					getState(RegistryState.class).configuredRegistry = rp.data;
+					getData(RegistryData.class).configuredRegistry = rp.data;
 				}
 			}
 
@@ -180,7 +180,7 @@ public class ServerConnection {
 					}
 				}
 			}
-			default -> throw new IllegalArgumentException("Unexpected value: " + state);
+			default -> throw new IllegalArgumentException("Unexpected value: " + connectionState);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class ServerConnection {
 		return !(in.available() > 0);
 	}
 
-	public static enum State {
+	public static enum ConnectionState {
 		HANDSHAKE, LOGIN, CONFIGURATION, PLAY, DISCONNECTED;
 	}
 

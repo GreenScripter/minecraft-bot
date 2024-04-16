@@ -18,10 +18,10 @@ import greenscripter.minecraft.packet.s2c.play.LoginPlayPacket;
 import greenscripter.minecraft.packet.s2c.play.RespawnPacket;
 import greenscripter.minecraft.packet.s2c.play.SectionUpdatePacket;
 import greenscripter.minecraft.packet.s2c.play.UnloadChunkPacket;
-import greenscripter.minecraft.play.state.ClientConfigState;
-import greenscripter.minecraft.play.state.PositionState;
-import greenscripter.minecraft.play.state.RegistryState;
-import greenscripter.minecraft.play.state.WorldState;
+import greenscripter.minecraft.play.data.ClientConfigData;
+import greenscripter.minecraft.play.data.PositionData;
+import greenscripter.minecraft.play.data.RegistryData;
+import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.world.BlockEntity;
 import greenscripter.minecraft.world.Chunk;
@@ -43,25 +43,25 @@ public class WorldPlayHandler extends PlayHandler {
 	int blockEntityDataId = new BlockEntityDataPacket().id();
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
-		WorldState worldState = sc.getState(WorldState.class);
+		WorldData worldData = sc.getData(WorldData.class);
 
 		if (p.id == respawnId) {
 			RespawnPacket respawn = p.convert(new RespawnPacket());
-			PositionState pos = sc.getState(PositionState.class);
-			for (Chunk c : new ArrayList<>(worldState.world.chunks.values())) {
-				worldState.world.unloadChunk(c, sc);
+			PositionData pos = sc.getData(PositionData.class);
+			for (Chunk c : new ArrayList<>(worldData.world.chunks.values())) {
+				worldData.world.unloadChunk(c, sc);
 			}
 			pos.dimension = respawn.dimensionName;
 
-			worldState.world = worlds.getWorld(respawn.dimensionName);
-			if (worldState.world == null) {
+			worldData.world = worlds.getWorld(respawn.dimensionName);
+			if (worldData.world == null) {
 				World world = new World();
 				world.id = respawn.dimensionName;
 				world.dimensionType = respawn.dimensionType;
 				world.worlds = worlds;
 
-				RegistryState registryState = sc.getState(RegistryState.class);
-				var dimensionTypeList = registryState.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
+				RegistryData registryData = sc.getData(RegistryData.class);
+				var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
 				NBTTagCompound type = null;
 				for (NBTTagCompound c : dimensionTypeList.value) {
 					if (c.get("name").asString().value.equals(world.dimensionType)) {
@@ -74,24 +74,24 @@ public class WorldPlayHandler extends PlayHandler {
 
 				worlds.worlds.put(world.id, world);
 
-				worldState.world = world;
+				worldData.world = world;
 			}
 
 		} else if (p.id == loginPlayId) {
 			LoginPlayPacket respawn = p.convert(new LoginPlayPacket());
-			PositionState pos = sc.getState(PositionState.class);
+			PositionData pos = sc.getData(PositionData.class);
 			pos.dimension = respawn.dimensionName;
 
-			worldState.world = worlds.getWorld(respawn.dimensionName);
-			if (worldState.world == null) {
+			worldData.world = worlds.getWorld(respawn.dimensionName);
+			if (worldData.world == null) {
 				World world = new World();
 				world.id = respawn.dimensionName;
 				System.out.println("Loaded world " + world.id);
 				world.dimensionType = respawn.dimensionType;
 				world.worlds = worlds;
 
-				RegistryState registryState = sc.getState(RegistryState.class);
-				var dimensionTypeList = registryState.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
+				RegistryData registryData = sc.getData(RegistryData.class);
+				var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
 				NBTTagCompound type = null;
 				for (NBTTagCompound c : dimensionTypeList.value) {
 					if (c.get("name").asString().value.equals(world.dimensionType)) {
@@ -104,19 +104,19 @@ public class WorldPlayHandler extends PlayHandler {
 
 				worlds.worlds.put(world.id, world);
 
-				worldState.world = world;
+				worldData.world = world;
 			}
 
 		} else if (p.id == chunkDataId) {
 			ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
-			if (worldState.world != null) {
-				if (worldState.world.isChunkLoaded(chunk.chunkX, chunk.chunkZ)) {
+			if (worldData.world != null) {
+				if (worldData.world.isChunkLoaded(chunk.chunkX, chunk.chunkZ)) {
 					//					System.out.println("Chunk " + chunk.chunkX + " " + chunk.chunkZ + " already loaded");
-					worldState.world.addChunkLoader(worldState.world.getChunk(chunk.chunkX, chunk.chunkZ), sc);
+					worldData.world.addChunkLoader(worldData.world.getChunk(chunk.chunkX, chunk.chunkZ), sc);
 				} else {
 					//					System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
-					Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldState.world.min_y, worldState.world.height, worldState.world);
-					worldState.world.addChunkLoader(c, sc);
+					Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldData.world.min_y, worldData.world.height, worldData.world);
+					worldData.world.addChunkLoader(c, sc);
 
 					ChunkDataDecoder.decode(c, chunk.data);
 
@@ -128,15 +128,15 @@ public class WorldPlayHandler extends PlayHandler {
 				}
 			}
 			AckChunksPacket ack = new AckChunksPacket();
-			if (sc.getState(ClientConfigState.class).viewDistance <= 1) {
+			if (sc.getData(ClientConfigData.class).viewDistance <= 1) {
 				ack.chunksPerTick = 0.01f;
 			}
 			sc.out.writePacket(ack);
 		} else if (p.id == unloadChunkId) {
 			UnloadChunkPacket chunkunload = p.convert(new UnloadChunkPacket());
-			Chunk chunk = worldState.world.getChunk(chunkunload.x, chunkunload.z);
+			Chunk chunk = worldData.world.getChunk(chunkunload.x, chunkunload.z);
 			if (chunk != null) {
-				worldState.world.unloadChunk(chunk, sc);
+				worldData.world.unloadChunk(chunk, sc);
 			}
 		} else if (p.id == explosionId) {
 			ExplosionPacket explosion = p.convert(new ExplosionPacket());
@@ -145,7 +145,7 @@ public class WorldPlayHandler extends PlayHandler {
 				for (Position pos : explosion.blocks) {
 					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " minecraft:red_stained_glass"));
 					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " " + BlockStates.getState(worldState.world.getBlock(pos.x, pos.y, pos.z)).format()));
-					worldState.world.setBlock(pos.x, pos.y, pos.z, air);
+					worldData.world.setBlock(pos.x, pos.y, pos.z, air);
 
 				}
 			}
@@ -154,12 +154,12 @@ public class WorldPlayHandler extends PlayHandler {
 			BlockUpdatePacket update = p.convert(new BlockUpdatePacket());
 			//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " " + BlockStates.getState(worldState.world.getBlock(update.pos.x, update.pos.y, update.pos.z)).format()));
 
-			worldState.world.setBlock(update.pos.x, update.pos.y, update.pos.z, update.state);
+			worldData.world.setBlock(update.pos.x, update.pos.y, update.pos.z, update.state);
 			//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " minecraft:green_stained_glass"));
 
 		} else if (p.id == sectionUpdateId) {
 			SectionUpdatePacket update = p.convert(new SectionUpdatePacket());
-			Chunk chunk = worldState.world.getChunk(update.sectionX, update.sectionZ);
+			Chunk chunk = worldData.world.getChunk(update.sectionX, update.sectionZ);
 			if (chunk != null) {
 				for (int i = 0; i < update.ids.length; i++) {
 					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + (update.xs[i] + chunk.chunkX * 16) + " " + (update.ys[i] + update.sectionY * 16) + " " + (update.zs[i] + chunk.chunkZ * 16) + " minecraft:blue_stained_glass"));
@@ -176,7 +176,7 @@ public class WorldPlayHandler extends PlayHandler {
 			en.data = update.nbt;
 			en.pos = update.pos;
 			en.type = update.type;
-			worldState.world.addBlockEntity(en);
+			worldData.world.addBlockEntity(en);
 			//			System.out.println("Added " + en.pos + " " + en.type + " " + en.data);
 		}
 	}

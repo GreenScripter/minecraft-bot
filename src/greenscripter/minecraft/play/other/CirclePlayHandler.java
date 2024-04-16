@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
+import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.handler.PlayHandler;
-import greenscripter.minecraft.play.state.PositionState;
 import greenscripter.minecraft.utils.Vector;
 
 public class CirclePlayHandler extends PlayHandler {
@@ -19,7 +19,7 @@ public class CirclePlayHandler extends PlayHandler {
 		//		if (System.currentTimeMillis() - start < 5000) {
 		//			return;
 		//		}
-		PositionState pos = sc.getState(PositionState.class);
+		PositionData pos = sc.getData(PositionData.class);
 		PlayerMovePositionRotationPacket move = new PlayerMovePositionRotationPacket();
 		move.yaw = 0;
 

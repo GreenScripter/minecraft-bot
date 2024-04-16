@@ -33,7 +33,7 @@ public class ThreadedSwarmHandling {
 					//				connections.add(sc);
 					while (true) {
 						sc.step();
-						if (!started && sc.state.equals(ServerConnection.State.PLAY)) {
+						if (!started && sc.connectionState.equals(ServerConnection.ConnectionState.PLAY)) {
 							started = true;
 							new Thread(() -> {
 								try {

@@ -8,7 +8,7 @@ import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.play.TeleportConfirmPacket;
 import greenscripter.minecraft.packet.s2c.play.TeleportRequestPacket;
-import greenscripter.minecraft.play.state.PositionState;
+import greenscripter.minecraft.play.data.PositionData;
 
 public class TeleportRequestPlayHandler extends PlayHandler {
 
@@ -16,7 +16,7 @@ public class TeleportRequestPlayHandler extends PlayHandler {
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		if (p.id == teleportPacketId) {
-			PositionState pos = sc.getState(PositionState.class);
+			PositionData pos = sc.getData(PositionData.class);
 			TeleportRequestPacket req = p.convert(new TeleportRequestPacket());
 			req.makeNotRelative(pos.x, pos.y, pos.z, pos.pitch, pos.yaw);
 			pos.x = req.x;

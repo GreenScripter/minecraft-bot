@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
+import greenscripter.minecraft.play.data.ClientConfigData;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
 import greenscripter.minecraft.play.other.PointlessPathfindHandler;
-import greenscripter.minecraft.play.state.ClientConfigState;
 
 public class PathfindTest {
 
@@ -39,7 +39,7 @@ public class PathfindTest {
 						try {
 							if (!sc.name.equals("bot0")) return;
 							sc.out.writePacket(p);
-							sc.getState(ClientConfigState.class).viewDistance = p.viewDistance;
+							sc.getData(ClientConfigData.class).viewDistance = p.viewDistance;
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -112,7 +112,7 @@ public class PathfindTest {
 					//				connections.add(sc);
 					while (true) {
 						sc.step();
-						if (sc.state.equals(ServerConnection.State.PLAY)) {
+						if (sc.connectionState.equals(ServerConnection.ConnectionState.PLAY)) {
 							synchronized (next) {
 								next.add(sc);
 							}

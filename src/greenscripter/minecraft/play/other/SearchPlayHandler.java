@@ -13,11 +13,11 @@ import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.gameinfo.BlockStates;
 import greenscripter.minecraft.packet.c2s.play.PlayerActionPacket;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
+import greenscripter.minecraft.play.data.PlayData;
+import greenscripter.minecraft.play.data.PositionData;
+import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.play.handler.PlayHandler;
-import greenscripter.minecraft.play.other.PointlessPathfindHandler.PathFindState;
-import greenscripter.minecraft.play.state.PlayState;
-import greenscripter.minecraft.play.state.PositionState;
-import greenscripter.minecraft.play.state.WorldState;
+import greenscripter.minecraft.play.other.PointlessPathfindHandler.PathFindData;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.utils.Vector;
 import greenscripter.minecraft.world.PathFinder;
@@ -32,8 +32,8 @@ public class SearchPlayHandler extends PlayHandler {
 	{
 		finder = new PathFinder();
 		finder.infiniteVClipAllowed = false;
-		PlayState.playState.put(PathFindState.class, PathFindState::new);
-		PlayState.playState.put(PositionQueue.class, PositionQueue::new);
+		PlayData.playData.put(PathFindData.class, PathFindData::new);
+		PlayData.playData.put(PositionQueue.class, PositionQueue::new);
 		targets = BlockStates.addTagToBlockSet(targets, "minecraft:small_flowers");
 		targets = BlockStates.addTagToBlockSet(targets, "minecraft:crops");
 		targets = BlockStates.addTagToBlockSet(targets, "minecraft:flowers");
@@ -59,24 +59,24 @@ public class SearchPlayHandler extends PlayHandler {
 		if (System.currentTimeMillis() - start < 3000) {
 			return;
 		}
-		WorldState worldState = sc.getState(WorldState.class);
-		if (worldState.world == null) {
+		WorldData worldData = sc.getData(WorldData.class);
+		if (worldData.world == null) {
 			return;
 		}
 
-		PositionState pos = sc.getState(PositionState.class);
-		PathFindState pathState = sc.getState(PathFindState.class);
+		PositionData pos = sc.getData(PositionData.class);
+		PathFindData pathData = sc.getData(PathFindData.class);
 		//		PositionQueue queue = sc.getState(PositionQueue.class);
-		if (pathState.errored) return;
+		if (pathData.errored) return;
 
 		if (pos.dimension == null) {
 			return;
 		}
 		if (finder.world == null || !finder.world.id.equals(pos.dimension)) {
-			finder.world = worldState.world;
+			finder.world = worldData.world;
 		}
-		if (!pathState.queue.isEmpty()) {
-			PlayerMovePositionRotationPacket p = pathState.queue.remove(0);
+		if (!pathData.queue.isEmpty()) {
+			PlayerMovePositionRotationPacket p = pathData.queue.remove(0);
 			//			System.out.println(pos.x + " " + pos.y + " " + pos.z + " move to " + p.x + " " + p.y + " " + p.z);
 			pos.x = p.x;
 			pos.y = p.y;
@@ -84,21 +84,21 @@ public class SearchPlayHandler extends PlayHandler {
 			sc.out.writePacket(p);
 			return;
 		}
-		targetted.removeIf(t -> worldState.world.getBlock(t.x, t.y, t.z) <= 0);
+		targetted.removeIf(t -> worldData.world.getBlock(t.x, t.y, t.z) <= 0);
 		//		System.out.println(worldState.world);
-		if (worldState.world != null) {
+		if (worldData.world != null) {
 			Position self = new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
 			List<Position> blocks = new ArrayList<>();
 
 			if (queue.queue.isEmpty()) {
-				blocks = worldState.world.performSearch((int) pos.x, (int) pos.y, (int) pos.z, targets, 200000, 5000, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
+				blocks = worldData.world.performSearch((int) pos.x, (int) pos.y, (int) pos.z, targets, 200000, 5000, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
 				queue.queue.addAll(blocks);
 				blocks = new ArrayList<>();
 			}
 			queue.queue.sort((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self));
 			if (!queue.queue.isEmpty()) {
 				if (self.getManhattanDistance(queue.queue.get(0)) > 100 && queue.queue.size() < 1000) {
-					blocks = worldState.world.performSearch((int) pos.x, (int) pos.y, (int) pos.z, targets, 200000, 50, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
+					blocks = worldData.world.performSearch((int) pos.x, (int) pos.y, (int) pos.z, targets, 200000, 50, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
 					queue.queue.addAll(blocks);
 					blocks = new ArrayList<>();
 					queue.queue.sort((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self));
@@ -107,7 +107,7 @@ public class SearchPlayHandler extends PlayHandler {
 
 			while (blocks.isEmpty() && !queue.queue.isEmpty()) {
 				Position t = queue.queue.remove(0);
-				int block = worldState.world.getBlock(t.x, t.y, t.z);
+				int block = worldData.world.getBlock(t.x, t.y, t.z);
 
 				if (block > 0 && targets[block]) {
 					if (!targetted.contains(t)) {
@@ -119,16 +119,16 @@ public class SearchPlayHandler extends PlayHandler {
 				return;
 			}
 
-			if (pathState.oldPos != null) {
-				sc.out.writePacket(new PlayerActionPacket(PlayerActionPacket.START_MINING, pathState.oldPos, (byte) 1, breakSeq++));
-				sc.out.writePacket(new PlayerActionPacket(PlayerActionPacket.FINISH_MINING, pathState.oldPos, (byte) 1, breakSeq++));
-				targetted.remove(pathState.oldPos);
+			if (pathData.oldPos != null) {
+				sc.out.writePacket(new PlayerActionPacket(PlayerActionPacket.START_MINING, pathData.oldPos, (byte) 1, breakSeq++));
+				sc.out.writePacket(new PlayerActionPacket(PlayerActionPacket.FINISH_MINING, pathData.oldPos, (byte) 1, breakSeq++));
+				targetted.remove(pathData.oldPos);
 
 				//				sc.out.writePacket(new ExecuteCommandPacket("setblock" + " " + pathState.oldPos.x + " " + (pathState.oldPos.y) + " " + pathState.oldPos.z + " minecraft:air"));
 
 			}
 			for (Position p : blocks) {
-				pathState.oldPos = p;
+				pathData.oldPos = p;
 				targetted.add(p);
 				//				worldState.world.setBlock(p.x, p.y, p.z, 0);
 				break;
@@ -137,10 +137,10 @@ public class SearchPlayHandler extends PlayHandler {
 				//				sc.out.writePacket(new ExecuteCommandPacket("particle minecraft:block_marker " + BlockStates.getState(worldState.world.getBlock(p.x, p.y, p.z)).block() + " " + p.x + " " + (p.y + 0.5) + " " + p.z));
 			}
 			long start = System.currentTimeMillis();
-			List<Vector> path = finder.pathFind(new Vector(pos.x, pos.y, pos.z), new Vector(pathState.oldPos), 4);
+			List<Vector> path = finder.pathFind(new Vector(pos.x, pos.y, pos.z), new Vector(pathData.oldPos), 4);
 			if (path == null) {
 				if (System.currentTimeMillis() - start > 900) {
-					System.out.println(pos.x + " " + pos.y + " " + pos.z + " -> " + pathState.oldPos.x + " " + pathState.oldPos.y + " " + pathState.oldPos.z);
+					System.out.println(pos.x + " " + pos.y + " " + pos.z + " -> " + pathData.oldPos.x + " " + pathData.oldPos.y + " " + pathData.oldPos.z);
 					System.out.println(new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z)));
 					System.out.println(sc.name);
 					//					pathState.errored = true;
@@ -148,7 +148,7 @@ public class SearchPlayHandler extends PlayHandler {
 				return;
 			}
 			finder.mergeStraightLines(path, 10);
-			pathState.queue.addAll(finder.getPackets(path, new Vector(pos.x, pos.y, pos.z), pos.pitch, pos.yaw));
+			pathData.queue.addAll(finder.getPackets(path, new Vector(pos.x, pos.y, pos.z), pos.pitch, pos.yaw));
 		}
 	}
 
@@ -156,7 +156,7 @@ public class SearchPlayHandler extends PlayHandler {
 		return true;
 	}
 
-	static class PositionQueue extends PlayState {
+	static class PositionQueue extends PlayData {
 
 		List<Position> queue = new ArrayList<>();
 	}

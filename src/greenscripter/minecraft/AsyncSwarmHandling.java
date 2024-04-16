@@ -95,7 +95,7 @@ public class AsyncSwarmHandling {
 					//				connections.add(sc);
 					while (true) {
 						sc.step();
-						if (sc.state.equals(ServerConnection.State.PLAY)) {
+						if (sc.connectionState.equals(ServerConnection.ConnectionState.PLAY)) {
 							synchronized (next) {
 								next.add(sc);
 							}
