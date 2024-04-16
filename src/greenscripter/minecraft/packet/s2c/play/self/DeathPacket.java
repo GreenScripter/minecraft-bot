@@ -1,19 +1,19 @@
-package greenscripter.minecraft.packet.s2c.play;
+package greenscripter.minecraft.packet.s2c.play.self;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
-import greenscripter.minecraft.utils.Position;
 
-public class BlockUpdatePacket extends Packet {
+public class DeathPacket extends Packet {
 
-	public Position pos;
-	public int state;
+	public int entityId;
+	public NBTTagCompound message;
 
 	public int id() {
-		return 0x09;
+		return 0x3A;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
@@ -21,8 +21,8 @@ public class BlockUpdatePacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		pos = in.readPosition();
-		state = in.readVarInt();
+		entityId = in.readVarInt();
+		message = in.readNBT();
 	}
 
 }

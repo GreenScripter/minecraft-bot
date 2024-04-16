@@ -1,18 +1,19 @@
-package greenscripter.minecraft.packet.s2c.play;
+package greenscripter.minecraft.packet.s2c.play.blocks;
 
 import java.io.IOException;
 
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
+import greenscripter.minecraft.utils.Position;
 
-public class UnloadChunkPacket extends Packet {
+public class BlockUpdatePacket extends Packet {
 
-	public int x;
-	public int z;
+	public Position pos;
+	public int state;
 
 	public int id() {
-		return 0x1F;
+		return 0x09;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
@@ -20,8 +21,8 @@ public class UnloadChunkPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		z = in.readInt();
-		x = in.readInt();
+		pos = in.readPosition();
+		state = in.readVarInt();
 	}
 
 }

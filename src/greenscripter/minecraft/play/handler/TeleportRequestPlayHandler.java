@@ -7,7 +7,7 @@ import java.io.IOException;
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.play.TeleportConfirmPacket;
-import greenscripter.minecraft.packet.s2c.play.TeleportRequestPacket;
+import greenscripter.minecraft.packet.s2c.play.self.TeleportRequestPacket;
 import greenscripter.minecraft.play.data.PositionData;
 
 public class TeleportRequestPlayHandler extends PlayHandler {

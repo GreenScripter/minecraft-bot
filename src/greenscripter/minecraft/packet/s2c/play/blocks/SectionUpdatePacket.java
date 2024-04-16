@@ -1,4 +1,4 @@
-package greenscripter.minecraft.packet.s2c.play;
+package greenscripter.minecraft.packet.s2c.play.blocks;
 
 import java.io.IOException;
 

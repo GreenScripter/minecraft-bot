@@ -7,7 +7,7 @@ import java.io.IOException;
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.play.ClientStatusPacket;
-import greenscripter.minecraft.packet.s2c.play.DeathPacket;
+import greenscripter.minecraft.packet.s2c.play.self.DeathPacket;
 
 public class DeathPlayHandler extends PlayHandler {
 
