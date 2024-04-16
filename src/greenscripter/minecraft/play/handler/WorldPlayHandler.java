@@ -116,7 +116,6 @@ public class WorldPlayHandler extends PlayHandler {
 				} else {
 					//					System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
 					Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldData.world.min_y, worldData.world.height, worldData.world);
-					worldData.world.addChunkLoader(c, sc);
 
 					ChunkDataDecoder.decode(c, chunk.data);
 
@@ -125,6 +124,8 @@ public class WorldPlayHandler extends PlayHandler {
 						en.pos = new Position(e.xinchunk + chunk.chunkX * 16, e.y, e.zinchunk + chunk.chunkZ * 16);
 						c.addBlockEntity(en);
 					}
+
+					worldData.world.addChunkLoader(c, sc);
 				}
 			}
 			AckChunksPacket ack = new AckChunksPacket();

@@ -32,6 +32,8 @@ import greenscripter.minecraft.utils.PeekInputStream;
 
 public class ServerConnection {
 
+	public Thread owner = null;
+
 	public Socket socket;
 	public MCInputStream in;
 	public MCOutputStream out;
@@ -77,7 +79,7 @@ public class ServerConnection {
 		playHandler.forEach(this::addPlayHandler);
 	}
 
-	public ServerConnection addPlayHandler(PlayHandler p) {
+	public synchronized ServerConnection addPlayHandler(PlayHandler p) {
 		handlers.add(p);
 		for (int i : p.handlesPackets()) {
 			if (packetTypes[i] == null) packetTypes[i] = new ArrayList<>();
@@ -93,7 +95,7 @@ public class ServerConnection {
 		return new ArrayList<>(handlers);
 	}
 
-	public ServerConnection removePlayHandler(PlayHandler p) {
+	public synchronized ServerConnection removePlayHandler(PlayHandler p) {
 		handlers.remove(p);
 		ticking.remove(p);
 		for (List<PlayHandler> l : packetTypes) {
@@ -114,7 +116,7 @@ public class ServerConnection {
 		return (T) s;
 	}
 
-	public void step() throws IOException {
+	public synchronized void step() throws IOException {
 		switch (connectionState) {
 			case HANDSHAKE -> {
 				String hostname = this.hostname;
@@ -193,7 +195,7 @@ public class ServerConnection {
 		}
 	}
 
-	public void tick() throws IOException {
+	public synchronized void tick() throws IOException {
 		for (PlayHandler h : ticking) {
 			h.tick(this);
 		}
