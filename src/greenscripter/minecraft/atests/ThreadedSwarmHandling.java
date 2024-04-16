@@ -1,4 +1,4 @@
-package greenscripter.minecraft;
+package greenscripter.minecraft.atests;
 
 import java.util.List;
 import java.util.UUID;
@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;

@@ -1,4 +1,4 @@
-package greenscripter.minecraft;
+package greenscripter.minecraft.atests;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,19 +6,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
-import greenscripter.minecraft.play.data.ClientConfigData;
-import greenscripter.minecraft.play.handler.DeathPlayHandler;
+import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
-import greenscripter.minecraft.play.handler.WorldPlayHandler;
-import greenscripter.minecraft.play.other.PointlessPathfindHandler;
+import greenscripter.minecraft.play.other.CirclePlayHandler;
 
-public class PathfindTest {
+public class AsyncSwarmHandling {
 
 	public static void main(String[] args) throws Exception {
 		List<ServerConnection> next = new ArrayList<>();
@@ -33,17 +29,6 @@ public class PathfindTest {
 			while (true) {
 				long start = System.currentTimeMillis();
 				synchronized (next) {
-					ClientInfoPacket p = new ClientInfoPacket();
-					p.viewDistance = 0;
-					next.forEach(sc -> {
-						try {
-							if (!sc.name.equals("bot0")) return;
-							sc.out.writePacket(p);
-							sc.getData(ClientConfigData.class).viewDistance = p.viewDistance;
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					});
 					connections.addAll(0, next);
 					next.clear();
 				}
@@ -90,23 +75,22 @@ public class PathfindTest {
 				}
 			}
 		}).start();
-		WorldPlayHandler worldHandler = new WorldPlayHandler();
+
 		List<PlayHandler> handler = List.of(//
 				new KeepAlivePlayHandler(), //
-				new DeathPlayHandler(), //
-				worldHandler, //
-				new TeleportRequestPlayHandler(),//
-				new PointlessPathfindHandler(worldHandler)//
-		);
+				new TeleportRequestPlayHandler()//, //
+//				new CirclePlayHandler()
+				);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;
-		for (int i = 0 + start; i < 1 + start; i++) {
+		for (int i = 0 + start; i < 1000 + start; i++) {
 			int c = i;
 			new Thread(() -> {
 				try {
 					String name = args.length != 0 ? args[0] + c : "bot" + c;
 					UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
 					ServerConnection sc = new ServerConnection("localhost", 20255, name, uuid, handler);
+					sc.addPlayHandler(new CirclePlayHandler());
 					sc.id = c;
 					//					sc.bungeeMode = true;
 					//				connections.add(sc);

@@ -1,4 +1,4 @@
-package greenscripter.minecraft;
+package greenscripter.minecraft.atests;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
 import greenscripter.minecraft.play.data.ClientConfigData;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
@@ -18,7 +19,7 @@ import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
 import greenscripter.minecraft.play.other.SearchPlayHandler;
 
-public class MCTest {
+public class SwarmSearchTest {
 
 	public static void main(String[] args) throws Exception {
 		List<ServerConnection> next = new ArrayList<>();
@@ -95,7 +96,8 @@ public class MCTest {
 				new KeepAlivePlayHandler(), //
 				new DeathPlayHandler(), //
 				worldHandler, //
-				new TeleportRequestPlayHandler()//
+				new TeleportRequestPlayHandler(),//
+				new SearchPlayHandler()//
 		);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;

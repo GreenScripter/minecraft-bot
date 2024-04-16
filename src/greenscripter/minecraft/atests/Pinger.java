@@ -1,4 +1,4 @@
-package greenscripter.minecraft;
+package greenscripter.minecraft.atests;
 
 import java.io.IOException;
 import java.net.Socket;

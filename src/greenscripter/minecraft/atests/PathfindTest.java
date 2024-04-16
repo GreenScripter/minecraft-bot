@@ -1,4 +1,4 @@
-package greenscripter.minecraft;
+package greenscripter.minecraft.atests;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
 import greenscripter.minecraft.play.data.ClientConfigData;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
@@ -16,9 +17,9 @@ import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
-import greenscripter.minecraft.play.other.SearchPlayHandler;
+import greenscripter.minecraft.play.other.PointlessPathfindHandler;
 
-public class SwarmSearchTest {
+public class PathfindTest {
 
 	public static void main(String[] args) throws Exception {
 		List<ServerConnection> next = new ArrayList<>();
@@ -34,10 +35,10 @@ public class SwarmSearchTest {
 				long start = System.currentTimeMillis();
 				synchronized (next) {
 					ClientInfoPacket p = new ClientInfoPacket();
-					p.viewDistance = 4;
+					p.viewDistance = 0;
 					next.forEach(sc -> {
 						try {
-//							if (!sc.name.equals("bot0")) return;
+							if (!sc.name.equals("bot0")) return;
 							sc.out.writePacket(p);
 							sc.getData(ClientConfigData.class).viewDistance = p.viewDistance;
 						} catch (IOException e) {
@@ -96,11 +97,11 @@ public class SwarmSearchTest {
 				new DeathPlayHandler(), //
 				worldHandler, //
 				new TeleportRequestPlayHandler(),//
-				new SearchPlayHandler()//
+				new PointlessPathfindHandler(worldHandler)//
 		);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;
-		for (int i = 0 + start; i < 100 + start; i++) {
+		for (int i = 0 + start; i < 1 + start; i++) {
 			int c = i;
 			new Thread(() -> {
 				try {
