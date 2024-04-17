@@ -203,6 +203,7 @@ public class StateMachine<T> {
 		}
 		State<T> add = new State<T>(this);
 		namedStates.put(name, add);
+		add.name = name;
 		setState(add);
 		return add;
 	}
@@ -212,6 +213,7 @@ public class StateMachine<T> {
 			throw new IllegalStateException("Already has first state " + stack.get(0));
 		}
 		namedStates.put(name, add);
+		add.name = name;
 		setState(add);
 		return add;
 	}
@@ -223,11 +225,13 @@ public class StateMachine<T> {
 	public State<T> state(String name) {
 		State<T> add = new State<T>(this);
 		namedStates.put(name, add);
+		add.name = name;
 		return add;
 	}
 
 	public State<T> state(String name, State<T> add) {
 		namedStates.put(name, add);
+		add.name = name;
 		return add;
 	}
 

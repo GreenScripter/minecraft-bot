@@ -2,12 +2,13 @@ package greenscripter.statemachine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class State<T> {
 
 	public Storage storage = new Storage();
 	protected StateMachine<T> machine;
+
+	String name;
 
 	List<StateTickCallback<T>> tickCallbacks = new ArrayList<>();
 
@@ -103,18 +104,18 @@ public class State<T> {
 		return this;
 	}
 
-	public State<T> until(Predicate<StateEvent<T>> condition) {
+	public State<T> until(StateTickPredicate<T> condition) {
 		tickCallbacks.add(e -> {
-			if (condition.test(e)) {
+			if (condition.tick(e)) {
 				e.popNow();
 			}
 		});
 		return this;
 	}
 
-	public State<T> when(Predicate<StateEvent<T>> condition, StateTickCallback<T> action) {
+	public State<T> when(StateTickPredicate<T> condition, StateTickCallback<T> action) {
 		tickCallbacks.add(e -> {
-			if (condition.test(e)) {
+			if (condition.tick(e)) {
 				action.tick(e);
 			}
 		});
@@ -127,6 +128,10 @@ public class State<T> {
 			e.machine.pushPrepare(next);
 		});
 		return next;
+	}
+
+	public State<T> name(String name) {
+		return machine.state(name, this);
 	}
 
 	public State<T> then(State<T> next) {
@@ -146,6 +151,10 @@ public class State<T> {
 
 	public StateMachine<T> done() {
 		return machine;
+	}
+
+	public String toString() {
+		return super.toString() + " " + name;
 	}
 
 }

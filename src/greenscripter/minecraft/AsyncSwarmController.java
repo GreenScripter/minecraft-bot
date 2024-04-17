@@ -36,6 +36,7 @@ public class AsyncSwarmController {
 	public Supplier<Integer> botIds = () -> nextBotID++;
 	public Consumer<ServerConnection> deathCallback = null;
 	public Consumer<ServerConnection> joinCallback = null;
+	public Runnable tickCallback = null;
 
 	Thread tickThread;
 
@@ -152,11 +153,11 @@ public class AsyncSwarmController {
 								return false;
 							}
 						});
+						connections.sort(Comparator.comparing(c -> c.id));
 					}
 				}
 				//connections only needs to be synchronized during writes, 
 				//other threads are not allowed to write, only read.
-				connections.sort(Comparator.comparing(c -> c.id));
 				ArrayList<ServerConnection> copy = new ArrayList<>(connections);
 
 				for (ServerConnection sc : copy) {
@@ -203,6 +204,13 @@ public class AsyncSwarmController {
 					extract.forEach(sc -> sc.owner = null);
 					extract.clear();
 				}
+				
+				if (tickCallback != null) try {
+					tickCallback.run();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 				long duration = System.currentTimeMillis() - start;
 				max = Math.max(max, duration);
 				min = Math.min(min, duration);

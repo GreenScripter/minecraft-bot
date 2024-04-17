@@ -209,7 +209,7 @@ public class EntityPlayHandler extends PlayHandler {
 	}
 
 	public List<Integer> handlesPackets() {
-		return List.of(attributesId, addEffectId, equipmentId, headRotationId, metaDataId, //
+		return List.of(attributesId, addEffectId, equipmentId, headRotationId, metaDataId,  //
 				positionId, positionRotationId, rotationId, spawnId, velocityId, removeId, //
 				removeEffectId, setPassengersId, teleportId, spawnXpOrbId);
 	}
