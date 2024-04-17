@@ -1,0 +1,21 @@
+package greenscripter.minecraft.world.entity.metadata;
+
+import java.io.IOException;
+
+import greenscripter.minecraft.nbt.NBTTagCompound;
+import greenscripter.minecraft.utils.MCInputStream;
+import greenscripter.minecraft.world.entity.EntityMetadata;
+
+public class EMOTextComponent extends EntityMetadata {
+
+	public NBTTagCompound value;
+
+	public int id() {
+		return 6;
+	}
+
+	public void read(MCInputStream in) throws IOException {
+		if (in.readBoolean()) value = in.readNBT();
+	}
+
+}
