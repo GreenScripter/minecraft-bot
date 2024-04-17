@@ -31,7 +31,7 @@ public class MCTest {
 			sc.sendPacket(new ClientInfoPacket(10));
 		};
 		controller.start();
-		controller.connect(100, 40);
+		controller.connect(1, 40);
 
 	}
 

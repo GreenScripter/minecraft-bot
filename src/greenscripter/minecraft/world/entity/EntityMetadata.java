@@ -71,6 +71,19 @@ public abstract class EntityMetadata {
 
 	}
 
+	public static EntityMetadata[] readMetadata(EntityMetadata[] existing, MCInputStream in) throws IOException {
+		if (existing == null) existing = new EntityMetadata[40];
+		int index = in.read();
+		while (index != 0xFF) {
+			int type = in.readVarInt();
+			EntityMetadata em = types.get(type).get();
+			em.read(in);
+			existing[index] = em;
+			index = in.read();
+		}
+		return existing;
+	}
+
 	public abstract int id();
 
 	public abstract void read(MCInputStream in) throws IOException;

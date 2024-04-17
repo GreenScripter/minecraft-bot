@@ -5,10 +5,12 @@ import java.io.IOException;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
+import greenscripter.minecraft.world.entity.EntityMetadata;
 
 public class EntityMetaDataPacket extends Packet {
 
 	public int entityID;
+	public EntityMetadata[] meta;
 
 	public EntityMetaDataPacket() {}
 
@@ -22,7 +24,7 @@ public class EntityMetaDataPacket extends Packet {
 
 	public void fromBytes(MCInputStream in) throws IOException {
 		entityID = in.readVarInt();
-		//Ton of extra data.
+		meta = EntityMetadata.readMetadata(meta, in);
 	}
 
 }

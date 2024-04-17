@@ -31,6 +31,8 @@ public class EntityEquipmentPacket extends Packet {
 			slotId = (byte) (slotId ^ NEXT_BIT);
 			Slot slot = in.readSlot();
 			slots[slotId] = slot;
+
+			slotId = in.readByte();
 		}
 		Slot slot = in.readSlot();
 		slots[slotId] = slot;

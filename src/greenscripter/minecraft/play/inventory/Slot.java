@@ -9,4 +9,8 @@ public class Slot {
 	public byte itemCount;
 	public NBTTagCompound nbt;
 
+	public String toString() {
+		return "Slot [present=" + present + ", itemId=" + itemId + ", itemCount=" + itemCount + ", nbt=" + nbt + "]";
+	}
+
 }

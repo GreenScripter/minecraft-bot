@@ -23,6 +23,7 @@ import greenscripter.minecraft.packet.s2c.play.entity.RemoveEntityEffectPacket;
 import greenscripter.minecraft.packet.s2c.play.entity.SetPassengersPacket;
 import greenscripter.minecraft.packet.s2c.play.entity.TeleportEntityPacket;
 import greenscripter.minecraft.packet.s2c.play.entity.XPOrbSpawnPacket;
+import greenscripter.minecraft.play.data.PlayerData;
 import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.world.World;
 import greenscripter.minecraft.world.entity.Entity;
@@ -51,8 +52,21 @@ public class EntityPlayHandler extends PlayHandler {
 		if (up.id == attributesId) {
 
 		} else if (up.id == addEffectId) {
+			EntityEffectPacket p = up.convert(new EntityEffectPacket());
+			PlayerData player = sc.getData(PlayerData.class);
 
+			System.out.println("From " + player.entityId + " add to " + p.entityId + " " + p.effectId + " " + p.duration + " " + p.amplifier);
 		} else if (up.id == equipmentId) {
+			EntityEquipmentPacket p = up.convert(new EntityEquipmentPacket());
+			Entity e = world.getEntity(p.entityID);
+			if (e != null) {
+				for (int i = 0; i < p.slots.length; i++) {
+					if (p.slots[i] != null) {
+						//						System.out.println("Slot " + i + " set to " + p.slots[i]);
+						e.slots[i] = p.slots[i];
+					}
+				}
+			}
 
 		} else if (up.id == headRotationId) {
 			EntityHeadRotationPacket p = up.convert(new EntityHeadRotationPacket());
@@ -63,7 +77,15 @@ public class EntityPlayHandler extends PlayHandler {
 			}
 
 		} else if (up.id == metaDataId) {
-
+			EntityMetaDataPacket p = up.convert(new EntityMetaDataPacket());
+			Entity e = world.getEntity(p.entityID);
+			if (e != null) {
+				for (int i = 0; i < p.meta.length; i++) {
+					if (p.meta[i] != null) {
+						e.metadata[i] = p.meta[i];
+					}
+				}
+			}
 		} else if (up.id == positionId) {
 			EntityPositionPacket p = up.convert(new EntityPositionPacket());
 
