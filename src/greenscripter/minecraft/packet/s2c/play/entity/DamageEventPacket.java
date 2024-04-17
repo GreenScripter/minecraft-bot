@@ -6,20 +6,18 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class EntityPositionRotationPacket extends Packet {
+public class DamageEventPacket extends Packet {
 
 	public int entityID;
-	public short deltaX;
-	public short deltaY;
-	public short deltaZ;
-	public byte yaw;
-	public byte pitch;
-	public boolean onGround;
+	public int damageTypeID;
+	public int damagerIDPlusOne;
+	public int directDamagerPlusOne;
+	public boolean hasPos;
 
-	public EntityPositionRotationPacket() {}
+	public DamageEventPacket() {}
 
 	public int id() {
-		return 0x2D;
+		return 0x19;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
@@ -28,13 +26,10 @@ public class EntityPositionRotationPacket extends Packet {
 
 	public void fromBytes(MCInputStream in) throws IOException {
 		entityID = in.readVarInt();
-		deltaX = in.readShort();
-		deltaY = in.readShort();
-		deltaZ = in.readShort();
-		yaw = in.readByte();
-		pitch = in.readByte();
-		onGround = in.readBoolean();
+		damageTypeID = in.readVarInt();
+		damagerIDPlusOne = in.readVarInt();
+		directDamagerPlusOne = in.readVarInt();
+		hasPos = in.readBoolean();
 	}
-
 
 }

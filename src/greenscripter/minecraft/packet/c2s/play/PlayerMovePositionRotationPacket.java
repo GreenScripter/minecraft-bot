@@ -3,6 +3,7 @@ package greenscripter.minecraft.packet.c2s.play;
 import java.io.IOException;
 
 import greenscripter.minecraft.packet.Packet;
+import greenscripter.minecraft.play.data.PlayerData;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
@@ -16,6 +17,10 @@ public class PlayerMovePositionRotationPacket extends Packet {
 	public boolean onGround = true;
 
 	public PlayerMovePositionRotationPacket() {}
+
+	public PlayerMovePositionRotationPacket(PlayerData data) {
+		this(data.pos.pos.x, data.pos.pos.y, data.pos.pos.z, data.pos.yaw, data.pos.pitch);
+	}
 
 	public PlayerMovePositionRotationPacket(double x2, double y2, double z2, float yaw2, float pitch2) {
 		this.x = x2;

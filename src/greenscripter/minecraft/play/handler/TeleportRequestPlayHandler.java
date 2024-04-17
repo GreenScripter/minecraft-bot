@@ -18,10 +18,10 @@ public class TeleportRequestPlayHandler extends PlayHandler {
 		if (p.id == teleportPacketId) {
 			PositionData pos = sc.getData(PositionData.class);
 			TeleportRequestPacket req = p.convert(new TeleportRequestPacket());
-			req.makeNotRelative(pos.x, pos.y, pos.z, pos.pitch, pos.yaw);
-			pos.x = req.x;
-			pos.y = req.y;
-			pos.z = req.z;
+			req.makeNotRelative(pos.pos.x, pos.pos.y, pos.pos.z, pos.pitch, pos.yaw);
+			pos.pos.x = req.x;
+			pos.pos.y = req.y;
+			pos.pos.z = req.z;
 			pos.pitch = req.pitch;
 			pos.yaw = req.yaw;
 			sc.out.writePacket(new TeleportConfirmPacket(req.teleportID));

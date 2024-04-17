@@ -78,27 +78,27 @@ public class SearchPlayHandler extends PlayHandler {
 		if (!pathData.queue.isEmpty()) {
 			PlayerMovePositionRotationPacket p = pathData.queue.remove(0);
 			//			System.out.println(pos.x + " " + pos.y + " " + pos.z + " move to " + p.x + " " + p.y + " " + p.z);
-			pos.x = p.x;
-			pos.y = p.y;
-			pos.z = p.z;
+			pos.pos.x = p.x;
+			pos.pos.y = p.y;
+			pos.pos.z = p.z;
 			sc.out.writePacket(p);
 			return;
 		}
 		targetted.removeIf(t -> worldData.world.getBlock(t.x, t.y, t.z) <= 0);
 		//		System.out.println(worldState.world);
 		if (worldData.world != null) {
-			Position self = new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+			Position self = new Position(pos.pos);
 			List<Position> blocks = new ArrayList<>();
 
 			if (queue.queue.isEmpty()) {
-				blocks = worldData.world.performSearch((int) pos.x, (int) pos.y, (int) pos.z, targets, 200000, 5000, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
+				blocks = worldData.world.performSearch((int) pos.pos.x, (int) pos.pos.y, (int) pos.pos.z, targets, 200000, 5000, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
 				queue.queue.addAll(blocks);
 				blocks = new ArrayList<>();
 			}
 			queue.queue.sort((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self));
 			if (!queue.queue.isEmpty()) {
 				if (self.getManhattanDistance(queue.queue.get(0)) > 100 && queue.queue.size() < 1000) {
-					blocks = worldData.world.performSearch((int) pos.x, (int) pos.y, (int) pos.z, targets, 200000, 50, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
+					blocks = worldData.world.performSearch((int) pos.pos.x, (int) pos.pos.y, (int) pos.pos.z, targets, 200000, 50, true).stream().filter(p -> !times.containsKey(p) || System.currentTimeMillis() - times.get(p) > 3000).sorted((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self)).toList();
 					queue.queue.addAll(blocks);
 					blocks = new ArrayList<>();
 					queue.queue.sort((p1, p2) -> p1.getManhattanDistance(self) - p2.getManhattanDistance(self));
@@ -137,18 +137,18 @@ public class SearchPlayHandler extends PlayHandler {
 				//				sc.out.writePacket(new ExecuteCommandPacket("particle minecraft:block_marker " + BlockStates.getState(worldState.world.getBlock(p.x, p.y, p.z)).block() + " " + p.x + " " + (p.y + 0.5) + " " + p.z));
 			}
 			long start = System.currentTimeMillis();
-			List<Vector> path = finder.pathFind(new Vector(pos.x, pos.y, pos.z), new Vector(pathData.oldPos), 4);
+			List<Vector> path = finder.pathFind(pos.pos.copy(), new Vector(pathData.oldPos), 4);
 			if (path == null) {
 				if (System.currentTimeMillis() - start > 900) {
-					System.out.println(pos.x + " " + pos.y + " " + pos.z + " -> " + pathData.oldPos.x + " " + pathData.oldPos.y + " " + pathData.oldPos.z);
-					System.out.println(new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z)));
+					System.out.println(pos.pos + " -> " + pathData.oldPos.x + " " + pathData.oldPos.y + " " + pathData.oldPos.z);
+					System.out.println(new Position(pos.pos));
 					System.out.println(sc.name);
 					//					pathState.errored = true;
 				}
 				return;
 			}
 			finder.mergeStraightLines(path, 10);
-			pathData.queue.addAll(finder.getPackets(path, new Vector(pos.x, pos.y, pos.z), pos.pitch, pos.yaw));
+			pathData.queue.addAll(finder.getPackets(path, pos.pos.copy(), pos.pitch, pos.yaw));
 		}
 	}
 

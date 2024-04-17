@@ -41,8 +41,8 @@ public class PointlessPathfindHandler extends PlayHandler {
 
 		PositionData pos = sc.getData(PositionData.class);
 		PathFindData pathData = sc.getData(PathFindData.class);
-//		pathState.tick++;
-//		if (pathState.tick % 2 != 0) return;
+		//		pathState.tick++;
+		//		if (pathState.tick % 2 != 0) return;
 		if (pathData.errored) return;
 
 		if (pos.dimension == null) {
@@ -54,9 +54,9 @@ public class PointlessPathfindHandler extends PlayHandler {
 		if (!pathData.queue.isEmpty()) {
 			PlayerMovePositionRotationPacket p = pathData.queue.remove(0);
 			//			System.out.println(pos.x + " " + pos.y + " " + pos.z + " move to " + p.x + " " + p.y + " " + p.z);
-			pos.x = p.x;
-			pos.y = p.y;
-			pos.z = p.z;
+			pos.pos.x = p.x;
+			pos.pos.y = p.y;
+			pos.pos.z = p.z;
 			sc.out.writePacket(p);
 			return;
 		}
@@ -65,19 +65,19 @@ public class PointlessPathfindHandler extends PlayHandler {
 		//			return;
 		//		}
 		long start = System.currentTimeMillis();
-		List<Vector> path = finder.pathFind(new Vector(pos.x, pos.y, pos.z), pathData.oldPos);
+		List<Vector> path = finder.pathFind(pos.pos.copy(), pathData.oldPos);
 		if (path == null) {
 			if (System.currentTimeMillis() - start > 900) {
-				System.out.println(pos.x + " " + pos.y + " " + pos.z + " -> " + pathData.oldPos.x + " " + pathData.oldPos.y + " " + pathData.oldPos.z);
-				System.out.println(new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z)));
+				System.out.println(pos.pos + " -> " + pathData.oldPos.x + " " + pathData.oldPos.y + " " + pathData.oldPos.z);
+				System.out.println(new Position(pos.pos));
 				System.out.println(sc.name);
 				pathData.errored = true;
 			}
 			return;
 		}
 		finder.mergeStraightLines(path, 10);
-		pathData.queue.addAll(finder.getPackets(path, new Vector(pos.x, pos.y, pos.z), pos.pitch, pos.yaw));
-		pathData.oldPos = new Position((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+		pathData.queue.addAll(finder.getPackets(path, pos.pos.copy(), pos.pitch, pos.yaw));
+		pathData.oldPos = new Position(pos.pos);
 		//		Collections.reverse(queue);
 	}
 

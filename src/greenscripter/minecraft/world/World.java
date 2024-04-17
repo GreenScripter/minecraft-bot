@@ -178,8 +178,11 @@ public class World {
 	public void unloadEntity(Entity e, ServerConnection sc) {
 		if (e == null) return;
 		e.players.remove(sc);
+
 		if (e.players.size() == 0) {
 			entities.remove(e.entityId);
+		} else if (e.maintainer == sc) {
+			e.maintainer = e.players.iterator().next();
 		}
 	}
 

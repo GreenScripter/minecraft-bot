@@ -16,6 +16,15 @@ public class Registries {
 	public static Map<String, Map<String, Integer>> registries = new HashMap<>();
 	public static Map<String, Map<Integer, String>> registriesFromIds = new HashMap<>();
 
+	public static String[] kickIfHit = new String[] { // These are hardcoded in game using instance of checks.
+			"minecraft:item", //
+			"minecraft:arrow", //
+			"minecraft:experience_orb", //
+			"minecraft:spectral_arrow", //
+			"minecraft:trident" //
+	};
+	public static boolean[] safeAttack;
+
 	static {
 		long start = System.currentTimeMillis();
 		try {
@@ -38,6 +47,14 @@ public class Registries {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		safeAttack = new boolean[Registries.registries.get("minecraft:entity_type").values().stream().max(Integer::compareTo).orElse(0)];
+		for (int i = 0; i < safeAttack.length; i++) {
+			safeAttack[i] = true;
+		}
+		for (int i = 0; i < kickIfHit.length; i++) {
+			safeAttack[Registries.registries.get("minecraft:entity_type").get(kickIfHit[i])] = false;
+		}
+
 		System.out.println("Took " + (System.currentTimeMillis() - start) + " ms to load registries.");
 
 	}

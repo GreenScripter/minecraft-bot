@@ -25,18 +25,18 @@ public class CirclePlayHandler extends PlayHandler {
 
 		if (!arrived) {
 			Vector target = new Vector(0, 200, 0);
-			Vector at = new Vector(pos.x, pos.y, pos.z);
+			Vector at = pos.pos.copy();
 
 			Vector delta = target.copy().subtract(at);
-//			if (delta.y != 0) {
-				delta.multiply(0, 1, 0);
-//			}
+			//			if (delta.y != 0) {
+			delta.multiply(0, 1, 0);
+			//			}
 			if (delta.length() > 10) {
 				delta.normalize().multiply(10);
 			}
-			pos.x += delta.x;
-			pos.y += delta.y;
-			pos.z += delta.z;
+			pos.pos.x += delta.x;
+			pos.pos.y += delta.y;
+			pos.pos.z += delta.z;
 
 			if (delta.length() == 0) {
 				arrived = true;
@@ -50,7 +50,7 @@ public class CirclePlayHandler extends PlayHandler {
 			coordinate = coordinate % (2 * Math.PI);
 			//			double offset = (System.currentTimeMillis() - start) / 1000.0;
 			Vector target = new Vector(50 * Math.cos(coordinate), Math.abs((botID & 0x7) - 4) * (arrivedCount > 990 ? 1 : 0) + 200, 50 * Math.sin(coordinate));
-			Vector at = new Vector(pos.x, pos.y, pos.z);
+			Vector at = pos.pos.copy();
 
 			Vector delta = target.copy().subtract(at);
 			if (delta.y != 0) {
@@ -59,18 +59,18 @@ public class CirclePlayHandler extends PlayHandler {
 			if (delta.length() > 10) {
 				delta.normalize().multiply(10);
 			}
-			pos.x += delta.x;
-			pos.y += delta.y;
-			pos.z += delta.z;
+			pos.pos.x += delta.x;
+			pos.pos.y += delta.y;
+			pos.pos.z += delta.z;
 			//			System.out.println();
 			//			System.out.println(Math.toDegrees(coordinate));
 			//			System.out.println(Math.toDegrees(Math.atan2(delta.z, delta.x)));
 			move.yaw = (float) Math.toDegrees(coordinate) - 0;//-90 + (float) Math.toDegrees(Math.atan2(delta.z, delta.x));
 		}
 
-		move.x = pos.x;
-		move.y = pos.y;
-		move.z = pos.z;
+		move.x = pos.pos.x;
+		move.y = pos.pos.y;
+		move.z = pos.pos.z;
 		move.pitch = pos.pitch;
 		sc.out.writePacket(move);
 	}

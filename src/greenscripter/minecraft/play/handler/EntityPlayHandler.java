@@ -70,9 +70,11 @@ public class EntityPlayHandler extends PlayHandler {
 			Entity e = world.getEntity(p.entityID);
 			if (e != null) {
 				e.onGround = p.onGround;
-				e.pos.x = EntityPositionPacket.getFrom(e.pos.x, p.deltaX);
-				e.pos.y = EntityPositionPacket.getFrom(e.pos.y, p.deltaY);
-				e.pos.z = EntityPositionPacket.getFrom(e.pos.z, p.deltaZ);
+				if (e.maintainer == sc) {
+					e.pos.x += EntityPositionPacket.getFrom(p.deltaX);
+					e.pos.y += EntityPositionPacket.getFrom(p.deltaY);
+					e.pos.z += EntityPositionPacket.getFrom(p.deltaZ);
+				}
 			}
 
 		} else if (up.id == positionRotationId) {
@@ -81,9 +83,11 @@ public class EntityPlayHandler extends PlayHandler {
 			Entity e = world.getEntity(p.entityID);
 			if (e != null) {
 				e.onGround = p.onGround;
-				e.pos.x = EntityPositionPacket.getFrom(e.pos.x, p.deltaX);
-				e.pos.y = EntityPositionPacket.getFrom(e.pos.y, p.deltaY);
-				e.pos.z = EntityPositionPacket.getFrom(e.pos.z, p.deltaZ);
+				if (e.maintainer == sc) {
+					e.pos.x += EntityPositionPacket.getFrom(p.deltaX);
+					e.pos.y += EntityPositionPacket.getFrom(p.deltaY);
+					e.pos.z += EntityPositionPacket.getFrom(p.deltaZ);
+				}
 				e.pitch = p.pitch * (360f / 256);
 				e.yaw = p.yaw * (360f / 256);
 			}
@@ -100,6 +104,14 @@ public class EntityPlayHandler extends PlayHandler {
 			EntitySpawnPacket p = up.convert(new EntitySpawnPacket());
 			Entity e = world.getEntity(p.entityID);
 			if (e != null) {
+				e.headYaw = p.headYaw * (360f / 256);
+				e.pitch = p.pitch * (360f / 256);
+				e.yaw = p.yaw * (360f / 256);
+
+				e.pos.x = p.x;
+				e.pos.y = p.y;
+				e.pos.z = p.z;
+				e.maintainer = sc;
 				e.players.add(sc);
 			} else {
 				e = new Entity();
@@ -117,6 +129,7 @@ public class EntityPlayHandler extends PlayHandler {
 				e.pos.z = p.z;
 
 				e.uuid = p.uuid;
+				e.maintainer = sc;
 				world.addEntityLoader(e, sc);
 
 			}
@@ -138,8 +151,8 @@ public class EntityPlayHandler extends PlayHandler {
 			if (e != null) {
 				e.onGround = p.onGround;
 				e.pos.x = p.x;
-				e.pos.x = p.y;
-				e.pos.x = p.z;
+				e.pos.y = p.y;
+				e.pos.z = p.z;
 				e.pitch = p.pitch * (360f / 256);
 				e.yaw = p.yaw * (360f / 256);
 			}

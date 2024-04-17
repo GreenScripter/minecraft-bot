@@ -14,6 +14,16 @@ public class Position {
 		this.z = z;
 	}
 
+	public Position(Vector v) {
+		this(v.x, v.y, v.z);
+	}
+
+	public Position(double x, double y, double z) {
+		this.x = (int) Math.floor(x);
+		this.y = (int) Math.floor(y);
+		this.z = (int) Math.floor(z);
+	}
+
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

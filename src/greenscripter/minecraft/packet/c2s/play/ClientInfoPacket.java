@@ -19,6 +19,10 @@ public class ClientInfoPacket extends Packet {
 
 	public ClientInfoPacket() {}
 
+	public ClientInfoPacket(int viewDistance) {
+		this.viewDistance = (byte) viewDistance;
+	}
+
 	public int id() {
 		return 0x09;
 	}

@@ -10,6 +10,7 @@ import greenscripter.minecraft.utils.Vector;
 public class Entity {
 
 	public int entityId;
+	public ServerConnection maintainer;
 	public Set<ServerConnection> players = new HashSet<>();
 	public UUID uuid;
 	public int type;
@@ -19,5 +20,5 @@ public class Entity {
 	public float headYaw;
 	public int data;
 	public boolean onGround;
-	
+
 }

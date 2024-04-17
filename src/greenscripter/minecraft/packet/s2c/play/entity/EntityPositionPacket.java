@@ -32,8 +32,8 @@ public class EntityPositionPacket extends Packet {
 		onGround = in.readBoolean();
 	}
 
-	public static double getFrom(double previous, short delta) {
-		return (delta / 128.0) / 32.0 + previous;//(currentX * 32 - prevX * 32) * 128;
+	public static double getFrom(short delta) {
+		return (delta / (128.0 * 32.0));//(currentX * 32 - prevX * 32) * 128;
 	}
 
 }

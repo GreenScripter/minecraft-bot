@@ -110,7 +110,7 @@ public class ServerConnection {
 	public <T extends PlayData> T getData(Class<T> type) {
 		PlayData s = playData.get(type);
 		if (s == null) {
-			s = PlayData.createData(type);
+			s = PlayData.createData(type, this);
 			playData.put((Class<? extends PlayData>) type, s);
 		}
 		return (T) s;
