@@ -25,7 +25,4 @@ public abstract class PlayHandler {
 		return List.of();
 	}
 
-	public PlayHandler combine(PlayHandler other) {
-		return new StackedPlayHandler(this, other);
-	}
 }

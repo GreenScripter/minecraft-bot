@@ -6,12 +6,12 @@ import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
 import greenscripter.minecraft.play.handler.EntityPlayHandler;
+import greenscripter.minecraft.play.handler.InventoryPlayHandler;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.PlayerPlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
-import greenscripter.minecraft.play.other.KillAuraHandler;
 
 public class MCTest {
 
@@ -23,7 +23,7 @@ public class MCTest {
 				new TeleportRequestPlayHandler(),//
 				new EntityPlayHandler(),//
 				new PlayerPlayHandler(),//
-				new KillAuraHandler()//
+				new InventoryPlayHandler()//
 		);
 
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);

@@ -16,12 +16,12 @@ import com.google.gson.JsonParser;
 public class RegistryTags {
 
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(blockTags.keySet());
+		//		System.out.println(blockTags.keySet());
 		Registries.registries.getClass();
 		BlockStates.blockStates.getClass();
-		//		System.out.println(Registries.registries.keySet());
+		//				System.out.println(Registries.registries.keySet());
 		//		System.out.println(BlockStates.blockStates.keySet());
-		//		System.out.println(Registries.registries.get("minecraft:entity_type"));
+		System.out.println(Registries.registries.get("minecraft:menu"));
 		Thread.sleep(20000);
 	}
 

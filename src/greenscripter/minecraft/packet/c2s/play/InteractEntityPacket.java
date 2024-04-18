@@ -38,6 +38,9 @@ public class InteractEntityPacket extends Packet {
 			out.writeFloat(targetZ);
 			out.writeVarInt(hand);
 		}
+		if (type == TYPE_INTERACT) {
+			out.writeVarInt(hand);
+		}
 		out.writeBoolean(sneaking);
 	}
 

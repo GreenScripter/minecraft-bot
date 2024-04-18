@@ -13,4 +13,11 @@ public class Slot {
 		return "Slot [present=" + present + ", itemId=" + itemId + ", itemCount=" + itemCount + ", nbt=" + nbt + "]";
 	}
 
+	public void become(Slot other) {
+		this.present = other.present;
+		this.itemId = other.itemId;
+		this.itemCount = other.itemCount;
+		this.nbt = other.nbt;
+	}
+
 }

@@ -16,6 +16,7 @@ public class PlayData {
 		PlayData.playData.put(WorldData.class, WorldData::new);
 		PlayData.playData.put(PlayerData.class, PlayerData::new);
 		PlayData.playData.put(ClientConfigData.class, ClientConfigData::new);
+		PlayData.playData.put(InventoryData.class, InventoryData::new);
 	}
 
 	@SuppressWarnings("unchecked")
