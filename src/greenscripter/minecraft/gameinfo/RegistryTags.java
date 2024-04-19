@@ -21,7 +21,7 @@ public class RegistryTags {
 		BlockStates.blockStates.getClass();
 		//				System.out.println(Registries.registries.keySet());
 		//		System.out.println(BlockStates.blockStates.keySet());
-		System.out.println(Registries.registries.get("minecraft:menu"));
+//		System.out.println(Registries.registries.get("minecraft:menu"));
 		Thread.sleep(20000);
 	}
 
