@@ -1,4 +1,7 @@
+
 package greenscripter.minecraft.nbt;
+
+import java.util.Objects;
 
 import java.io.IOException;
 
@@ -24,6 +27,18 @@ public class NBTTagByte extends NBTComponent {
 
 	public String toString() {
 		return value + "b";
+	}
+
+	public int hashCode() {
+		return Objects.hash(value);
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		NBTTagByte other = (NBTTagByte) obj;
+		return value == other.value;
 	}
 
 }

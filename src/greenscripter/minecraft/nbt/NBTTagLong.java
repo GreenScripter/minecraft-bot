@@ -1,5 +1,7 @@
 package greenscripter.minecraft.nbt;
 
+import java.util.Objects;
+
 import java.io.IOException;
 
 import greenscripter.minecraft.utils.MCInputStream;
@@ -24,5 +26,17 @@ public class NBTTagLong extends NBTComponent {
 
 	public String toString() {
 		return value + "l";
+	}
+
+	public int hashCode() {
+		return Objects.hash(value);
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		NBTTagLong other = (NBTTagLong) obj;
+		return value == other.value;
 	}
 }

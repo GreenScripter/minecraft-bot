@@ -2,6 +2,7 @@ package greenscripter.minecraft.nbt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import java.io.IOException;
 
@@ -55,5 +56,18 @@ public class NBTTagList<T extends NBTComponent> extends NBTComponent {
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+
+	public int hashCode() {
+		return Objects.hash(listType, value);
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		@SuppressWarnings("rawtypes")
+		NBTTagList other = (NBTTagList) obj;
+		return listType == other.listType && Objects.equals(value, other.value);
 	}
 }

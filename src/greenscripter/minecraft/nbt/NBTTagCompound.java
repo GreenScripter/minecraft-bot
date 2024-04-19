@@ -2,6 +2,7 @@ package greenscripter.minecraft.nbt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import java.io.IOException;
 
@@ -53,5 +54,17 @@ public class NBTTagCompound extends NBTComponent {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	public int hashCode() {
+		return Objects.hash(components);
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		NBTTagCompound other = (NBTTagCompound) obj;
+		return Objects.equals(components, other.components);
 	}
 }

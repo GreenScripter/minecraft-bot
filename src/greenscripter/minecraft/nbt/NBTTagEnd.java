@@ -14,5 +14,15 @@ public class NBTTagEnd extends NBTComponent {
 	}
 
 	public void write(MCOutputStream out) {}
+	
+	public int hashCode() {
+		return 1234567;
+	}
 
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		return true;
+	}
 }

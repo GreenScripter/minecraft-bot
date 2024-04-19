@@ -28,4 +28,19 @@ public class NBTTagByteArray extends NBTComponent {
 	public String toString() {
 		return Arrays.toString(data);
 	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		NBTTagByteArray other = (NBTTagByteArray) obj;
+		return Arrays.equals(data, other.data);
+	}
 }
