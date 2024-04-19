@@ -92,6 +92,8 @@ public class Registries {
 		public int armorProtection;
 		public float armorToughness;
 		public String armorSlot;
+		public double attackSpeed;
+		public double attackDamage;
 		public boolean isblock;
 		public String blockId;
 
@@ -152,7 +154,9 @@ public class Registries {
 				itemInfo.add("armorToughness", new JsonPrimitive(armor.getToughness()));
 				itemInfo.add("armorSlot", new JsonPrimitive(armor.getSlotType().name()));
 			}
-	
+			itemInfo.add("attackSpeed", new JsonPrimitive(4+item.getAttributeModifiers(EquipmentSlot.MAINHAND).get(EntityAttributes.GENERIC_ATTACK_SPEED).stream().mapToDouble(m -> m.getValue()).sum()));
+			itemInfo.add("attackDamage", new JsonPrimitive(1+item.getAttributeModifiers(EquipmentSlot.MAINHAND).get(EntityAttributes.GENERIC_ATTACK_DAMAGE).stream().mapToDouble(m -> m.getValue()).sum()));
+
 			itemInfo.add("isBlock", new JsonPrimitive(item instanceof BlockItem));
 	
 			if (item instanceof BlockItem block) {
