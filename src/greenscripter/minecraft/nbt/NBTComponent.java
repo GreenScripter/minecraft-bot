@@ -194,7 +194,7 @@ public abstract class NBTComponent {
 
 	public static NBTTagCompound readNetworkNBT(MCInputStream in) throws IOException {
 		byte id = in.readByte();
-		if (id==0) return null;
+		if (id == 0) return null;
 		if (id != TAG_Compound) {
 			System.err.println(id);
 			throw new IOException("No wrapper compound on NBT");
@@ -209,6 +209,10 @@ public abstract class NBTComponent {
 	}
 
 	public static void writeNetworkNBT(MCOutputStream out, NBTTagCompound c) throws IOException {
+		if (c == null) {
+			out.writeByte(0);
+			return;
+		}
 		out.writeByte(c.getType());
 		c.write(out);
 	}

@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
+import greenscripter.minecraft.play.inventory.Slot;
 
 public class MCOutputStream extends DataOutputStream {
 
@@ -127,6 +128,15 @@ public class MCOutputStream extends DataOutputStream {
 
 			// Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
 			value >>>= 7;
+		}
+	}
+
+	public void writeSlot(Slot slot) throws IOException {
+		writeBoolean(slot.present);
+		if (slot.present) {
+			writeVarInt(slot.itemId);
+			writeByte(slot.itemCount);
+			writeNBT(slot.nbt);
 		}
 	}
 

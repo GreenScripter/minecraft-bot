@@ -13,8 +13,9 @@ public class ClickContainerButtonPacket extends Packet {
 
 	public ClickContainerButtonPacket() {}
 
-	public ClickContainerButtonPacket(int windowId) {
+	public ClickContainerButtonPacket(int windowId, int buttonId) {
 		this.windowId = windowId;
+		this.buttonId = buttonId;
 	}
 
 	public int id() {

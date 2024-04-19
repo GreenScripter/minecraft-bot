@@ -1,5 +1,9 @@
 package greenscripter.minecraft.play.inventory;
 
+import java.util.Objects;
+
+import greenscripter.minecraft.gameinfo.Registries;
+import greenscripter.minecraft.gameinfo.Registries.ItemInfo;
 import greenscripter.minecraft.nbt.NBTTagCompound;
 
 public class Slot {
@@ -20,4 +24,38 @@ public class Slot {
 		this.nbt = other.nbt;
 	}
 
+	public void add(int count) {
+		itemCount += count;
+		if (itemCount <= 0) {
+			present = false;
+			itemId = 0;
+			itemCount = 0;
+			nbt = null;
+		}
+	}
+
+	public void setCount(int count) {
+		itemCount = (byte) count;
+		if (itemCount <= 0) {
+			present = false;
+			itemId = 0;
+			itemCount = 0;
+			nbt = null;
+		}
+	}
+
+	public String getItemId() {
+		if (!present) return null;
+		return Registries.registriesFromIds.get("minecraft:item").get(itemId);
+	}
+
+	public ItemInfo getItemInfo() {
+		if (!present) return null;
+		return Registries.itemInfo.get(getItemId());
+	}
+
+	public boolean equivalent(Slot other) {
+		if (present == other.present && present == false) return true;
+		return itemId == other.itemId && Objects.equals(nbt, other.nbt) && present == other.present;
+	}
 }

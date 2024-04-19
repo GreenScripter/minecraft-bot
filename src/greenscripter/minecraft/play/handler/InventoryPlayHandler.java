@@ -36,7 +36,7 @@ public class InventoryPlayHandler extends PlayHandler {
 					screen.slots[i].become(p.slots[i]);
 				}
 				screen.cursor.become(p.cursor);
-				//				System.out.println("replace " + screen.stateId);
+				System.out.println("replace " + screen.stateId);
 			}
 		} else if (up.id == setPropertyId) {
 			SetContainerPropertyPacket p = up.convert(new SetContainerPropertyPacket());
@@ -50,7 +50,15 @@ public class InventoryPlayHandler extends PlayHandler {
 			if (screen.windowId == p.windowId) {
 				screen.stateId = p.stateId;
 				screen.slots[p.slotId].become(p.data);
-				//				System.out.println("update " + screen.stateId);
+				System.out.println("update " + screen.stateId + " " + p.slotId + " " + p.data);
+			} else if (screen.windowId == 0 && data.previous != null && data.previous.slots != null && data.previous.windowId == p.windowId) {
+				int slotCount = data.previous.slots.length;
+				int endDelta = slotCount - p.slotId;
+				int slot = screen.slots.length - endDelta;
+				if (endDelta <= 36) {
+					screen.slots[slot].become(p.data);
+					System.out.println("passed along update from " + p.windowId + " to " + screen.stateId + " " + p.slotId + " to " + slot + " " + p.data);
+				}
 			}
 		} else if (up.id == closeId) {
 			ForceCloseContainerPacket p = up.convert(new ForceCloseContainerPacket());
@@ -60,6 +68,7 @@ public class InventoryPlayHandler extends PlayHandler {
 					if (data.screen != null && data.screen.slots != null) {
 						data.inv.replicateInvFrom(data.screen);
 					}
+					data.previous = data.screen;
 					data.screen = null;
 				}
 			}

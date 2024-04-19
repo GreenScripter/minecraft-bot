@@ -4,6 +4,7 @@ import java.util.List;
 
 import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
+import greenscripter.minecraft.play.data.InventoryData;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
 import greenscripter.minecraft.play.handler.EntityPlayHandler;
 import greenscripter.minecraft.play.handler.InventoryPlayHandler;
@@ -32,6 +33,24 @@ public class MCTest {
 		};
 		controller.start();
 		controller.connect(1, 40);
+		Thread.sleep(10000);
+		controller.getAlive().forEach(sc -> {
+			InventoryData data = sc.getData(InventoryData.class);
+			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(0));
+		});
+		Thread.sleep(3000);
+		controller.getAlive().forEach(sc -> {
+			InventoryData data = sc.getData(InventoryData.class);
+			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
+			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
+			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
+			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
+			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
+			data.leftClickSlot(sc, data.getActiveScreen().getHotbarSlot(2));
+			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(2));
+			data.dropAllCursorItems(sc);
+
+		});
 
 	}
 
