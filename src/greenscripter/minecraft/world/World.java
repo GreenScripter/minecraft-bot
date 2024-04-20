@@ -42,6 +42,10 @@ public class World {
 		return getChunk(x >> 4, z >> 4);
 	}
 
+	public int getBlock(Position pos) {
+		return getBlock(pos.x, pos.y, pos.z);
+	}
+
 	public int getBlock(int x, int y, int z) {
 		Chunk c = getBlockChunk(x, z);
 		if (c != null) {
@@ -49,6 +53,10 @@ public class World {
 		} else {
 			return -1;
 		}
+	}
+
+	public BlockEntity getBlockEntity(Position pos) {
+		return getBlockEntity(pos.x, pos.y, pos.z);
 	}
 
 	public BlockEntity getBlockEntity(int x, int y, int z) {
@@ -135,12 +143,20 @@ public class World {
 		return blocks;
 	}
 
+	public void setBlock(Position pos, int block) {
+		setBlock(pos.x, pos.y, pos.z, block);
+	}
+
 	public void setBlock(int x, int y, int z, int block) {
 		Chunk c = getBlockChunk(x, z);
 		if (c != null) {
 			c.setBlock(x, y, z, block);
 			c.removeBlockEntity(x, y, z);
 		}
+	}
+
+	public void setBlockEntity(Position pos, BlockEntity block) {
+		setBlockEntity(pos.x, pos.y, pos.z, block);
 	}
 
 	public void setBlockEntity(int x, int y, int z, BlockEntity block) {
