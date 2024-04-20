@@ -35,21 +35,14 @@ public class MCTest {
 		controller.connect(1, 40);
 		Thread.sleep(10000);
 		controller.getAlive().forEach(sc -> {
+			System.out.println("callback 1");
 			InventoryData data = sc.getData(InventoryData.class);
-			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(0));
 		});
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 		controller.getAlive().forEach(sc -> {
+			System.out.println("callback 2");
 			InventoryData data = sc.getData(InventoryData.class);
-			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
-			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
-			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
-			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
-			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(1));
-			data.leftClickSlot(sc, data.getActiveScreen().getHotbarSlot(2));
-			data.rightClickSlot(sc, data.getActiveScreen().getHotbarSlot(2));
-			data.dropAllCursorItems(sc);
-
+			data.swapSlots(sc, data.inv.getInventorySlot(0), 40);
 		});
 
 	}

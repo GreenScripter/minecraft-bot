@@ -25,6 +25,13 @@ public class InventoryData extends PlayData {
 		return screen;
 	}
 
+	public OpenedScreen getInventoryScreen() {
+		if (screen == null || screen.slots == null || screen.slots.length == 0) {
+			return inv;
+		}
+		return screen;
+	}
+
 	public void setHotbarSlot(ServerConnection sc, int slot) {
 		hotbarSlot = slot;
 		sc.sendPacket(new HotbarSlotPacket(slot));
@@ -41,6 +48,258 @@ public class InventoryData extends PlayData {
 			previous = screen;
 			screen = null;
 		}
+	}
+
+	private void inventorySpillOver(Slot slot, Slot other, int cap) {
+		int delta = cap - other.itemCount;
+		if (delta >= slot.itemCount) {
+			other.add(slot.itemCount);
+			slot.setCount(0);
+		} else {
+			other.add(delta);
+			slot.add(-delta);
+		}
+	}
+
+	public void shiftClickSlot(ServerConnection sc, Slot slot) {
+		OpenedScreen screen = getActiveScreen();
+		if (screen.slotIds.get(slot) == null) {
+			System.err.println(slot + " is not part of the active screen " + screen.windowId);
+			return;
+		}
+		if (!slot.present) return;//nothing being clicked.
+
+		int slotId = screen.getSlotId(slot);
+		ClickContainerPacket p = new ClickContainerPacket(screen.windowId, 1, 0, slotId);
+		p.stateId = screen.stateId;
+		int maxCount = slot.getItemInfo().maxStack;
+		//player inventory shifts between hotbar and not, plus extra slots ex. armor
+		if (screen.windowId == 0) {
+			//check for armor and offhand moves first.
+			boolean specialMoved = false;
+			if (slot.getItemId().equals("minecraft:shield")) {
+				if (!inv.getOffhand().present) {
+					inv.getOffhand().become(slot);
+					slot.setCount(0);
+					p.changed.add(new SlotChange(screen.getSlotId(inv.getOffhand()), inv.getOffhand()));
+					specialMoved = true;
+				}
+			} else if (slot.getItemInfo().isArmor) {
+				Slot[] armor = inv.getArmor();
+				Slot target = null;
+				if (slot.getItemInfo().armorSlot.equals("HEAD")) {
+					target = armor[0];
+				}
+				if (slot.getItemInfo().armorSlot.equals("CHEST")) {
+					target = armor[1];
+				}
+				if (slot.getItemInfo().armorSlot.equals("LEGS")) {
+					target = armor[2];
+				}
+				if (slot.getItemInfo().armorSlot.equals("FEET")) {
+					target = armor[3];
+				}
+				if (target != null && !target.present) {
+					target.become(slot);
+					slot.setCount(0);
+					p.changed.add(new SlotChange(screen.getSlotId(target), target));
+					specialMoved = true;
+				}
+			}
+			//if no special move, move normally
+			if (!specialMoved) {
+				if (screen.getSlotId(slot) > 35) {
+					//hotbar sent to inv
+					for (int i = 9; i < 36; i++) {
+						Slot other = screen.getInventorySlot(i);
+						if (other.equivalent(slot)) {
+
+							if (other.itemCount == maxCount) continue;
+							inventorySpillOver(slot, other, maxCount);
+							p.changed.add(new SlotChange(screen.getSlotId(other), other));
+							if (!slot.present) break;
+						}
+					}
+					if (slot.present) for (int i = 9; i < 36; i++) {
+						Slot other = screen.getInventorySlot(i);
+						if (!other.present) {
+							other.become(slot);
+							slot.setCount(0);
+							p.changed.add(new SlotChange(screen.getSlotId(other), other));
+							break;
+						}
+					}
+				} else {
+					//inventory sent to hotbar
+					for (int i = 0; i < 9; i++) {
+						Slot other = screen.getHotbarSlot(i);
+						if (other.equivalent(slot)) {
+
+							if (other.itemCount == maxCount) continue;
+							inventorySpillOver(slot, other, maxCount);
+							p.changed.add(new SlotChange(screen.getSlotId(other), other));
+							if (!slot.present) break;
+						}
+					}
+					if (slot.present) for (int i = 0; i < 9; i++) {
+						Slot other = screen.getHotbarSlot(i);
+						if (!other.present) {
+							other.become(slot);
+							slot.setCount(0);
+							p.changed.add(new SlotChange(screen.getSlotId(other), other));
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			//Other inventories shift between other and player but reversed.
+			if (screen.getSlotId(slot) < screen.getOtherSlotsCount()) {
+				//transfer into inventory
+				//hotbar first
+				for (int i = 0; i < 9; i++) {
+					Slot other = screen.getHotbarSlot(i);
+					if (other.equivalent(slot)) {
+						if (other.itemCount == maxCount) continue;
+						inventorySpillOver(slot, other, maxCount);
+						p.changed.add(new SlotChange(screen.getSlotId(other), other));
+						if (!slot.present) break;
+					}
+				}
+				//rest of inv in reverse
+				for (int i = 35; i >= 9; i--) {
+					Slot other = screen.getInventorySlot(i);
+					if (other.equivalent(slot)) {
+						if (other.itemCount == maxCount) continue;
+						inventorySpillOver(slot, other, maxCount);
+						p.changed.add(new SlotChange(screen.getSlotId(other), other));
+						if (!slot.present) break;
+					}
+				}
+				//allow empty slots next
+				//hotbar
+				if (slot.present) for (int i = 0; i < 9; i++) {
+					Slot other = screen.getHotbarSlot(i);
+					if (!other.present) {
+						other.become(slot);
+						slot.setCount(0);
+						p.changed.add(new SlotChange(screen.getSlotId(other), other));
+						break;
+					}
+				}
+				//rest of inv reversed
+				if (slot.present) for (int i = 35; i >= 9; i--) {
+					Slot other = screen.getInventorySlot(i);
+					if (!other.present) {
+						other.become(slot);
+						slot.setCount(0);
+						p.changed.add(new SlotChange(screen.getSlotId(other), other));
+						break;
+					}
+				}
+			} else {
+				//transfer from inventory
+				for (int i = 0; i < screen.getOtherSlotsCount(); i++) {
+					Slot other = screen.getOtherSlot(i);
+					if (other.equivalent(slot)) {
+
+						if (other.itemCount == maxCount) continue;
+						inventorySpillOver(slot, other, maxCount);
+						p.changed.add(new SlotChange(screen.getSlotId(other), other));
+						if (!slot.present) break;
+					}
+				}
+				//allow empty slots next
+				if (slot.present) for (int i = 0; i < screen.getOtherSlotsCount(); i++) {
+					Slot other = screen.getOtherSlot(i);
+					if (!other.present) {
+						other.become(slot);
+						slot.setCount(0);
+						p.changed.add(new SlotChange(screen.getSlotId(other), other));
+						break;
+					}
+				}
+			}
+		}
+
+		p.changed.add(new SlotChange(slotId, slot));
+		p.carriedItem = screen.cursor;
+		sc.sendPacket(p);
+	}
+
+	public void doubleClickSlot(ServerConnection sc, Slot slot) {
+		OpenedScreen screen = getActiveScreen();
+		if (screen.slotIds.get(slot) == null) {
+			System.err.println(slot + " is not part of the active screen " + screen.windowId);
+			return;
+		}
+		if (!screen.cursor.present) return;//nothing in the cursor means nothing collected.
+		if (screen.cursor.itemCount >= screen.cursor.getItemInfo().maxStack) return;//stack already full
+
+		int slotId = screen.getSlotId(slot);
+		ClickContainerPacket p = new ClickContainerPacket(screen.windowId, 6, 0, slotId);
+		p.stateId = screen.stateId;
+		int maxCount = screen.cursor.getItemInfo().maxStack;
+		int spaceRemaining = maxCount - screen.cursor.itemCount;
+		//take from partial stacks
+		for (int i = 0; i < screen.slots.length; i++) {
+			if (screen.slots[i].equivalent(screen.cursor)) {
+				if (screen.slots[i].itemCount == maxCount) continue;
+				int add = screen.slots[i].itemCount;
+				screen.slots[i].add(-spaceRemaining);
+				screen.cursor.add(Math.max(add - screen.slots[i].itemCount, 0));
+				spaceRemaining = maxCount - screen.cursor.itemCount;
+				p.changed.add(new SlotChange(i, screen.slots[i]));
+				if (spaceRemaining == 0) break;
+			}
+		}
+		//take from full stacks
+		if (spaceRemaining != 0) {
+			for (int i = 0; i < screen.slots.length; i++) {
+				if (screen.slots[i].equivalent(screen.cursor)) {
+					int add = screen.slots[i].itemCount;
+					screen.slots[i].add(-spaceRemaining);
+					screen.cursor.add(Math.max(add - screen.slots[i].itemCount, 0));
+					spaceRemaining = maxCount - screen.cursor.itemCount;
+					p.changed.add(new SlotChange(i, screen.slots[i]));
+					if (spaceRemaining == 0) break;
+				}
+			}
+		}
+
+		p.changed.add(new SlotChange(slotId, slot));
+		p.carriedItem = screen.cursor;
+		sc.sendPacket(p);
+	}
+
+	public void swapOffhand(ServerConnection sc, Slot slot) {
+		swapSlots(sc, slot, 40);
+	}
+
+	public void swapSlots(ServerConnection sc, Slot slot, int hotbarSlot) {
+		OpenedScreen screen = getActiveScreen();
+		if (screen.slotIds.get(slot) == null) {
+			System.err.println(slot + " is not part of the active screen " + screen.windowId);
+			return;
+		}
+		if ((hotbarSlot < 0 || hotbarSlot > 8) && hotbarSlot != 40) return;
+		int slotId = screen.getSlotId(slot);
+		ClickContainerPacket p = new ClickContainerPacket(screen.windowId, 2, hotbarSlot, slotId);
+		p.stateId = screen.stateId;
+
+		Slot other = hotbarSlot == 40 ? inv.getOffhand() : screen.getHotbarSlot(hotbarSlot);
+		if (!slot.present && !other.present) return;
+
+		Slot temp = new Slot();
+		temp.become(slot);
+
+		slot.become(other);
+		other.become(temp);
+
+		p.changed.add(new SlotChange(slotId, slot));
+		if (hotbarSlot != 40 || screen.windowId == 0) p.changed.add(new SlotChange(screen.getSlotId(other), other));
+		p.carriedItem = screen.cursor;
+		sc.sendPacket(p);
 	}
 
 	public void leftClickSlot(ServerConnection sc, Slot slot) {
