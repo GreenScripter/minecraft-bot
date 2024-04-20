@@ -19,9 +19,11 @@ public class RegistryTags {
 		//		System.out.println(blockTags.keySet());
 		Registries.registries.getClass();
 		BlockStates.blockStates.getClass();
+		//		System.out.println(BlockStates.blockStates.entrySet().stream().max(Comparator.comparingInt(e->e.getValue().size())));
+		//		System.out.println(BlockStates.blockProperties.get("minecraft:redstone_wire"));
 		//				System.out.println(Registries.registries.keySet());
 		//		System.out.println(BlockStates.blockStates.keySet());
-//		System.out.println(Registries.registries.get("minecraft:menu"));
+		//		System.out.println(Registries.registries.get("minecraft:menu"));
 		Thread.sleep(20000);
 	}
 
