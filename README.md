@@ -27,3 +27,5 @@ Packet Handlers are the primary extension block of the entire swarm, and act on 
 The conversion itself isn't really a safe operation, and it is up to the caller to ensure that the packet really is of the target type.
 New or missing packet types can be created by extending Packet, and need not be registered in any way to be used.
 See the existing handler classes for examples, the built in handlers are in no way special and alternate custom implementations could be used instead.
+## Raw Game Info
+Sometimes you need to find a piece of info about a generic item or block state. In this library, everything is tracked by its protocol id in almost every case. To look up information about an item or block state by id, the greenscripter.minecraft.gameinfo package provides lookup tables by id for determining various information, such as what block identifier (eg. minecraft:dirt) a block state has, or if an item's max stack size.
