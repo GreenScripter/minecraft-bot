@@ -42,6 +42,9 @@ public class WorldPlayHandler extends PlayHandler {
 	int sectionUpdateId = new SectionUpdatePacket().id();
 	int blockEntityDataId = new BlockEntityDataPacket().id();
 
+	public List<ChunkFirstLoadListener> chunkLoadListeners = new ArrayList<>();
+	public List<BlockChangeListener> blockChangeListeners = new ArrayList<>();
+
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		WorldData worldData = sc.getData(WorldData.class);
 
@@ -126,6 +129,9 @@ public class WorldPlayHandler extends PlayHandler {
 					}
 
 					worldData.world.addChunkLoader(c, sc);
+					for (ChunkFirstLoadListener listener : chunkLoadListeners) {
+						listener.chunkLoaded(sc, c);
+					}
 				}
 			}
 			AckChunksPacket ack = new AckChunksPacket();
@@ -146,7 +152,12 @@ public class WorldPlayHandler extends PlayHandler {
 				for (Position pos : explosion.blocks) {
 					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " minecraft:red_stained_glass"));
 					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " " + BlockStates.getState(worldState.world.getBlock(pos.x, pos.y, pos.z)).format()));
-					worldData.world.setBlock(pos.x, pos.y, pos.z, air);
+					if (worldData.world.getBlock(pos.x, pos.y, pos.z) != air) {
+						worldData.world.setBlock(pos.x, pos.y, pos.z, air);
+						for (BlockChangeListener listener : blockChangeListeners) {
+							listener.blockChanged(sc, worldData.world, pos.x, pos.y, pos.z, air);
+						}
+					}
 
 				}
 			}
@@ -154,20 +165,32 @@ public class WorldPlayHandler extends PlayHandler {
 		} else if (p.id == blockUpdateId) {
 			BlockUpdatePacket update = p.convert(new BlockUpdatePacket());
 			//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " " + BlockStates.getState(worldState.world.getBlock(update.pos.x, update.pos.y, update.pos.z)).format()));
-
-			worldData.world.setBlock(update.pos.x, update.pos.y, update.pos.z, update.state);
+			if (worldData.world.getBlock(update.pos.x, update.pos.y, update.pos.z) != update.state) {
+				worldData.world.setBlock(update.pos.x, update.pos.y, update.pos.z, update.state);
+				for (BlockChangeListener listener : blockChangeListeners) {
+					listener.blockChanged(sc, worldData.world, update.pos.x, update.pos.y, update.pos.z, update.state);
+				}
+			}
 			//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " minecraft:green_stained_glass"));
 
 		} else if (p.id == sectionUpdateId) {
 			SectionUpdatePacket update = p.convert(new SectionUpdatePacket());
 			Chunk chunk = worldData.world.getChunk(update.sectionX, update.sectionZ);
 			if (chunk != null) {
+				int sectionBlockX = update.sectionX * 16;
+				int sectionBlockY = update.sectionY * 16;
+				int sectionBlockZ = update.sectionZ * 16;
 				for (int i = 0; i < update.ids.length; i++) {
 					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + (update.xs[i] + chunk.chunkX * 16) + " " + (update.ys[i] + update.sectionY * 16) + " " + (update.zs[i] + chunk.chunkZ * 16) + " minecraft:blue_stained_glass"));
 					//					int blockWas = chunk.getBlockInChunk(update.xs[i], update.ys[i] + update.sectionY * 16 - chunk.min_y, update.zs[i]);
 					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + (update.xs[i] + chunk.chunkX * 16) + " " + (update.ys[i] + update.sectionY * 16) + " " + (update.zs[i] + chunk.chunkZ * 16) + " " + BlockStates.getState(blockWas).format()));
 
-					chunk.setBlockInChunk(update.xs[i], update.ys[i] + update.sectionY * 16 - chunk.min_y, update.zs[i], update.ids[i]);
+					if (chunk.getBlockInChunk(update.xs[i], update.ys[i] + sectionBlockY - chunk.min_y, update.zs[i]) != update.ids[i]) {
+						chunk.setBlockInChunk(update.xs[i], update.ys[i] + sectionBlockY - chunk.min_y, update.zs[i], update.ids[i]);
+						for (BlockChangeListener listener : blockChangeListeners) {
+							listener.blockChanged(sc, worldData.world, update.xs[i] + sectionBlockX, update.ys[i] + sectionBlockY, update.zs[i] + sectionBlockZ, update.ids[i]);
+						}
+					}
 
 				}
 			}
@@ -184,5 +207,15 @@ public class WorldPlayHandler extends PlayHandler {
 
 	public List<Integer> handlesPackets() {//needs to handle respawn, chunk data, section update and block updates
 		return List.of(chunkDataId, respawnId, loginPlayId, unloadChunkId, explosionId, blockUpdateId, sectionUpdateId, blockEntityDataId);
+	}
+
+	public static interface ChunkFirstLoadListener {
+
+		public void chunkLoaded(ServerConnection sc, Chunk chunk) throws IOException;
+	}
+
+	public static interface BlockChangeListener {
+
+		public void blockChanged(ServerConnection sc, World world, int x, int y, int z, int state) throws IOException;
 	}
 }
