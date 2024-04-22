@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import greenscripter.minecraft.play.handler.PlayHandler;
@@ -173,6 +174,12 @@ public class AsyncSwarmController {
 					} catch (Exception e) {
 						e.printStackTrace();
 						remove.add(sc);
+						sc.connectionState = ServerConnection.ConnectionState.DISCONNECTED;
+						try {
+							sc.channel.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 					}
 					packets += (sc.in.packetCounter);
 					sc.in.packetCounter = 0;
@@ -204,13 +211,13 @@ public class AsyncSwarmController {
 					extract.forEach(sc -> sc.owner = null);
 					extract.clear();
 				}
-				
+
 				if (tickCallback != null) try {
 					tickCallback.run();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				long duration = System.currentTimeMillis() - start;
 				max = Math.max(max, duration);
 				min = Math.min(min, duration);

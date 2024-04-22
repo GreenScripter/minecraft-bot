@@ -25,7 +25,14 @@ import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.play.data.PlayData;
 import greenscripter.minecraft.play.data.RegistryData;
+import greenscripter.minecraft.play.handler.DeathPlayHandler;
+import greenscripter.minecraft.play.handler.EntityPlayHandler;
+import greenscripter.minecraft.play.handler.InventoryPlayHandler;
+import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
+import greenscripter.minecraft.play.handler.PlayerPlayHandler;
+import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
+import greenscripter.minecraft.play.handler.WorldPlayHandler;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.PeekInputStream;
@@ -211,5 +218,17 @@ public class ServerConnection {
 
 	public String toString() {
 		return name;
+	}
+
+	public static List<PlayHandler> getStandardHandlers() {
+		return new ArrayList<>(List.of(//
+				new KeepAlivePlayHandler(), //
+				new DeathPlayHandler(), //
+				new WorldPlayHandler(), //
+				new TeleportRequestPlayHandler(),//
+				new EntityPlayHandler(),//
+				new PlayerPlayHandler(),//
+				new InventoryPlayHandler()//
+		));
 	}
 }

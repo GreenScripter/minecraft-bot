@@ -4,7 +4,6 @@ import java.util.List;
 
 import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
-import greenscripter.minecraft.play.data.InventoryData;
 import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
