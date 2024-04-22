@@ -103,6 +103,14 @@ public class BlockStates {
 		return subtract;
 	}
 
+	public static boolean[] copyBlockSet(boolean[] set) {
+		boolean[] copy = getBlockSet();
+		for (int i = 0; i < copy.length; i++) {
+			copy[i] = set[i];
+		}
+		return copy;
+	}
+
 	static {
 		long start = System.currentTimeMillis();
 		try {

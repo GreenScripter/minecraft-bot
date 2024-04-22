@@ -59,6 +59,14 @@ public class Position {
 		return (int) (dx + dy + dz);
 	}
 
+	public long getEncoded() {
+		return ((x & 0x3FFFFFFl) << 38) | ((z & 0x3FFFFFFl) << 12) | (y & 0xFFFl);
+	}
+
+	public Position copy() {
+		return new Position(x, y, z);
+	}
+
 	public String toString() {
 		return x + " " + y + " " + z;
 	}

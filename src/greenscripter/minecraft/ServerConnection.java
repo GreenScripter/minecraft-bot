@@ -123,6 +123,10 @@ public class ServerConnection {
 		return (T) s;
 	}
 
+	public <T extends PlayData> void setData(Class<T> type, T t) {
+		playData.put(type, t);
+	}
+
 	public synchronized void step() throws IOException {
 		switch (connectionState) {
 			case HANDSHAKE -> {

@@ -16,9 +16,19 @@ import greenscripter.minecraft.utils.Vector;
 
 public class PathFinder {
 
+	public static boolean[] pathFindable = BlockStates.copyBlockSet(BlockStates.noCollideIds);
+	static {
+		BlockStates.removeFromBlockSet(pathFindable, "minecraft:lava");
+		BlockStates.removeFromBlockSet(pathFindable, "minecraft:fire");
+		BlockStates.removeFromBlockSet(pathFindable, "minecraft:cobweb");
+		BlockStates.removeFromBlockSet(pathFindable, "minecraft:powder_snow");
+		BlockStates.removeFromBlockSet(pathFindable, "minecraft:soul_fire");
+		BlockStates.removeFromBlockSet(pathFindable, "minecraft:sweet_berry_bush");
+	}
+
 	public World world;
 
-	public boolean[] noCollides = BlockStates.noCollideIds;
+	public boolean[] noCollides = pathFindable;
 
 	public int pathRetainDistance = 10;
 
@@ -113,6 +123,25 @@ public class PathFinder {
 				i--;
 			}
 		}
+	}
+
+	public List<Vector> pathfind(Position startBlock, Position endBlock) {
+		if (new Vector(startBlock).multiply(1, 0, 1).distanceTo(new Vector(endBlock).multiply(1, 0, 1)) > 200) {
+			return upAndOver(new Vector(startBlock), new Vector(endBlock), -1);
+		}
+		var blocks = aStar(startBlock, List.of(), endBlock, -1);
+		if (blocks == null) return null;
+		List<Vector> path = new ArrayList<>();
+		for (Position p : blocks) {
+			path.add(new Vector(p));
+		}
+		mergeStraightLines(path, 10);
+		return path;
+
+	}
+
+	public List<Vector> pathfindOver(Position startBlock, Position endBlock) {
+		return upAndOver(new Vector(startBlock), new Vector(endBlock), -1);
 	}
 
 	public List<Position> aStar(Position startBlock, List<Vector> endNear, Position endBlock, double nearLength) {
@@ -423,6 +452,69 @@ public class PathFinder {
 				maxHeapify(largest);
 			}
 		}
+	}
+
+	public Position findDestinations(Position target) {
+		Position grounded = findDestinations(target, true);
+		if (grounded == null) {
+			return findDestinations(target, false);
+		}
+		return grounded;
+	}
+
+	public Position findDestinations(Position target, boolean grounded) {
+		target = target.copy();
+		if (world.isPassiblePlayer(target, noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+			return target;
+		}
+		if (world.isPassiblePlayer(target.add(0, 1, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+			return target;
+		}
+		if (world.isPassiblePlayer(target.add(0, -2, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+			return target;
+		}
+		if (world.isPassiblePlayer(target.add(0, -1, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+			return target;
+		}
+		if (world.isPassiblePlayer(target.add(0, -1, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+			return target;
+		}
+		target.add(0, 3, 0);
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				for (int k = -1; k <= 1; k++) {
+					Position next = target.copy().add(i, j, k);
+					if (world.isPassiblePlayer(next, noCollides) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
+						return next;
+					}
+				}
+			}
+		}
+		for (int i = -2; i <= 2; i++) {
+			for (int j = -2; j <= 2; j++) {
+				for (int k = -2; k <= 2; k++) {
+					if (i * i + (j + 1.5) * (j + 1.5) + k * k > 25) continue;
+					if (Math.abs(i) <= 1 && Math.abs(j) <= 1 && Math.abs(k) <= 1) continue;
+					Position next = target.copy().add(i, j, k);
+					if (world.isPassiblePlayer(next, noCollides) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
+						return next;
+					}
+				}
+			}
+		}
+		for (int i = -3; i <= 3; i++) {
+			for (int j = -4; j <= 3; j++) {
+				for (int k = -3; k <= 3; k++) {
+					if (i * i + (j + 1.5) * (j + 1.5) + k * k > 25) continue;
+					if (Math.abs(i) <= 2 && Math.abs(j) <= 2 && Math.abs(k) <= 2) continue;
+					Position next = target.copy().add(i, j, k);
+					if (world.isPassiblePlayer(next, noCollides) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
+						return next;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public Position findValidStartNear(Vector start) {

@@ -79,6 +79,10 @@ public class World {
 		return noCollides[block];
 	}
 
+	public boolean isPassiblePlayer(Position pos, boolean[] noCollides) {
+		return isPassible(pos.x, pos.y, pos.z, noCollides) && isPassible(pos.x, pos.y + 1, pos.z, noCollides);
+	}
+
 	public boolean isPassiblePlayer(int x, int y, int z, boolean[] noCollides) {
 		return isPassible(x, y, z, noCollides) && isPassible(x, y + 1, z, noCollides);
 	}

@@ -43,6 +43,7 @@ public class WorldPlayHandler extends PlayHandler {
 	int blockEntityDataId = new BlockEntityDataPacket().id();
 
 	public List<ChunkFirstLoadListener> chunkLoadListeners = new ArrayList<>();
+	public List<ChunkUnloadListener> chunkUnloadListeners = new ArrayList<>();
 	public List<BlockChangeListener> blockChangeListeners = new ArrayList<>();
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
@@ -144,6 +145,11 @@ public class WorldPlayHandler extends PlayHandler {
 			Chunk chunk = worldData.world.getChunk(chunkunload.x, chunkunload.z);
 			if (chunk != null) {
 				worldData.world.unloadChunk(chunk, sc);
+				if (chunk.players.isEmpty()) {
+					for (ChunkUnloadListener listener : chunkUnloadListeners) {
+						listener.chunkUnloaded(sc, chunk);
+					}
+				}
 			}
 		} else if (p.id == explosionId) {
 			ExplosionPacket explosion = p.convert(new ExplosionPacket());
@@ -212,6 +218,11 @@ public class WorldPlayHandler extends PlayHandler {
 	public static interface ChunkFirstLoadListener {
 
 		public void chunkLoaded(ServerConnection sc, Chunk chunk) throws IOException;
+	}
+
+	public static interface ChunkUnloadListener {
+
+		public void chunkUnloaded(ServerConnection sc, Chunk chunk) throws IOException;
 	}
 
 	public static interface BlockChangeListener {
