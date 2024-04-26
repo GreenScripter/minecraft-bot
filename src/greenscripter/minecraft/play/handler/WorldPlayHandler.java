@@ -112,12 +112,15 @@ public class WorldPlayHandler extends PlayHandler {
 			}
 
 		} else if (p.id == chunkDataId) {
-			ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
+			int x = ChunkDataPacket.readXCoordinate(p);
+			int z = ChunkDataPacket.readZCoordinate(p);
 			if (worldData.world != null) {
-				if (worldData.world.isChunkLoaded(chunk.chunkX, chunk.chunkZ)) {
+				if (worldData.world.isChunkLoaded(x, z)) {
 					//					System.out.println("Chunk " + chunk.chunkX + " " + chunk.chunkZ + " already loaded");
-					worldData.world.addChunkLoader(worldData.world.getChunk(chunk.chunkX, chunk.chunkZ), sc);
+					worldData.world.addChunkLoader(worldData.world.getChunk(x, z), sc);
 				} else {
+					//					System.out.println("Making new Chunk");
+					ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
 					//					System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
 					Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldData.world.min_y, worldData.world.height, worldData.world);
 

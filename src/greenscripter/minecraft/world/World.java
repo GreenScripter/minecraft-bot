@@ -178,8 +178,18 @@ public class World {
 	}
 
 	public void addChunkLoader(Chunk c, ServerConnection sc) {
-		chunks.put(Chunk.mergeCoords(c.chunkX, c.chunkZ), c);
-		c.players.add(sc);
+		long coord = Chunk.mergeCoords(c.chunkX, c.chunkZ);
+		Chunk exists = chunks.get(coord);
+		if (exists == null) {
+			chunks.put(coord, c);
+			exists = c;
+		}
+		if (c != exists) {
+			System.out.println("Chunk " + c.chunkX + " " + c.chunkZ + " has wrong loaders.");
+			System.out.println(c);
+			System.out.println(exists);
+		}
+		exists.players.add(sc);
 	}
 
 	public void unloadChunk(Chunk c, ServerConnection sc) {

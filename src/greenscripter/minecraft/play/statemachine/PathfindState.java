@@ -39,6 +39,8 @@ public class PathfindState extends PlayerState {
 					if (noPath != null) noPath.tick(e);
 					e.popNow();
 				}
+				PositionData pos = e.value.getData(PositionData.class);
+				followPath = finder.getPacketVectors(followPath, pos.pos);
 				if (render != null) if (!followPath.isEmpty()) {
 					Vector pathPos = followPath.get(0);
 					for (int i = 1; i < followPath.size(); i++) {
@@ -65,8 +67,21 @@ public class PathfindState extends PlayerState {
 					if (!triedOver) {
 						triedOver = true;
 						followPath = finder.pathfindOver(start, target);
+						if (followPath != null) {
+							followPath = finder.getPacketVectors(followPath, pos.pos);
+						}
 						index = 0;
 						last = null;
+						if (render != null) for (int id : pathIds) {
+							render.removeShape(id);
+						}
+						if (render != null) if (followPath != null && !followPath.isEmpty()) {
+							Vector pathPos = followPath.get(0);
+							for (int i = 1; i < followPath.size(); i++) {
+								pathIds.add(render.addLine(finder.world.id, pathPos, followPath.get(i), IndicatorServer.getColor(0, 255, 0, 255)));
+								pathPos = followPath.get(i);
+							}
+						}
 						return;
 					}
 					if (travelFailed != null) travelFailed.tick(e);
@@ -80,7 +95,9 @@ public class PathfindState extends PlayerState {
 					if (travelComplete != null) travelComplete.tick(e);
 					e.pop();
 				}
-				pos.setPos(e.value, followPath.get(index));
+				if (render != null && index > 2 && index < pathIds.size()) render.removeShape(pathIds.get(index - 3));
+
+				pos.setPosRotation(e.value, followPath.get(index), pos.pitch, pos.yaw);
 				last = pos.pos.copy();
 				index++;
 			});

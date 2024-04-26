@@ -31,10 +31,27 @@ public class PathFinder {
 	public boolean[] noCollides = pathFindable;
 
 	public int pathRetainDistance = 10;
+	public int maxSpeed = 10;
 
 	public boolean infiniteVClipAllowed = true;
 	public long timeout = 1000;
 	private AtomicBoolean running = new AtomicBoolean(false);
+
+	public List<Vector> land(Position start) {
+		Position previous = start;
+		Position at = start.copy();
+		List<Vector> path = new ArrayList<>();
+		while (world.isPassiblePlayer(at.add(0, -1, 0), noCollides)) {
+			if (previous.y - at.y >= maxSpeed) {
+				previous = at;
+				at = at.copy();
+				path.add(new Vector(at));
+			}
+		}
+		at.add(0, 1, 0);
+		if (!at.equals(start)) path.add(new Vector(at));
+		return path;
+	}
 
 	public List<Vector> pathFind(Vector start, Vector end, double radius) {
 		if (start.copy().multiply(1, 0, 1).distanceTo(end.copy().multiply(1, 0, 1)) > 200) {
@@ -262,13 +279,77 @@ public class PathFinder {
 		//		if ((basePriority = world.getState(current.x, current.y - 1, current.z)) >= 1) blocks.add(new AStarNode(new BlockPos(current.x, current.y - 1, current.z), parent, -basePriority));
 		if (world.isPassiblePlayer(current.x, current.y, current.z - 1, noCollides)) blocks.add(new AStarNode(new Position(current.x, current.y, current.z - 1), parent, -basePriority));
 
-		for (int i = -10; i <= 10; i += 1) {
+		for (int i = -maxSpeed; i <= maxSpeed; i += 1) {
 			if (world.isPassiblePlayer(current.x, current.y + i, current.z, noCollides)) {
 				basePriority = 1;
 				basePriority -= Math.abs(i);
 				AStarNode newNode = new AStarNode(new Position(current.x, current.y + i, current.z), parent, -basePriority);
 				newNode.extraCost += Math.abs(i);
+				if (Math.abs(i) == maxSpeed) {
+					newNode.extraCost -= maxSpeed + 1;
+				}
 				blocks.add(newNode);
+			}
+		}
+
+		for (int i = 0; i <= maxSpeed; i += 1) {
+			if (world.isPassiblePlayer(current.x + i, current.y, current.z, noCollides)) {
+				if (Math.abs(i) == maxSpeed) {
+					basePriority = 1;
+					basePriority -= Math.abs(i);
+					AStarNode newNode = new AStarNode(new Position(current.x + i, current.y, current.z), parent, -basePriority);
+					newNode.extraCost += Math.abs(i);
+					newNode.extraCost -= maxSpeed + 1;
+
+					blocks.add(newNode);
+				}
+			} else {
+				break;
+			}
+		}
+		for (int i = 0; i <= maxSpeed; i += 1) {
+			if (world.isPassiblePlayer(current.x, current.y, current.z + i, noCollides)) {
+				if (Math.abs(i) == maxSpeed) {
+					basePriority = 1;
+					basePriority -= Math.abs(i);
+					AStarNode newNode = new AStarNode(new Position(current.x, current.y, current.z + i), parent, -basePriority);
+					newNode.extraCost += Math.abs(i);
+					newNode.extraCost -= maxSpeed + 1;
+
+					blocks.add(newNode);
+				}
+			} else {
+				break;
+			}
+		}
+		for (int i = 0; i <= maxSpeed; i += 1) {
+			if (world.isPassiblePlayer(current.x - i, current.y, current.z, noCollides)) {
+				if (Math.abs(i) == maxSpeed) {
+					basePriority = 1;
+					basePriority -= Math.abs(i);
+					AStarNode newNode = new AStarNode(new Position(current.x - i, current.y, current.z), parent, -basePriority);
+					newNode.extraCost += Math.abs(i);
+					newNode.extraCost -= maxSpeed + 1;
+
+					blocks.add(newNode);
+				}
+			} else {
+				break;
+			}
+		}
+		for (int i = 0; i <= maxSpeed; i += 1) {
+			if (world.isPassiblePlayer(current.x, current.y, current.z - i, noCollides)) {
+				if (Math.abs(i) == maxSpeed) {
+					basePriority = 1;
+					basePriority -= Math.abs(i);
+					AStarNode newNode = new AStarNode(new Position(current.x, current.y, current.z - i), parent, -basePriority);
+					newNode.extraCost += Math.abs(i);
+					newNode.extraCost -= maxSpeed + 1;
+
+					blocks.add(newNode);
+				}
+			} else {
+				break;
 			}
 		}
 		if (infiniteVClipAllowed && endpoint.contains(((long) current.x << 32) + current.z)) {
@@ -595,6 +676,22 @@ public class PathFinder {
 	//		return true;
 	//	}
 
+	public List<Vector> getPacketVectors(List<Vector> path, Vector previous) {
+		List<Vector> packets = new ArrayList<>();
+		for (Vector v : path) {
+			double distance = v.distanceTo(previous);
+			if (distance > 10) {
+				for (int i = 0; i < distance / 10; i++) {
+					packets.add(new Vector(previous.x, previous.y, previous.z));
+				}
+			}
+
+			packets.add(new Vector(v.x, v.y, v.z));
+			previous = v;
+		}
+		return packets;
+	}
+
 	public List<PlayerMovePositionRotationPacket> getPackets(List<Vector> path, Vector previous, float pitch, float yaw) {
 		List<PlayerMovePositionRotationPacket> packets = new ArrayList<>();
 		for (Vector v : path) {
@@ -614,12 +711,12 @@ public class PathFinder {
 	public List<Vector> getBeamPath(Vector start, Vector end) {
 		List<Vector> path = new ArrayList<>();
 		Vector delta = end.copy().subtract(start);
-		Vector step = delta.copy().normalize().multiply(10);
-		int steps = (int) (delta.length() / 10);
+		Vector step = delta.copy().normalize().multiply(maxSpeed);
+		int steps = (int) (delta.length() / maxSpeed);
 		for (int i = 0; i < steps; i++) {
 			path.add(start.copy().add(step.copy().multiply(i)));
 		}
-		path.add(end);
+		if (path.isEmpty() || !end.equals(path.get(path.size() - 1))) path.add(end);
 		return path;
 	}
 

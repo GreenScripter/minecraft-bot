@@ -18,7 +18,7 @@ public class Chunk {
 	public Set<ServerConnection> players = new HashSet<>();
 	public Map<Position, BlockEntity> blockEntities = new HashMap<>();
 
-	int[][][] blocks;//stored in y,z,x order to match chunk data from the server.
+	public int[][][] blocks;//stored in y,z,x order to match chunk data from the server.
 
 	public Chunk(int chunkX, int chunkZ, int minY, int height, World world) {
 		blocks = new int[height][16][16];

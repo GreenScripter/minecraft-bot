@@ -49,8 +49,8 @@ public class TreeBot {
 						if (checkMask[x][z]) {
 							continue;
 						}
-						int block = c.getBlockInChunk(x, y, z);
-						if (logs[block] && leaves[c.getBlockInChunk(x, y + 1, z)]) {
+						int block = c.blocks[y][z][x];//c.getBlockInChunk(x, y, z);
+						if (logs[block] && leaves[c.blocks[y + 1][z][x]]) {
 							checkMask[x][z] = true;
 							Tree tree = new Tree(global.searched, c.world, new Position(x + c.chunkX * 16, y + c.min_y, z + c.chunkZ * 16));
 							tree.chunk = Chunk.mergeCoords(c.chunkX, c.chunkZ);
@@ -85,9 +85,11 @@ public class TreeBot {
 			sc.setData(TreeBotLocalData.class, new TreeBotLocalData());
 		};
 
+		long start = System.currentTimeMillis();
 		controller.localHandlers = sc -> {
 			TreeBotStateMachine state = new TreeBotStateMachine(sc);
 			return List.of(new PlayTickHandler(sc2 -> {
+				if (System.currentTimeMillis() - start < 3000) return;
 				if (sc2.getData(WorldData.class).world == null) return;
 				state.tick();
 			}));
