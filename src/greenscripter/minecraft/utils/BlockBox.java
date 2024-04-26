@@ -33,4 +33,22 @@ public class BlockBox {
 		}
 	}
 
+	public boolean contains(Position p) {
+		if (p.x >= pos1.x && p.y >= pos1.y && p.z >= pos1.z && p.x <= pos2.x && p.y <= pos2.y && p.z <= pos2.z) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean contains(Vector p) {
+		if (p.x >= pos1.x && p.y >= pos1.y && p.z >= pos1.z && p.x <= pos2.x && p.y <= pos2.y && p.z <= pos2.z) {
+			return true;
+		}
+		return false;
+	}
+
+	public BlockBox expand(int amount) {
+		return new BlockBox(pos1.copy().add(-amount, -amount, -amount), pos2.copy().add(amount, amount, amount));
+	}
+
 }

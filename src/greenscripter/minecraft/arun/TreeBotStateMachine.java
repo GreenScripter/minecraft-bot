@@ -10,10 +10,12 @@ import greenscripter.minecraft.arun.TreeBot.TreeBotLocalData;
 import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.play.statemachine.BreakBlockState;
+import greenscripter.minecraft.play.statemachine.ItemPickupState;
 import greenscripter.minecraft.play.statemachine.PathFollowState;
 import greenscripter.minecraft.play.statemachine.PathfindState;
 import greenscripter.minecraft.play.statemachine.PlayerMachine;
 import greenscripter.minecraft.play.statemachine.PlayerState;
+import greenscripter.minecraft.play.statemachine.WaitState;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.utils.Vector;
 import greenscripter.remoteindicators.IndicatorServer;
@@ -108,6 +110,14 @@ class BreakTreeState extends PlayerState {
 			};
 			e.pushNow(pathfind);
 
+		});
+
+		onFinished(e -> {
+			TreeBotGlobalData global = e.value.getData(TreeBotGlobalData.class);
+			TreeBotLocalData local = e.value.getData(TreeBotLocalData.class);
+			PlayerState wait = new WaitState(100);
+			wait.then(new ItemPickupState(global.pathfinding, local.pathfinder, TreeBot.render, tree.boundingBox.expand(5)));
+			e.push(wait);
 		});
 	}
 }
