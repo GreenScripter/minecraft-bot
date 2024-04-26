@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
+import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
@@ -27,6 +28,14 @@ public class ChunkDataPacket extends Packet {
 
 	public void toBytes(MCOutputStream out) throws IOException {
 		throw new UnsupportedOperationException();
+	}
+
+	public static int readXCoordinate(UnknownPacket up) throws IOException {
+		return (((up.data[0 + up.offset] & 0xFF) << 24) + ((up.data[1 + up.offset] & 0xFF) << 16) + ((up.data[2 + up.offset] & 0xFF) << 8) + ((up.data[3 + up.offset] & 0xFF) << 0));
+	}
+
+	public static int readZCoordinate(UnknownPacket up) throws IOException {
+		return (((up.data[4 + up.offset] & 0xFF) << 24) + ((up.data[5 + up.offset] & 0xFF) << 16) + ((up.data[6 + up.offset] & 0xFF) << 8) + ((up.data[7 + up.offset] & 0xFF) << 0));
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
