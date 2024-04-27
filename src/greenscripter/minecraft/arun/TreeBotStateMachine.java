@@ -38,7 +38,7 @@ class FindTreeState extends PlayerState {
 
 			var searcher = world.world.worlds.getSearchFor(null, TreeBot.logs, false, true);
 			synchronized (searcher.results) {
-				var close = searcher.results.stream().limit(500).min(Comparator.comparingDouble(t -> pos.pos.squaredDistanceTo(t.blocks.get(0).x, t.blocks.get(0).y, t.blocks.get(0).z)));
+				var close = searcher.results.stream().filter(t -> t.dimension.equals(world.world.id)).limit(500).min(Comparator.comparingDouble(t -> pos.pos.squaredDistanceTo(t.blocks.get(0).x, t.blocks.get(0).y, t.blocks.get(0).z)));
 				if (close.isPresent()) {
 					var tree = close.get();
 					TreeBot.updateBox(tree.renderId, tree.boundingBox, tree.dimension, IndicatorServer.getColor(255, 255, 0, 255));

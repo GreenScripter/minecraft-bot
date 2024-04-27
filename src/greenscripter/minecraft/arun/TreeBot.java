@@ -21,7 +21,7 @@ import greenscripter.remoteindicators.IndicatorServer;
 public class TreeBot {
 
 	static boolean[] logs = BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:logs");
-	static boolean[] leaves = BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:leaves");
+	static boolean[] leaves = BlockStates.addTagToBlockSet(BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:leaves"), "minecraft:wart_blocks");
 
 	public static IndicatorServer render;
 

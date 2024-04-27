@@ -73,7 +73,7 @@ public class WorldPlayHandler extends PlayHandler {
 					NBTTagCompound type = null;
 					for (NBTTagCompound c : dimensionTypeList.value) {
 						if (c.get("name").asString().value.equals(world.dimensionType)) {
-							type = c;
+							type = c.get("element").asCompound();
 							break;
 						}
 					}
