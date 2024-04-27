@@ -36,11 +36,20 @@ public class StateMachine<T> {
 	Storage storage = new Storage();
 	T value;
 
+	private Map<Class<?>, Long> profilingTimers = new HashMap<>();
+
 	private boolean needsInit = false;
 	private State<T> initWith = null;
+	public boolean profiling = false;
 
 	public StateMachine(T t) {
 		this.value = t;
+	}
+
+	public void printProfiler() {
+		for (var e : profilingTimers.entrySet()) {
+			System.out.println(e.getKey() + ": " + e.getValue());
+		}
 	}
 
 	/**
@@ -65,6 +74,7 @@ public class StateMachine<T> {
 	}
 
 	public boolean tick() {
+		long start = System.currentTimeMillis();
 		State<T> state = getState();
 		if (state != null) {
 			while (needsInit) {
@@ -73,6 +83,10 @@ public class StateMachine<T> {
 					state.init(initWith);
 				} catch (ThrownReturn e) {
 				}
+				if (profiling) {
+					profilingTimers.put(state.getClass(), profilingTimers.getOrDefault(state.getClass(), 0l) + (System.currentTimeMillis() - start));
+				}
+				start = System.currentTimeMillis();
 				state = getState();
 			}
 
@@ -80,6 +94,9 @@ public class StateMachine<T> {
 				state.tick();
 			} catch (ThrownReturn e) {
 			}
+		}
+		if (profiling) {
+			profilingTimers.put(state.getClass(), profilingTimers.getOrDefault(state.getClass(), 0l) + (System.currentTimeMillis() - start));
 		}
 		return state == null;
 	}
@@ -129,7 +146,7 @@ public class StateMachine<T> {
 
 	public void swapToNow(State<T> state) throws ThrownReturn {
 		swapToPrepare(state);
-		tick();
+		if (!profiling) tick();
 		throw new ThrownReturn("swapped");
 	}
 
@@ -155,7 +172,7 @@ public class StateMachine<T> {
 
 	public void pushNow(State<T> state) throws ThrownReturn {
 		pushPrepare(state);
-		tick();
+		if (!profiling) tick();
 		throw new ThrownReturn("pushed");
 	}
 
@@ -184,7 +201,7 @@ public class StateMachine<T> {
 
 	public void popNow() throws ThrownReturn {
 		popPrepare();
-		tick();
+		if (!profiling) tick();
 		throw new ThrownReturn("popped");
 	}
 

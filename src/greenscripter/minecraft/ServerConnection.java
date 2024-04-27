@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -77,7 +78,7 @@ public class ServerConnection {
 		socket.setReceiveBufferSize(1024 * 1024 * 1);
 		peeker = new PeekInputStream(socket.getInputStream(), channel);
 		in = new MCInputStream(peeker);
-		out = new MCOutputStream(socket.getOutputStream());
+		out = new MCOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 		connectionState = ConnectionState.HANDSHAKE;
 		this.name = name;
 		this.uuid = uuid;

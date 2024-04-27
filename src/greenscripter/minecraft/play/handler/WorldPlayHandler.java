@@ -31,7 +31,7 @@ import greenscripter.minecraft.world.Worlds;
 
 public class WorldPlayHandler extends PlayHandler {
 
-	public Worlds worlds = new Worlds();
+	public Worlds worlds;
 
 	int chunkDataId = new ChunkDataPacket().id();
 	int respawnId = new RespawnPacket().id();
@@ -46,171 +46,177 @@ public class WorldPlayHandler extends PlayHandler {
 	public List<ChunkUnloadListener> chunkUnloadListeners = new ArrayList<>();
 	public List<BlockChangeListener> blockChangeListeners = new ArrayList<>();
 
+	public WorldPlayHandler() {
+		worlds = new Worlds(this);
+	}
+
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		WorldData worldData = sc.getData(WorldData.class);
-
-		if (p.id == respawnId) {
-			RespawnPacket respawn = p.convert(new RespawnPacket());
-			PositionData pos = sc.getData(PositionData.class);
-			for (Chunk c : new ArrayList<>(worldData.world.chunks.values())) {
-				worldData.world.unloadChunk(c, sc);
-			}
-			pos.dimension = respawn.dimensionName;
-
-			worldData.world = worlds.getWorld(respawn.dimensionName);
-			if (worldData.world == null) {
-				World world = new World();
-				world.id = respawn.dimensionName;
-				world.dimensionType = respawn.dimensionType;
-				world.worlds = worlds;
-
-				RegistryData registryData = sc.getData(RegistryData.class);
-				var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
-				NBTTagCompound type = null;
-				for (NBTTagCompound c : dimensionTypeList.value) {
-					if (c.get("name").asString().value.equals(world.dimensionType)) {
-						type = c;
-						break;
-					}
+		synchronized (worlds) {
+			if (p.id == respawnId) {
+				RespawnPacket respawn = p.convert(new RespawnPacket());
+				PositionData pos = sc.getData(PositionData.class);
+				for (Chunk c : new ArrayList<>(worldData.world.chunks.values())) {
+					worldData.world.unloadChunk(c, sc);
 				}
-				world.height = type.get("height").asInt().value;
-				world.min_y = type.get("min_y").asInt().value;
+				pos.dimension = respawn.dimensionName;
 
-				worlds.worlds.put(world.id, world);
+				worldData.world = worlds.getWorld(respawn.dimensionName);
+				if (worldData.world == null) {
+					World world = new World();
+					world.id = respawn.dimensionName;
+					world.dimensionType = respawn.dimensionType;
+					world.worlds = worlds;
 
-				worldData.world = world;
-			}
-
-		} else if (p.id == loginPlayId) {
-			LoginPlayPacket respawn = p.convert(new LoginPlayPacket());
-			PositionData pos = sc.getData(PositionData.class);
-			pos.dimension = respawn.dimensionName;
-
-			worldData.world = worlds.getWorld(respawn.dimensionName);
-			if (worldData.world == null) {
-				World world = new World();
-				world.id = respawn.dimensionName;
-				System.out.println("Loaded world " + world.id);
-				world.dimensionType = respawn.dimensionType;
-				world.worlds = worlds;
-
-				RegistryData registryData = sc.getData(RegistryData.class);
-				var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
-				NBTTagCompound type = null;
-				for (NBTTagCompound c : dimensionTypeList.value) {
-					if (c.get("name").asString().value.equals(world.dimensionType)) {
-						type = c.get("element").asCompound();
-						break;
-					}
-				}
-				world.height = type.get("height").asInt().value;
-				world.min_y = type.get("min_y").asInt().value;
-
-				worlds.worlds.put(world.id, world);
-
-				worldData.world = world;
-			}
-
-		} else if (p.id == chunkDataId) {
-			int x = ChunkDataPacket.readXCoordinate(p);
-			int z = ChunkDataPacket.readZCoordinate(p);
-			if (worldData.world != null) {
-				if (worldData.world.isChunkLoaded(x, z)) {
-					//					System.out.println("Chunk " + chunk.chunkX + " " + chunk.chunkZ + " already loaded");
-					worldData.world.addChunkLoader(worldData.world.getChunk(x, z), sc);
-				} else {
-					//					System.out.println("Making new Chunk");
-					ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
-					//					System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
-					Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldData.world.min_y, worldData.world.height, worldData.world);
-
-					ChunkDataDecoder.decode(c, chunk.data);
-
-					for (ChunkDataPacket.BlockEntity e : chunk.blockEntities) {
-						BlockEntity en = new BlockEntity();
-						en.pos = new Position(e.xinchunk + chunk.chunkX * 16, e.y, e.zinchunk + chunk.chunkZ * 16);
-						c.addBlockEntity(en);
-					}
-
-					worldData.world.addChunkLoader(c, sc);
-					for (ChunkFirstLoadListener listener : chunkLoadListeners) {
-						listener.chunkLoaded(sc, c);
-					}
-				}
-			}
-			AckChunksPacket ack = new AckChunksPacket();
-			if (sc.getData(ClientConfigData.class).viewDistance <= 1) {
-				ack.chunksPerTick = 0.01f;
-			}
-			sc.out.writePacket(ack);
-		} else if (p.id == unloadChunkId) {
-			UnloadChunkPacket chunkunload = p.convert(new UnloadChunkPacket());
-			Chunk chunk = worldData.world.getChunk(chunkunload.x, chunkunload.z);
-			if (chunk != null) {
-				worldData.world.unloadChunk(chunk, sc);
-				if (chunk.players.isEmpty()) {
-					for (ChunkUnloadListener listener : chunkUnloadListeners) {
-						listener.chunkUnloaded(sc, chunk);
-					}
-				}
-			}
-		} else if (p.id == explosionId) {
-			ExplosionPacket explosion = p.convert(new ExplosionPacket());
-			int air = BlockStates.getDefaultBlockState("minecraft:air").id();
-			if (explosion.blockInteraction != 0) {
-				for (Position pos : explosion.blocks) {
-					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " minecraft:red_stained_glass"));
-					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " " + BlockStates.getState(worldState.world.getBlock(pos.x, pos.y, pos.z)).format()));
-					if (worldData.world.getBlock(pos.x, pos.y, pos.z) != air) {
-						worldData.world.setBlock(pos.x, pos.y, pos.z, air);
-						for (BlockChangeListener listener : blockChangeListeners) {
-							listener.blockChanged(sc, worldData.world, pos.x, pos.y, pos.z, air);
+					RegistryData registryData = sc.getData(RegistryData.class);
+					var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
+					NBTTagCompound type = null;
+					for (NBTTagCompound c : dimensionTypeList.value) {
+						if (c.get("name").asString().value.equals(world.dimensionType)) {
+							type = c;
+							break;
 						}
 					}
+					world.height = type.get("height").asInt().value;
+					world.min_y = type.get("min_y").asInt().value;
 
+					worlds.worlds.put(world.id, world);
+
+					worldData.world = world;
 				}
-			}
 
-		} else if (p.id == blockUpdateId) {
-			BlockUpdatePacket update = p.convert(new BlockUpdatePacket());
-			//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " " + BlockStates.getState(worldState.world.getBlock(update.pos.x, update.pos.y, update.pos.z)).format()));
-			if (worldData.world.getBlock(update.pos.x, update.pos.y, update.pos.z) != update.state) {
-				worldData.world.setBlock(update.pos.x, update.pos.y, update.pos.z, update.state);
-				for (BlockChangeListener listener : blockChangeListeners) {
-					listener.blockChanged(sc, worldData.world, update.pos.x, update.pos.y, update.pos.z, update.state);
-				}
-			}
-			//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " minecraft:green_stained_glass"));
+			} else if (p.id == loginPlayId) {
+				LoginPlayPacket respawn = p.convert(new LoginPlayPacket());
+				PositionData pos = sc.getData(PositionData.class);
+				pos.dimension = respawn.dimensionName;
 
-		} else if (p.id == sectionUpdateId) {
-			SectionUpdatePacket update = p.convert(new SectionUpdatePacket());
-			Chunk chunk = worldData.world.getChunk(update.sectionX, update.sectionZ);
-			if (chunk != null) {
-				int sectionBlockX = update.sectionX * 16;
-				int sectionBlockY = update.sectionY * 16;
-				int sectionBlockZ = update.sectionZ * 16;
-				for (int i = 0; i < update.ids.length; i++) {
-					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + (update.xs[i] + chunk.chunkX * 16) + " " + (update.ys[i] + update.sectionY * 16) + " " + (update.zs[i] + chunk.chunkZ * 16) + " minecraft:blue_stained_glass"));
-					//					int blockWas = chunk.getBlockInChunk(update.xs[i], update.ys[i] + update.sectionY * 16 - chunk.min_y, update.zs[i]);
-					//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + (update.xs[i] + chunk.chunkX * 16) + " " + (update.ys[i] + update.sectionY * 16) + " " + (update.zs[i] + chunk.chunkZ * 16) + " " + BlockStates.getState(blockWas).format()));
+				worldData.world = worlds.getWorld(respawn.dimensionName);
+				if (worldData.world == null) {
+					World world = new World();
+					world.id = respawn.dimensionName;
+					System.out.println("Loaded world " + world.id);
+					world.dimensionType = respawn.dimensionType;
+					world.worlds = worlds;
 
-					if (chunk.getBlockInChunk(update.xs[i], update.ys[i] + sectionBlockY - chunk.min_y, update.zs[i]) != update.ids[i]) {
-						chunk.setBlockInChunk(update.xs[i], update.ys[i] + sectionBlockY - chunk.min_y, update.zs[i], update.ids[i]);
-						for (BlockChangeListener listener : blockChangeListeners) {
-							listener.blockChanged(sc, worldData.world, update.xs[i] + sectionBlockX, update.ys[i] + sectionBlockY, update.zs[i] + sectionBlockZ, update.ids[i]);
+					RegistryData registryData = sc.getData(RegistryData.class);
+					var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
+					NBTTagCompound type = null;
+					for (NBTTagCompound c : dimensionTypeList.value) {
+						if (c.get("name").asString().value.equals(world.dimensionType)) {
+							type = c.get("element").asCompound();
+							break;
 						}
 					}
+					world.height = type.get("height").asInt().value;
+					world.min_y = type.get("min_y").asInt().value;
 
+					worlds.worlds.put(world.id, world);
+
+					worldData.world = world;
 				}
+
+			} else if (p.id == chunkDataId) {
+				int x = ChunkDataPacket.readXCoordinate(p);
+				int z = ChunkDataPacket.readZCoordinate(p);
+				if (worldData.world != null) {
+					if (worldData.world.isChunkLoaded(x, z)) {
+						//					System.out.println("Chunk " + chunk.chunkX + " " + chunk.chunkZ + " already loaded");
+						worldData.world.addChunkLoader(worldData.world.getChunk(x, z), sc);
+					} else {
+						//					System.out.println("Making new Chunk");
+						ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
+						//					System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
+						Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldData.world.min_y, worldData.world.height, worldData.world);
+
+						ChunkDataDecoder.decode(c, chunk.data);
+
+						for (ChunkDataPacket.BlockEntity e : chunk.blockEntities) {
+							BlockEntity en = new BlockEntity();
+							en.pos = new Position(e.xinchunk + chunk.chunkX * 16, e.y, e.zinchunk + chunk.chunkZ * 16);
+							c.addBlockEntity(en);
+						}
+
+						worldData.world.addChunkLoader(c, sc);
+						for (ChunkFirstLoadListener listener : chunkLoadListeners) {
+							listener.chunkLoaded(sc, c);
+						}
+					}
+				}
+				AckChunksPacket ack = new AckChunksPacket();
+				if (sc.getData(ClientConfigData.class).viewDistance <= 1) {
+					ack.chunksPerTick = 0.01f;
+				}
+				sc.out.writePacket(ack);
+			} else if (p.id == unloadChunkId) {
+				UnloadChunkPacket chunkunload = p.convert(new UnloadChunkPacket());
+				Chunk chunk = worldData.world.getChunk(chunkunload.x, chunkunload.z);
+				if (chunk != null) {
+					worldData.world.unloadChunk(chunk, sc);
+					if (chunk.players.isEmpty()) {
+						worlds.chunkUnloaded(chunk.world);
+						for (ChunkUnloadListener listener : chunkUnloadListeners) {
+							listener.chunkUnloaded(sc, chunk);
+						}
+					}
+				}
+			} else if (p.id == explosionId) {
+				ExplosionPacket explosion = p.convert(new ExplosionPacket());
+				int air = BlockStates.getDefaultBlockState("minecraft:air").id();
+				if (explosion.blockInteraction != 0) {
+					for (Position pos : explosion.blocks) {
+						//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " minecraft:red_stained_glass"));
+						//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " " + BlockStates.getState(worldState.world.getBlock(pos.x, pos.y, pos.z)).format()));
+						if (worldData.world.getBlock(pos.x, pos.y, pos.z) != air) {
+							worldData.world.setBlock(pos.x, pos.y, pos.z, air);
+							for (BlockChangeListener listener : blockChangeListeners) {
+								listener.blockChanged(sc, worldData.world, pos.x, pos.y, pos.z, air);
+							}
+						}
+
+					}
+				}
+
+			} else if (p.id == blockUpdateId) {
+				BlockUpdatePacket update = p.convert(new BlockUpdatePacket());
+				//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " " + BlockStates.getState(worldState.world.getBlock(update.pos.x, update.pos.y, update.pos.z)).format()));
+				if (worldData.world.getBlock(update.pos.x, update.pos.y, update.pos.z) != update.state) {
+					worldData.world.setBlock(update.pos.x, update.pos.y, update.pos.z, update.state);
+					for (BlockChangeListener listener : blockChangeListeners) {
+						listener.blockChanged(sc, worldData.world, update.pos.x, update.pos.y, update.pos.z, update.state);
+					}
+				}
+				//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " minecraft:green_stained_glass"));
+
+			} else if (p.id == sectionUpdateId) {
+				SectionUpdatePacket update = p.convert(new SectionUpdatePacket());
+				Chunk chunk = worldData.world.getChunk(update.sectionX, update.sectionZ);
+				if (chunk != null) {
+					int sectionBlockX = update.sectionX * 16;
+					int sectionBlockY = update.sectionY * 16;
+					int sectionBlockZ = update.sectionZ * 16;
+					for (int i = 0; i < update.ids.length; i++) {
+						//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + (update.xs[i] + chunk.chunkX * 16) + " " + (update.ys[i] + update.sectionY * 16) + " " + (update.zs[i] + chunk.chunkZ * 16) + " minecraft:blue_stained_glass"));
+						//					int blockWas = chunk.getBlockInChunk(update.xs[i], update.ys[i] + update.sectionY * 16 - chunk.min_y, update.zs[i]);
+						//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + (update.xs[i] + chunk.chunkX * 16) + " " + (update.ys[i] + update.sectionY * 16) + " " + (update.zs[i] + chunk.chunkZ * 16) + " " + BlockStates.getState(blockWas).format()));
+
+						if (chunk.getBlockInChunk(update.xs[i], update.ys[i] + sectionBlockY - chunk.min_y, update.zs[i]) != update.ids[i]) {
+							chunk.setBlockInChunk(update.xs[i], update.ys[i] + sectionBlockY - chunk.min_y, update.zs[i], update.ids[i]);
+							for (BlockChangeListener listener : blockChangeListeners) {
+								listener.blockChanged(sc, worldData.world, update.xs[i] + sectionBlockX, update.ys[i] + sectionBlockY, update.zs[i] + sectionBlockZ, update.ids[i]);
+							}
+						}
+
+					}
+				}
+			} else if (p.id == blockEntityDataId) {
+				BlockEntityDataPacket update = p.convert(new BlockEntityDataPacket());
+				BlockEntity en = new BlockEntity();
+				en.data = update.nbt;
+				en.pos = update.pos;
+				en.type = update.type;
+				worldData.world.addBlockEntity(en);
+				//			System.out.println("Added " + en.pos + " " + en.type + " " + en.data);
 			}
-		} else if (p.id == blockEntityDataId) {
-			BlockEntityDataPacket update = p.convert(new BlockEntityDataPacket());
-			BlockEntity en = new BlockEntity();
-			en.data = update.nbt;
-			en.pos = update.pos;
-			en.type = update.type;
-			worldData.world.addBlockEntity(en);
-			//			System.out.println("Added " + en.pos + " " + en.type + " " + en.data);
 		}
 	}
 

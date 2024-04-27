@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import greenscripter.minecraft.ServerConnection;
+import greenscripter.minecraft.gameinfo.BlockStates;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.world.entity.Entity;
 
@@ -68,6 +69,13 @@ public class World {
 		}
 	}
 
+	private boolean[] extraTall = BlockStates.getBlockSet();
+	{
+		extraTall = BlockStates.addTagToBlockSet(extraTall, "minecraft:fences");
+		extraTall = BlockStates.addTagToBlockSet(extraTall, "minecraft:fence_gates");
+		extraTall = BlockStates.addTagToBlockSet(extraTall, "minecraft:walls");
+	}
+
 	public boolean isPassible(int x, int y, int z, boolean[] noCollides) {
 		int block = getBlock(x, y, z);
 		if (block == -2) {
@@ -80,7 +88,7 @@ public class World {
 	}
 
 	public boolean isPassiblePlayer(Position pos, boolean[] noCollides) {
-		return isPassible(pos.x, pos.y, pos.z, noCollides) && isPassible(pos.x, pos.y + 1, pos.z, noCollides);
+		return isPassible(pos.x, pos.y, pos.z, noCollides) && isPassible(pos.x, pos.y + 1, pos.z, noCollides) && !isPassible(pos.x, pos.y - 1, pos.z, extraTall);
 	}
 
 	public boolean isPassiblePlayer(int x, int y, int z, boolean[] noCollides) {

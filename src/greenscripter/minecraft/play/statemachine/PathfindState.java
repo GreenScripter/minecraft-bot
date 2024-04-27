@@ -3,6 +3,7 @@ package greenscripter.minecraft.play.statemachine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.play.data.PositionData;
@@ -23,11 +24,13 @@ public class PathfindState extends PlayerState {
 	public StateTickCallback<ServerConnection> travelComplete;
 	public IndicatorServer render;
 	public List<Integer> pathIds = new ArrayList<>();
+	ExecutorService exec;
 
 	public PathfindState(ExecutorService exec, PathFinder finder, Position start, Position target) {
 		this.finder = finder;
 		this.start = start;
 		this.target = target;
+		this.exec = exec;
 
 		var future = exec.submit(() -> {
 			followPath = finder.pathfind(start, target);
@@ -59,6 +62,7 @@ public class PathfindState extends PlayerState {
 		int index = 0;
 		Vector last;
 		boolean triedOver;
+		Future<?> repathing;
 
 		public PathFollowState() {
 			onTick(e -> {
@@ -66,23 +70,30 @@ public class PathfindState extends PlayerState {
 				if (last != null && !pos.pos.equals(last)) {
 					if (!triedOver) {
 						triedOver = true;
-						followPath = finder.pathfindOver(start, target);
-						if (followPath != null) {
-							followPath = finder.getPacketVectors(followPath, pos.pos);
-						}
-						index = 0;
-						last = null;
-						if (render != null) for (int id : pathIds) {
-							render.removeShape(id);
-						}
-						if (render != null) if (followPath != null && !followPath.isEmpty()) {
-							Vector pathPos = followPath.get(0);
-							for (int i = 1; i < followPath.size(); i++) {
-								pathIds.add(render.addLine(finder.world.id, pathPos, followPath.get(i), IndicatorServer.getColor(0, 255, 0, 255)));
-								pathPos = followPath.get(i);
+						repathing = exec.submit(() -> {
+							followPath = finder.pathfindOver(start, target);
+							if (followPath != null) {
+								followPath = finder.getPacketVectors(followPath, pos.pos);
 							}
-						}
+							index = 0;
+							last = null;
+							if (render != null) for (int id : pathIds) {
+								render.removeShape(id);
+							}
+							if (render != null) if (followPath != null && !followPath.isEmpty()) {
+								Vector pathPos = followPath.get(0);
+								for (int i = 1; i < followPath.size(); i++) {
+									pathIds.add(render.addLine(finder.world.id, pathPos, followPath.get(i), IndicatorServer.getColor(0, 255, 0, 255)));
+									pathPos = followPath.get(i);
+								}
+							}
+						});
+
 						return;
+					} else {
+						if (!repathing.isDone()) {
+							return;
+						}
 					}
 					if (travelFailed != null) travelFailed.tick(e);
 					e.pop();

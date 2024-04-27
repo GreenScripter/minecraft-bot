@@ -82,7 +82,7 @@ public class BlockStates {
 	public static boolean[] unionBlockSet(boolean[] set, boolean[] other) {
 		boolean[] union = getBlockSet();
 		for (int i = 0; i < union.length; i++) {
-			union[i] = set[i] | other[i];
+			union[i] = set[i] || other[i];
 		}
 		return union;
 	}

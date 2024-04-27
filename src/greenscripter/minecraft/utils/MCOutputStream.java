@@ -21,38 +21,38 @@ public class MCOutputStream extends DataOutputStream {
 		super(out);
 	}
 
-	public int writeVarInt(int value) throws IOException {
+	public void writeVarInt(int value) throws IOException {
 		if ((value & 0xFFFFFF80) == 0) {
 			this.write(value);
-			return 1;
+			return;
 		}
 
 		this.write(value & 0x7F | 0x80);
 		value >>>= 7;
 		if ((value & 0xFFFFFF80) == 0) {
 			this.write(value);
-			return 2;
+			return;
 		}
 
 		this.write(value & 0x7F | 0x80);
 		value >>>= 7;
 		if ((value & 0xFFFFFF80) == 0) {
 			this.write(value);
-			return 3;
+			return;
 		}
 
 		this.write(value & 0x7F | 0x80);
 		value >>>= 7;
 		if ((value & 0xFFFFFF80) == 0) {
 			this.write(value);
-			return 4;
+			return;
 		}
 
 		this.write(value & 0x7F | 0x80);
 		value >>>= 7;
 
 		this.write(value);
-		return 5;
+		return;
 	}
 
 	public static int varIntSize(int value) {
@@ -75,11 +75,11 @@ public class MCOutputStream extends DataOutputStream {
 		return 5;
 	}
 
-	public int writeString(String value) throws IOException {
+	public void writeString(String value) throws IOException {
 		byte[] b = value.getBytes(StandardCharsets.UTF_8);
-		int len = writeVarInt(b.length);
+		writeVarInt(b.length);
 		this.write(b);
-		return len + b.length;
+		//		return len + b.length;
 	}
 
 	public void writeUUID(UUID uuid) throws IOException {
@@ -87,26 +87,26 @@ public class MCOutputStream extends DataOutputStream {
 		writeLong(uuid.getLeastSignificantBits());
 	}
 
-	public synchronized int writePacket(int id, byte[] data) throws IOException {
+	public synchronized void writePacket(int id, byte[] data) throws IOException {
 		int extra = 0;
 		if (compressionThreshold >= 0) {
 			extra += varIntSize(0);
 		}
-		int len = writeVarInt(extra + varIntSize(id) + data.length);
+		writeVarInt(extra + varIntSize(id) + data.length);
 		if (compressionThreshold >= 0) {
 			writeVarInt(0);
 		}
-		len += writeVarInt(id);
+		writeVarInt(id);
 		this.write(data);
-		return len + data.length;
+		this.flush();
 	}
 
-	public int writePacket(Packet packet) throws IOException {
+	public void writePacket(Packet packet) throws IOException {
 		var bout = new ByteArrayOutputStream();
 		MCOutputStream pout = new MCOutputStream(bout);
 		packet.toBytes(pout);
 		byte[] data = bout.toByteArray();
-		return writePacket(packet.id(), data);
+		writePacket(packet.id(), data);
 	}
 
 	public void writeNBT(NBTTagCompound nbt) throws IOException {

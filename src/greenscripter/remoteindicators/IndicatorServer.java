@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,6 +19,7 @@ public class IndicatorServer {
 
 	Map<Integer, Shape> shapes = new ConcurrentHashMap<>();
 	List<DataOutputStream> clients = Collections.synchronizedList(new ArrayList<>());
+	LinkedBlockingQueue<Update> outgoingShapes = new LinkedBlockingQueue<>();
 	int shapeId = 0;
 	int version = 1;
 	ServerSocket ss;
@@ -66,6 +68,31 @@ public class IndicatorServer {
 				e.printStackTrace();
 			}
 		}).start();
+		new Thread(() -> {
+			try {
+				while (true) {
+					Update u = outgoingShapes.take();
+					synchronized (clients) {
+						for (DataOutputStream out : clients) {
+							if (u.delete) {
+								try {
+									out.writeInt(ID_REMOVE_SHAPE);
+									out.writeInt(u.id);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							} else if (u.s instanceof Line l) {
+								writeLine(out, u.id, l);
+							} else if (u.s instanceof Cuboid l) {
+								writeCuboid(out, u.id, l);
+							}
+						}
+					}
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 
 	public static int getColor(int r, int g, int b, int a) {
@@ -87,11 +114,8 @@ public class IndicatorServer {
 		l.depthTest = false;
 
 		shapes.put(id, l);
-		synchronized (clients) {
-			for (DataOutputStream out : clients) {
-				writeLine(out, id, l);
-			}
-		}
+
+		outgoingShapes.add(new Update(id, l, false));
 	}
 
 	private void writeLine(DataOutputStream out, int id, Line l) {
@@ -131,11 +155,7 @@ public class IndicatorServer {
 
 		shapes.put(id, l);
 
-		synchronized (clients) {
-			for (DataOutputStream out : clients) {
-				writeCuboid(out, id, l);
-			}
-		}
+		outgoingShapes.add(new Update(id, l, false));
 	}
 
 	private void writeCuboid(DataOutputStream out, int id, Cuboid l) {
@@ -161,15 +181,10 @@ public class IndicatorServer {
 
 	public void removeShape(int id) {
 		shapes.remove(id);
-		synchronized (clients) {
-			for (DataOutputStream out : clients) {
-				try {
-					out.writeInt(ID_REMOVE_SHAPE);
-					out.writeInt(id);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		outgoingShapes.add(new Update(id, null, true));
+	}
+
+	record Update(int id, Shape s, boolean delete) {
+
 	}
 }

@@ -1,7 +1,6 @@
 package greenscripter.minecraft.arun;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +18,6 @@ import greenscripter.minecraft.play.handler.WorldPlayHandler;
 import greenscripter.minecraft.utils.BlockBox;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.utils.Vector;
-import greenscripter.minecraft.world.Chunk;
 import greenscripter.minecraft.world.PathFinder;
 import greenscripter.minecraft.world.World;
 import greenscripter.remoteindicators.IndicatorServer;
@@ -40,43 +38,8 @@ public class TreeBot {
 		handlers.add(worldHandler);
 
 		TreeBotGlobalData global = new TreeBotGlobalData();
-
-		worldHandler.chunkLoadListeners.add((sc, c) -> {
-			boolean[][] checkMask = new boolean[16][16];
-			for (int y = c.height - 2; y >= 0; y--) {
-				for (int z = 0; z < 16; z++) {
-					for (int x = 0; x < 16; x++) {
-						if (checkMask[x][z]) {
-							continue;
-						}
-						int block = c.blocks[y][z][x];//c.getBlockInChunk(x, y, z);
-						if (logs[block] && leaves[c.blocks[y + 1][z][x]]) {
-							checkMask[x][z] = true;
-							Tree tree = new Tree(global.searched, c.world, new Position(x + c.chunkX * 16, y + c.min_y, z + c.chunkZ * 16));
-							tree.chunk = Chunk.mergeCoords(c.chunkX, c.chunkZ);
-							tree.dimension = c.world.id;
-							if (!tree.blocks.isEmpty()) {
-								global.trees.add(tree);
-								tree.renderId = render.addCuboid(c.world.id, new Vector(tree.boundingBox.pos1).add(-0.5, 0, -0.5), new Vector(tree.boundingBox.pos2.copy()).add(0.5, 1, 0.5), IndicatorServer.getColor(0, 255, 255, 255));
-							}
-						}
-					}
-				}
-			}
-		});
-
-		worldHandler.chunkUnloadListeners.add((sc, c) -> {
-			long chunk = Chunk.mergeCoords(c.chunkX, c.chunkZ);
-
-			global.trees.removeIf(t -> {
-				if (t.chunk == chunk) {
-					t.blocks.forEach(p -> global.searched.remove(p.getEncoded()));
-					render.removeShape(t.renderId);
-					return true;
-				}
-				return false;
-			});
-		});
+		
+		worldHandler.worlds.getSearchFor(null, logs, false, true).render = render;
 
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
 		controller.joinCallback = sc -> {
@@ -88,10 +51,16 @@ public class TreeBot {
 		long start = System.currentTimeMillis();
 		controller.localHandlers = sc -> {
 			TreeBotStateMachine state = new TreeBotStateMachine(sc);
+			//			state.profiling = true;
 			return List.of(new PlayTickHandler(sc2 -> {
 				if (System.currentTimeMillis() - start < 3000) return;
 				if (sc2.getData(WorldData.class).world == null) return;
+				//				long startTick = System.currentTimeMillis();
 				state.tick();
+				//				if (System.currentTimeMillis() - startTick > 10) {
+				//					state.printProfiler();
+				//				}
+
 			}));
 		};
 		controller.start();
@@ -105,8 +74,6 @@ public class TreeBot {
 
 	static class TreeBotGlobalData extends PlayData {
 
-		List<Tree> trees = new ArrayList<>();
-		Set<Long> searched = new HashSet<>();
 		ExecutorService pathfinding = Executors.newFixedThreadPool(4);
 	}
 
