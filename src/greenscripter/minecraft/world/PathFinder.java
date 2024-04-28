@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import greenscripter.minecraft.gameinfo.BlockStates;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
+import greenscripter.minecraft.utils.BlockBox;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.utils.Vector;
 
@@ -32,6 +33,7 @@ public class PathFinder {
 
 	public int pathRetainDistance = 10;
 	public int maxSpeed = 10;
+	public int restrictRadius = -1;
 
 	public boolean infiniteVClipAllowed = true;
 	public long timeout = 1000;
@@ -41,7 +43,7 @@ public class PathFinder {
 		Position previous = start;
 		Position at = start.copy();
 		List<Vector> path = new ArrayList<>();
-		while (world.isPassiblePlayer(at.add(0, -1, 0), noCollides)) {
+		while (isPassible(at.add(0, -1, 0))) {
 			if (previous.y - at.y >= maxSpeed) {
 				previous = at;
 				at = at.copy();
@@ -152,7 +154,7 @@ public class PathFinder {
 		for (Position p : blocks) {
 			path.add(new Vector(p));
 		}
-		mergeStraightLines(path, 10);
+		mergeStraightLines(path, maxSpeed);
 		return path;
 
 	}
@@ -202,6 +204,7 @@ public class PathFinder {
 		active.add(startNode.pos);
 
 		long start = System.currentTimeMillis();
+		BlockBox box = new BlockBox(startBlock, endBlock).expand(restrictRadius);
 
 		List<AStarNode> next = new ArrayList<>();
 		loop: while (nodes.size() > 0) {
@@ -211,6 +214,9 @@ public class PathFinder {
 			AStarNode current = nodes.extractMax();
 			active.remove(current.pos);
 			next.clear();
+			if (restrictRadius >= 0 && !box.contains(current.pos)) {
+				continue;
+			}
 			aStarNeighbors(current, next, endPoints);
 
 			for (AStarNode node : next) {
@@ -269,18 +275,26 @@ public class PathFinder {
 		}
 	}
 
+	public boolean isPassible(Position p) {
+		return world.isPassiblePlayer(p.x, p.y, p.z, noCollides);
+	}
+
+	public boolean isPassible(int x, int y, int z) {
+		return world.isPassiblePlayer(x, y, z, noCollides);
+	}
+
 	public void aStarNeighbors(AStarNode parent, List<AStarNode> blocks, Set<Long> endpoint) {
 		Position current = parent.pos;
 		double basePriority = 1;
-		if (world.isPassiblePlayer(current.x + 1, current.y, current.z, noCollides)) blocks.add(new AStarNode(new Position(current.x + 1, current.y, current.z), parent, -basePriority));
+		if (isPassible(current.x + 1, current.y, current.z)) blocks.add(new AStarNode(new Position(current.x + 1, current.y, current.z), parent, -basePriority));
 		//		if ((basePriority = world.getState(current.x, current.y + 1, current.z)) >= 1) blocks.add(new AStarNode(new BlockPos(current.x, current.y + 1, current.z), parent, -basePriority));
-		if (world.isPassiblePlayer(current.x, current.y, current.z + 1, noCollides)) blocks.add(new AStarNode(new Position(current.x, current.y, current.z + 1), parent, -basePriority));
-		if (world.isPassiblePlayer(current.x - 1, current.y, current.z, noCollides)) blocks.add(new AStarNode(new Position(current.x - 1, current.y, current.z), parent, -basePriority));
+		if (isPassible(current.x, current.y, current.z + 1)) blocks.add(new AStarNode(new Position(current.x, current.y, current.z + 1), parent, -basePriority));
+		if (isPassible(current.x - 1, current.y, current.z)) blocks.add(new AStarNode(new Position(current.x - 1, current.y, current.z), parent, -basePriority));
 		//		if ((basePriority = world.getState(current.x, current.y - 1, current.z)) >= 1) blocks.add(new AStarNode(new BlockPos(current.x, current.y - 1, current.z), parent, -basePriority));
-		if (world.isPassiblePlayer(current.x, current.y, current.z - 1, noCollides)) blocks.add(new AStarNode(new Position(current.x, current.y, current.z - 1), parent, -basePriority));
+		if (isPassible(current.x, current.y, current.z - 1)) blocks.add(new AStarNode(new Position(current.x, current.y, current.z - 1), parent, -basePriority));
 
 		for (int i = -maxSpeed; i <= maxSpeed; i += 1) {
-			if (world.isPassiblePlayer(current.x, current.y + i, current.z, noCollides)) {
+			if (isPassible(current.x, current.y + i, current.z)) {
 				basePriority = 1;
 				basePriority -= Math.abs(i);
 				AStarNode newNode = new AStarNode(new Position(current.x, current.y + i, current.z), parent, -basePriority);
@@ -293,7 +307,7 @@ public class PathFinder {
 		}
 
 		for (int i = 0; i <= maxSpeed; i += 1) {
-			if (world.isPassiblePlayer(current.x + i, current.y, current.z, noCollides)) {
+			if (isPassible(current.x + i, current.y, current.z)) {
 				if (Math.abs(i) == maxSpeed) {
 					basePriority = 1;
 					basePriority -= Math.abs(i);
@@ -308,7 +322,7 @@ public class PathFinder {
 			}
 		}
 		for (int i = 0; i <= maxSpeed; i += 1) {
-			if (world.isPassiblePlayer(current.x, current.y, current.z + i, noCollides)) {
+			if (isPassible(current.x, current.y, current.z + i)) {
 				if (Math.abs(i) == maxSpeed) {
 					basePriority = 1;
 					basePriority -= Math.abs(i);
@@ -323,7 +337,7 @@ public class PathFinder {
 			}
 		}
 		for (int i = 0; i <= maxSpeed; i += 1) {
-			if (world.isPassiblePlayer(current.x - i, current.y, current.z, noCollides)) {
+			if (isPassible(current.x - i, current.y, current.z)) {
 				if (Math.abs(i) == maxSpeed) {
 					basePriority = 1;
 					basePriority -= Math.abs(i);
@@ -338,7 +352,7 @@ public class PathFinder {
 			}
 		}
 		for (int i = 0; i <= maxSpeed; i += 1) {
-			if (world.isPassiblePlayer(current.x, current.y, current.z - i, noCollides)) {
+			if (isPassible(current.x, current.y, current.z - i)) {
 				if (Math.abs(i) == maxSpeed) {
 					basePriority = 1;
 					basePriority -= Math.abs(i);
@@ -354,7 +368,7 @@ public class PathFinder {
 		}
 		if (infiniteVClipAllowed && endpoint.contains(((long) current.x << 32) + current.z)) {
 			for (int i = -66; i < 323; i += 1) {
-				if (world.isPassiblePlayer(current.x, i, current.z, noCollides)) {
+				if (isPassible(current.x, i, current.z)) {
 					basePriority = 1;
 					basePriority -= Math.abs(current.y - i);
 					AStarNode newNode = new AStarNode(new Position(current.x, i, current.z), parent, -basePriority);
@@ -545,19 +559,19 @@ public class PathFinder {
 
 	public Position findDestinations(Position target, boolean grounded) {
 		target = target.copy();
-		if (world.isPassiblePlayer(target, noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+		if (isPassible(target) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
 			return target;
 		}
-		if (world.isPassiblePlayer(target.add(0, 1, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+		if (isPassible(target.add(0, 1, 0)) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
 			return target;
 		}
-		if (world.isPassiblePlayer(target.add(0, -2, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+		if (isPassible(target.add(0, -2, 0)) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
 			return target;
 		}
-		if (world.isPassiblePlayer(target.add(0, -1, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+		if (isPassible(target.add(0, -1, 0)) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
 			return target;
 		}
-		if (world.isPassiblePlayer(target.add(0, -1, 0), noCollides) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
+		if (isPassible(target.add(0, -1, 0)) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides))) {
 			return target;
 		}
 		target.add(0, 3, 0);
@@ -565,7 +579,7 @@ public class PathFinder {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
 					Position next = target.copy().add(i, j, k);
-					if (world.isPassiblePlayer(next, noCollides) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
+					if (isPassible(next) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
 						return next;
 					}
 				}
@@ -577,7 +591,7 @@ public class PathFinder {
 					if (i * i + (j + 1.5) * (j + 1.5) + k * k > 25) continue;
 					if (Math.abs(i) <= 1 && Math.abs(j) <= 1 && Math.abs(k) <= 1) continue;
 					Position next = target.copy().add(i, j, k);
-					if (world.isPassiblePlayer(next, noCollides) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
+					if (isPassible(next) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
 						return next;
 					}
 				}
@@ -589,7 +603,7 @@ public class PathFinder {
 					if (i * i + (j + 1.5) * (j + 1.5) + k * k > 25) continue;
 					if (Math.abs(i) <= 2 && Math.abs(j) <= 2 && Math.abs(k) <= 2) continue;
 					Position next = target.copy().add(i, j, k);
-					if (world.isPassiblePlayer(next, noCollides) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
+					if (isPassible(next) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides))) {
 						return next;
 					}
 				}
@@ -607,7 +621,7 @@ public class PathFinder {
 		//		int block = world.getBlock(first.x, first.y, first.z);
 		//		System.out.println(first+" "+start);
 		//		System.out.println(block + " " + BlockStates.getState(block));
-		if (world.isPassiblePlayer(first.x, first.y, first.z, noCollides)) {
+		if (isPassible(first.x, first.y, first.z)) {
 			return first;
 		}
 
@@ -617,7 +631,7 @@ public class PathFinder {
 					for (int z = -distance; z <= distance; z++) {
 						if (Math.abs(x) == distance || Math.abs(y) == distance || Math.abs(z) == distance) {
 							if (start.squaredDistanceTo(first.x + x + 0.5, first.y + y, first.z + z + 0.5) <= min) {
-								if (world.isPassiblePlayer(first.x + x, first.y + y, first.z + z, noCollides)) {
+								if (isPassible(first.x + x, first.y + y, first.z + z)) {
 									//									move.setPosition(start);
 									//									if (!move.isWrongMove(new Vector(first.x + x + 0.5, first.y + y, first.z + z + 0.5))) {
 									Position pos = new Position(first.x + x, first.y + y, first.z + z);
@@ -634,7 +648,7 @@ public class PathFinder {
 		if (minPos == null) {
 			for (int y = -66; y < 323; y++) {
 				if (start.squaredDistanceTo(first.x, y, first.z) <= min) {
-					if (world.isPassiblePlayer(first.x, y, first.z, noCollides)) {
+					if (isPassible(first.x, y, first.z)) {
 						//						move.setPosition(start);
 						//						if (!move.isWrongMove(new Vector(first.x + 0.5, y, first.z + 0.5))) {
 						Position pos = new Position(first.x, y, first.z);

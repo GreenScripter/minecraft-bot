@@ -1,0 +1,87 @@
+package greenscripter.minecraft.arun;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import greenscripter.minecraft.AsyncSwarmController;
+import greenscripter.minecraft.ServerConnection;
+import greenscripter.minecraft.gameinfo.BlockStates;
+import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
+import greenscripter.minecraft.play.data.PlayData;
+import greenscripter.minecraft.play.data.WorldData;
+import greenscripter.minecraft.play.handler.PlayHandler;
+import greenscripter.minecraft.play.handler.PlayTickHandler;
+import greenscripter.minecraft.play.handler.WorldPlayHandler;
+import greenscripter.minecraft.utils.BlockBox;
+import greenscripter.minecraft.utils.Vector;
+import greenscripter.minecraft.world.PathFinder;
+import greenscripter.minecraft.world.TunnelPathFinder;
+import greenscripter.remoteindicators.IndicatorServer;
+
+public class GearBot {
+
+	static boolean[] searchBlocks = BlockStates.addToBlockSet(BlockStates.addToBlockSet(BlockStates.getBlockSet(), "minecraft:iron_ore"), "minecraft:ancient_debris");
+
+	public static IndicatorServer render;
+
+	public static void main(String[] args) throws Exception {
+		render = new IndicatorServer(24464);
+
+		List<PlayHandler> handlers = ServerConnection.getStandardHandlers();
+		WorldPlayHandler worldHandler = new WorldPlayHandler();
+		handlers.removeIf(p -> p instanceof WorldPlayHandler);
+		handlers.add(worldHandler);
+
+		worldHandler.worlds.getSearchFor(null, searchBlocks, false, true).render = render;
+		
+		GearBotGlobalData global = new GearBotGlobalData();
+		
+		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
+		controller.joinCallback = sc -> {
+			if (sc.id % 10 == 0) {
+				sc.sendPacket(new ClientInfoPacket(10));
+			} else {
+				sc.sendPacket(new ClientInfoPacket(2));
+			}
+			sc.setData(GearBotGlobalData.class, global);
+			sc.setData(GearBotLocalData.class, new GearBotLocalData());
+		};
+
+		long start = System.currentTimeMillis();
+		controller.localHandlers = sc -> {
+			GearBotStateMachine machine = new GearBotStateMachine(sc);
+			return List.of(new PlayTickHandler(sc2 -> {
+				if (System.currentTimeMillis() - start < 3000) return;
+				if (sc2.getData(WorldData.class).world == null) return;
+				machine.tick();
+			}));
+		};
+		controller.start();
+		controller.connect(100, 40);
+
+	}
+
+	public static void updateBox(int id, BlockBox box, String dimension, int color) {
+		render.setCuboid(id, dimension, new Vector(box.pos1).add(-0.5, 0, -0.5), new Vector(box.pos2).add(0.5, 1, 0.5), color);
+	}
+
+	static class GearBotGlobalData extends PlayData {
+
+		ExecutorService pathfinding = Executors.newFixedThreadPool(4);
+	}
+
+	static class GearBotLocalData extends PlayData {
+
+		PathFinder pathfinder = new PathFinder();
+		TunnelPathFinder tunneler = new TunnelPathFinder();
+		{
+			pathfinder.infiniteVClipAllowed = false;
+			pathfinder.timeout = 200;
+			
+			tunneler.infiniteVClipAllowed = false;
+			tunneler.timeout = 400;
+		}
+
+	}
+}

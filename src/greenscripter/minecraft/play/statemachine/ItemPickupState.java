@@ -27,10 +27,10 @@ public class ItemPickupState extends PlayerState {
 	public static final int ITEM_TYPE = Registries.registries.get("minecraft:entity_type").get("minecraft:item");
 
 	public ItemPickupState(ExecutorService exec, PathFinder finder, BlockBox region) {
-		this(exec, finder, null, region);
+		this(exec, finder, null, region, false);
 	}
 
-	public ItemPickupState(ExecutorService exec, PathFinder finder, IndicatorServer render, BlockBox region) {
+	public ItemPickupState(ExecutorService exec, PathFinder finder, IndicatorServer render, BlockBox region, boolean tunneling) {
 		this.render = render;
 		this.exec = exec;
 		this.finder = finder;
@@ -70,10 +70,17 @@ public class ItemPickupState extends PlayerState {
 				}
 			}
 			if (data.world.isPassiblePlayer(target, finder.noCollides)) {
-				PathfindState pathfind = new PathfindState(exec, finder, new Position(pos.pos), target);
-				pathfind.render = render;
-				pathfind.then(new PickupWait(entity.entityId));
-				e.push(pathfind);
+				if (!tunneling) {
+					PathfindState pathfind = new PathfindState(exec, finder, new Position(pos.pos), target);
+					pathfind.render = render;
+					pathfind.then(new PickupWait(entity.entityId));
+					e.push(pathfind);
+				} else {
+					TunnelState pathfind = new TunnelState(exec, finder, new Position(pos.pos), target);
+					pathfind.render = render;
+					pathfind.then(new PickupWait(entity.entityId));
+					e.push(pathfind);
+				}
 			}
 		});
 		onFinished(e -> {

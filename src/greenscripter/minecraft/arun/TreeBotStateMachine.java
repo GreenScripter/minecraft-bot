@@ -137,7 +137,7 @@ class BreakTreeState extends PlayerState {
 			TreeBotGlobalData global = e.value.getData(TreeBotGlobalData.class);
 			TreeBotLocalData local = e.value.getData(TreeBotLocalData.class);
 			PlayerState wait = new WaitState(100);
-			wait.then(new ItemPickupState(global.pathfinding, local.pathfinder, TreeBot.render, tree.boundingBox.expand(5)));
+			wait.then(new ItemPickupState(global.pathfinding, local.pathfinder, TreeBot.render, tree.boundingBox.expand(5), false));
 			e.push(wait);
 		});
 	}
