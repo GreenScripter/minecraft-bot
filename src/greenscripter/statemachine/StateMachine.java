@@ -74,6 +74,13 @@ public class StateMachine<T> {
 	}
 
 	public boolean tick() {
+		for (State<?> s : stack) {
+			s.ticksThisTick = 0;
+		}
+		return tickInternal();
+	}
+
+	public boolean tickInternal() {
 		long start = System.currentTimeMillis();
 		State<T> state = getState();
 		if (state != null) {
@@ -91,7 +98,9 @@ public class StateMachine<T> {
 			}
 
 			if (state != null) try {
-				state.tick();
+				if (state.maxTicksPerTick <= 0 || state.maxTicksPerTick > state.ticksThisTick++) {
+					state.tick();
+				}
 			} catch (ThrownReturn e) {
 			}
 		}
@@ -146,7 +155,7 @@ public class StateMachine<T> {
 
 	public void swapToNow(State<T> state) throws ThrownReturn {
 		swapToPrepare(state);
-		if (!profiling) tick();
+		if (!profiling) tickInternal();
 		throw new ThrownReturn("swapped");
 	}
 
@@ -172,7 +181,7 @@ public class StateMachine<T> {
 
 	public void pushNow(State<T> state) throws ThrownReturn {
 		pushPrepare(state);
-		if (!profiling) tick();
+		if (!profiling) tickInternal();
 		throw new ThrownReturn("pushed");
 	}
 
@@ -201,7 +210,7 @@ public class StateMachine<T> {
 
 	public void popNow() throws ThrownReturn {
 		popPrepare();
-		if (!profiling) tick();
+		if (!profiling) tickInternal();
 		throw new ThrownReturn("popped");
 	}
 

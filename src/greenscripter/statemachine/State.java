@@ -17,6 +17,9 @@ public class State<T> {
 	List<StateChangeCallback<T>> transferFromCallbacks = new ArrayList<>();
 	List<StateChangeCallback<T>> cleanupCallbacks = new ArrayList<>();
 	List<StateChangeCallback<T>> finishedCallbacks = new ArrayList<>();
+	
+	public int maxTicksPerTick = 0;
+	int ticksThisTick = 0;
 
 	public State() {
 
