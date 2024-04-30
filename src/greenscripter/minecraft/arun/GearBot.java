@@ -21,8 +21,11 @@ import greenscripter.remoteindicators.IndicatorServer;
 
 public class GearBot {
 
-	static boolean[] searchBlocks = BlockStates.addToBlockSet(BlockStates.addToBlockSet(BlockStates.getBlockSet(), "minecraft:iron_ore"), "minecraft:ancient_debris");
-
+	static boolean[] ironOre = BlockStates.addToBlockSet(BlockStates.getBlockSet(), "minecraft:iron_ore");
+	static boolean[] logs = BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:logs");
+	static boolean[] leaves = BlockStates.addTagToBlockSet(BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:leaves"), "minecraft:wart_blocks");
+	static boolean[] diamonds = BlockStates.addToBlockSet(BlockStates.addToBlockSet(BlockStates.getBlockSet(), "minecraft:diamond_ore"), "minecraft:deepslate_diamond_ore");
+	
 	public static IndicatorServer render;
 
 	public static void main(String[] args) throws Exception {
@@ -33,10 +36,10 @@ public class GearBot {
 		handlers.removeIf(p -> p instanceof WorldPlayHandler);
 		handlers.add(worldHandler);
 
-		worldHandler.worlds.getSearchFor(null, searchBlocks, false, true).render = render;
-		
+		worldHandler.worlds.getSearchFor(null, ironOre, false, true).render = render;
+
 		GearBotGlobalData global = new GearBotGlobalData();
-		
+
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
 		controller.joinCallback = sc -> {
 			if (sc.id % 10 == 0) {
@@ -78,7 +81,7 @@ public class GearBot {
 		{
 			pathfinder.infiniteVClipAllowed = false;
 			pathfinder.timeout = 200;
-			
+
 			tunneler.infiniteVClipAllowed = false;
 			tunneler.timeout = 400;
 		}

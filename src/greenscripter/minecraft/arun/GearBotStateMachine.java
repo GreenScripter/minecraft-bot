@@ -25,19 +25,19 @@ public class GearBotStateMachine extends PlayerMachine {
 
 	public GearBotStateMachine(ServerConnection t) {
 		super(t);
-		setState(new FindBlocksState());
+		setState(new FindBlocksState(GearBot.ironOre));
 	}
 
 }
 
 class FindBlocksState extends PlayerState {
 
-	public FindBlocksState() {
+	public FindBlocksState(boolean[] targets) {
 		onTick(e -> {
 			PositionData pos = e.value.getData(PositionData.class);
 			WorldData world = e.value.getData(WorldData.class);
 
-			var searcher = world.world.worlds.getSearchFor(null, GearBot.searchBlocks, false, true);
+			var searcher = world.world.worlds.getSearchFor(null, targets, false, true);
 			synchronized (searcher.results) {
 				var close = searcher.results.stream().filter(t -> t.dimension.equals(world.world.id)).min(Comparator.comparingDouble(t -> pos.pos.squaredDistanceTo(t.blocks.get(0).x, t.blocks.get(0).y, t.blocks.get(0).z)));
 				if (close.isPresent()) {
@@ -57,6 +57,7 @@ class BreakBlocksState extends PlayerState {
 	Position target;
 
 	public BreakBlocksState(SearchResult tree) {
+		this.maxTicksPerTick = 3;
 		onInit(e -> {
 			WorldData world = e.value.getData(WorldData.class);
 			GearBotLocalData local = e.value.getData(GearBotLocalData.class);
