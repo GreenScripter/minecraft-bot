@@ -1,5 +1,7 @@
 package greenscripter.minecraft.play.inventory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import greenscripter.minecraft.gameinfo.Registries;
@@ -44,14 +46,22 @@ public class Slot {
 		}
 	}
 
+	public static Map<Integer, String> itemRegistry = Registries.registriesFromIds.get("minecraft:item");
+	public static Map<Integer, ItemInfo> itemInfo = new HashMap<>();
+	static {
+		for (var id : itemRegistry.entrySet()) {
+			itemInfo.put(id.getKey(), Registries.itemInfo.get(id.getValue()));
+		}
+	}
+
 	public String getItemId() {
 		if (!present) return null;
-		return Registries.registriesFromIds.get("minecraft:item").get(itemId);
+		return itemRegistry.get(itemId);
 	}
 
 	public ItemInfo getItemInfo() {
 		if (!present) return null;
-		return Registries.itemInfo.get(getItemId());
+		return itemInfo.get(itemId);
 	}
 
 	public boolean equivalent(Slot other) {
