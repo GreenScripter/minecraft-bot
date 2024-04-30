@@ -114,11 +114,17 @@ public class TunnelState extends PlayerState {
 				if (!wd.world.isPassiblePlayer(new Position(followPath.get(index)), BlockStates.noCollideIds)) {
 					Position at = new Position(followPath.get(index));
 					if (!wd.world.isPassible(at.x, at.y, at.z, BlockStates.noCollideIds)) {
-						if (broke.add(at.getEncoded())) e.pushNow(new BreakBlockState(at.copy()));
+						if (wd.world.getBlock(at.x, at.y, at.z) < 0) return;
+						if (broke.add(at.getEncoded())) {
+							e.pushNow(new BreakBlockState(at.copy()));
+						}
 					}
 					at.add(0, 1, 0);
 					if (!wd.world.isPassible(at.x, at.y, at.z, BlockStates.noCollideIds)) {
-						if (broke.add(at.getEncoded())) e.pushNow(new BreakBlockState(at.copy()));
+						if (wd.world.getBlock(at.x, at.y, at.z) < 0) return;
+						if (broke.add(at.getEncoded())) {
+							e.pushNow(new BreakBlockState(at.copy()));
+						}
 					}
 					return;
 				}

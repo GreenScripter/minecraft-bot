@@ -38,7 +38,6 @@ public class TunnelPathFinder extends PathFinder {
 		BlockStates.addToBlockSet(fast, "minecraft:netherrack");
 	}
 
-
 	public TunnelPathFinder() {
 		maxSpeed = 1;
 		restrictRadius = 10;
@@ -105,13 +104,16 @@ public class TunnelPathFinder extends PathFinder {
 	public void aStarNeighbors(AStarNode parent, List<AStarNode> blocks, Set<Long> endpoint) {
 		super.aStarNeighbors(parent, add, endpoint);
 		for (AStarNode n : add) {
+			if (n.parent != null) {
+				n.extraCost += 0.9;
+			}
 			int block = world.getBlock(n.pos);
 			if (block > 0 && !fast[block]) {
-				n.extraCost += 1;
+				n.cost += 1;
 			}
 			block = world.getBlock(n.pos.x, n.pos.y + 1, n.pos.z);
 			if (block > 0 && !fast[block]) {
-				n.extraCost += 1;
+				n.cost += 1;
 			}
 			blocks.add(n);
 		}
