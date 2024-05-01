@@ -13,6 +13,7 @@ import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.PlayTickHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
+import greenscripter.minecraft.play.other.KillAuraHandler;
 import greenscripter.minecraft.utils.BlockBox;
 import greenscripter.minecraft.utils.Vector;
 import greenscripter.minecraft.world.PathFinder;
@@ -35,6 +36,7 @@ public class GearBot {
 		WorldPlayHandler worldHandler = new WorldPlayHandler();
 		handlers.removeIf(p -> p instanceof WorldPlayHandler);
 		handlers.add(worldHandler);
+		handlers.add(new KillAuraHandler());
 
 		worldHandler.worlds.getSearchFor(null, ironOre, false, true).render = render;
 
