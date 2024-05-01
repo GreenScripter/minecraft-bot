@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.utils.IndexIterator;
@@ -129,6 +130,15 @@ public class OpenedScreen {
 		return count;
 	}
 
+	public static int countItems(Predicate<Slot> type, Iterator<Slot> slots) {
+		int count = 0;
+		while (slots.hasNext()) {
+			Slot slot = slots.next();
+			if (slot.present && type.test(slot)) count += slot.itemCount;
+		}
+		return count;
+	}
+
 	public static int countSpaceForItem(int type, Iterator<Slot> slots) {
 		int count = 0;
 		while (slots.hasNext()) {
@@ -169,6 +179,15 @@ public class OpenedScreen {
 		while (slots.hasNext()) {
 			Slot slot = slots.next();
 			if (slot.equivalent(type)) count++;
+		}
+		return count;
+	}
+
+	public static int countSlotsMatching(Predicate<Slot> type, Iterator<Slot> slots) {
+		int count = 0;
+		while (slots.hasNext()) {
+			Slot slot = slots.next();
+			if (type.test(slot)) count++;
 		}
 		return count;
 	}
@@ -232,6 +251,15 @@ public class OpenedScreen {
 		while (slots.hasNext()) {
 			Slot slot = slots.next();
 			if (slot.equivalent(type)) result.add(slot);
+		}
+		return result;
+	}
+
+	public static List<Slot> getSlotsMatching(Predicate<Slot> type, Iterator<Slot> slots) {
+		List<Slot> result = new ArrayList<>();
+		while (slots.hasNext()) {
+			Slot slot = slots.next();
+			if (type.test(slot)) result.add(slot);
 		}
 		return result;
 	}
