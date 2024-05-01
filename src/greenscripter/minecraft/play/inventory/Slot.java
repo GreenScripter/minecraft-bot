@@ -47,10 +47,12 @@ public class Slot {
 	}
 
 	public static Map<Integer, String> itemRegistry = Registries.registriesFromIds.get("minecraft:item");
+	public static Map<String, Integer> reverseItemRegistry = new HashMap<>();
 	public static Map<Integer, ItemInfo> itemInfo = new HashMap<>();
 	static {
 		for (var id : itemRegistry.entrySet()) {
 			itemInfo.put(id.getKey(), Registries.itemInfo.get(id.getValue()));
+			reverseItemRegistry.put(id.getValue(), id.getKey());
 		}
 	}
 

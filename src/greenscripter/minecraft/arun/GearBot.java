@@ -38,7 +38,7 @@ public class GearBot {
 		handlers.add(worldHandler);
 		handlers.add(new KillAuraHandler());
 
-		worldHandler.worlds.getSearchFor(null, ironOre, false, true).render = render;
+		worldHandler.worlds.getSearchFor(null, ironOre, false, true);//.render = render;
 
 		GearBotGlobalData global = new GearBotGlobalData();
 

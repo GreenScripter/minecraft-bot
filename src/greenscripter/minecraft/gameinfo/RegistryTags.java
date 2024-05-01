@@ -16,7 +16,7 @@ import com.google.gson.JsonParser;
 public class RegistryTags {
 
 	public static void main(String[] args) throws InterruptedException {
-		System.out.println(blockTags.get("minecraft:base_stone_overworld"));
+		System.out.println(itemTags.get("minecraft:logs"));
 		Registries.registries.getClass();
 		BlockStates.blockStates.getClass();
 		//		System.out.println(BlockStates.blockStates.entrySet().stream().max(Comparator.comparingInt(e->e.getValue().size())));
