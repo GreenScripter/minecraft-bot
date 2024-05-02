@@ -151,7 +151,7 @@ public class BreakBlocksState extends PlayerState {
 			GearBotGlobalData global = e.value.getData(GearBotGlobalData.class);
 			GearBotLocalData local = e.value.getData(GearBotLocalData.class);
 			PlayerState wait = new WaitState(100);
-			wait.then(new ItemPickupState(global.pathfinding, local.tunneler, TreeBot.render, result.boundingBox.expand(5), true));
+			wait.then(new ItemPickupState(global.pathfinding, tunneling ? local.tunneler : local.pathfinder, TreeBot.render, result.boundingBox.expand(5), tunneling));
 			e.push(wait);
 		});
 	}
