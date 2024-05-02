@@ -57,13 +57,13 @@ public class GearBot {
 		controller.localHandlers = sc -> {
 			GearBotStateMachine machine = new GearBotStateMachine(sc);
 			return List.of(new PlayTickHandler(sc2 -> {
-				if (System.currentTimeMillis() - start < 3000) return;
+				if (System.currentTimeMillis() - start < 5000) return;
 				if (sc2.getData(WorldData.class).world == null) return;
 				machine.tick();
 			}));
 		};
 		controller.start();
-		controller.connect(100, 40);
+		controller.connect(1, 40);
 
 	}
 
