@@ -32,8 +32,10 @@ public class Worlds {
 								for (int x = 0; x < 16; x++) {
 									int block = c.blocks[y][z][x];//c.getBlockInChunk(x, y, z);
 									if (check[block]) {
-										for (var search : searches) {
-											search.addBlock(c.world, x + c.chunkX * 16, y + c.min_y, z + c.chunkZ * 16, block);
+										synchronized (searches) {
+											for (var search : searches) {
+												search.addBlock(c.world, x + c.chunkX * 16, y + c.min_y, z + c.chunkZ * 16, block);
+											}
 										}
 									}
 								}
@@ -41,8 +43,10 @@ public class Worlds {
 						}
 						synchronized (worlds) {
 							if (c.players.isEmpty()) {
-								for (var search : searches) {
-									search.clearChunk(c);
+								synchronized (searches) {
+									for (var search : searches) {
+										search.clearChunk(c);
+									}
 								}
 							}
 						}
@@ -68,43 +72,51 @@ public class Worlds {
 	}
 
 	public synchronized WorldSearch getSearchFor(ServerConnection sc, boolean[] states, boolean active, boolean searchNow) {
-		for (var s : searches) {
-			if (Arrays.equals(s.searchTargets, states)) {
-				s.using.add(sc);
-				return s;
+		synchronized (searches) {
+
+			for (var s : searches) {
+				if (Arrays.equals(s.searchTargets, states)) {
+					s.using.add(sc);
+					return s;
+				}
 			}
+			WorldSearch search = new WorldSearch(this, states, active);
+			search.using.add(sc);
+			searches.add(search);
+			if (searchNow) search.performInitialSearch();
+			search.searchNew = false;
+			check = BlockStates.unionBlockSet(check, search.searchTargets);
+			search.activate();
+			return search;
 		}
-		WorldSearch search = new WorldSearch(this, states, active);
-		search.using.add(sc);
-		searches.add(search);
-		if (searchNow) search.performInitialSearch();
-		search.searchNew = false;
-		check = BlockStates.unionBlockSet(check, search.searchTargets);
-		search.activate();
-		return search;
 	}
 
 	public synchronized void stopSearchingFor(ServerConnection sc, boolean[] states) {
-		for (var s : searches) {
-			if (Arrays.equals(s.searchTargets, states)) {
-				s.using.remove(sc);
-				if (s.using.isEmpty()) {
-					s.deactivate();
-					searches.remove(s);
-					updateSuperSearch();
-					return;
+		synchronized (searches) {
+			for (var s : searches) {
+				if (Arrays.equals(s.searchTargets, states)) {
+					s.using.remove(sc);
+					if (s.using.isEmpty()) {
+						s.deactivate();
+						searches.remove(s);
+						updateSuperSearch();
+						return;
+					}
 				}
 			}
 		}
 	}
 
 	public synchronized void stopSearchingFor(ServerConnection sc, WorldSearch s) {
-		s.using.remove(sc);
-		if (s.using.isEmpty()) {
-			s.deactivate();
-			searches.remove(s);
-			updateSuperSearch();
-			return;
+		synchronized (searches) {
+
+			s.using.remove(sc);
+			if (s.using.isEmpty()) {
+				s.deactivate();
+				searches.remove(s);
+				updateSuperSearch();
+				return;
+			}
 		}
 	}
 
