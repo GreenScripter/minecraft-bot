@@ -26,7 +26,7 @@ public class SetContainerContentPacket extends Packet {
 
 	public void fromBytes(MCInputStream in) throws IOException {
 		windowId = in.read();
-		stateId = in.read();
+		stateId = in.readVarInt();
 		int length = in.readVarInt();
 		slots = new Slot[length];
 		for (int i = 0; i < length; i++) {
