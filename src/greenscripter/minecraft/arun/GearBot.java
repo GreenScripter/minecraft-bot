@@ -71,12 +71,12 @@ public class GearBot {
 		render.setCuboid(id, dimension, new Vector(box.pos1).add(-0.5, 0, -0.5), new Vector(box.pos2).add(0.5, 1, 0.5), color);
 	}
 
-	static class GearBotGlobalData extends PlayData {
+	static class GearBotGlobalData implements PlayData {
 
 		ExecutorService pathfinding = Executors.newFixedThreadPool(4);
 	}
 
-	static class GearBotLocalData extends PlayData {
+	static class GearBotLocalData implements PlayData {
 
 		PathFinder pathfinder = new PathFinder();
 		TunnelPathFinder tunneler = new TunnelPathFinder();

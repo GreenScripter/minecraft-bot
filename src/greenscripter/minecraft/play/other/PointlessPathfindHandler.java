@@ -28,7 +28,7 @@ public class PointlessPathfindHandler extends PlayHandler {
 		PlayData.playData.put(PathFindData.class, PathFindData::new);
 	}
 
-	static class PathFindData extends PlayData {
+	static class PathFindData implements PlayData {
 
 		List<PlayerMovePositionRotationPacket> queue = new ArrayList<>();
 		Position oldPos = new Position(0, 72, 0);

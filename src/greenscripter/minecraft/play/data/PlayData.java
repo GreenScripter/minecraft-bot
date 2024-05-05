@@ -6,17 +6,19 @@ import java.util.function.Supplier;
 
 import greenscripter.minecraft.ServerConnection;
 
-public class PlayData {
+public interface PlayData {
 
-	public static Map<Class<? extends PlayData>, Supplier<? extends PlayData>> playData = new HashMap<>();
+	public static Map<Class<? extends PlayData>, Supplier<? extends PlayData>> playData = new PlayDataMap();
 
-	static {
-		PlayData.playData.put(PositionData.class, PositionData::new);
-		PlayData.playData.put(RegistryData.class, RegistryData::new);
-		PlayData.playData.put(WorldData.class, WorldData::new);
-		PlayData.playData.put(PlayerData.class, PlayerData::new);
-		PlayData.playData.put(ClientConfigData.class, ClientConfigData::new);
-		PlayData.playData.put(InventoryData.class, InventoryData::new);
+	static class PlayDataMap extends HashMap<Class<? extends PlayData>, Supplier<? extends PlayData>> {
+		PlayDataMap() {
+			this.put(PositionData.class, PositionData::new);
+			this.put(RegistryData.class, RegistryData::new);
+			this.put(WorldData.class, WorldData::new);
+			this.put(PlayerData.class, PlayerData::new);
+			this.put(ClientConfigData.class, ClientConfigData::new);
+			this.put(InventoryData.class, InventoryData::new);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -26,7 +28,7 @@ public class PlayData {
 		return t;
 	}
 
-	public void init(ServerConnection sc) {
+	public default void init(ServerConnection sc) {
 
 	}
 

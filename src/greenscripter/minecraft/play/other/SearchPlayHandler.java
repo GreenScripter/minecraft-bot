@@ -156,7 +156,7 @@ public class SearchPlayHandler extends PlayHandler {
 		return true;
 	}
 
-	static class PositionQueue extends PlayData {
+	static class PositionQueue implements PlayData {
 
 		List<Position> queue = new ArrayList<>();
 	}

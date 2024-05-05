@@ -75,7 +75,7 @@ public class KillAuraHandler extends PlayHandler {
 		return List.of(new DamageEventPacket().id());
 	}
 
-	public static class KillAuraData extends PlayData {
+	public static class KillAuraData implements PlayData {
 
 		public int lastHitBy = -1;
 	}

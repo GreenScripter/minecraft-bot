@@ -68,12 +68,12 @@ public class TreeBot {
 		render.setCuboid(id, dimension, new Vector(box.pos1).add(-0.5, 0, -0.5), new Vector(box.pos2).add(0.5, 1, 0.5), color);
 	}
 
-	static class TreeBotGlobalData extends PlayData {
+	static class TreeBotGlobalData implements PlayData {
 
 		ExecutorService pathfinding = Executors.newFixedThreadPool(4);
 	}
 
-	static class TreeBotLocalData extends PlayData {
+	static class TreeBotLocalData implements PlayData {
 
 		PathFinder pathfinder = new PathFinder();
 		{

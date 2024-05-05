@@ -3,7 +3,7 @@ package greenscripter.minecraft.play.data;
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.utils.DimensionPosition;
 
-public class PlayerData extends PlayData {
+public class PlayerData implements PlayData {
 
 	public int entityId;
 	public PositionData pos;

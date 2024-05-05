@@ -8,7 +8,7 @@ import greenscripter.minecraft.packet.c2s.play.UseItemPacket;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.world.World;
 
-public class WorldData extends PlayData {
+public class WorldData implements PlayData {
 
 	public World world;
 

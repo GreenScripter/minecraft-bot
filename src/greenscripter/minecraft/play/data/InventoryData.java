@@ -10,7 +10,7 @@ import greenscripter.minecraft.play.inventory.OpenedScreen;
 import greenscripter.minecraft.play.inventory.PlayerInventoryScreen;
 import greenscripter.minecraft.play.inventory.Slot;
 
-public class InventoryData extends PlayData {
+public class InventoryData implements PlayData {
 
 	public PlayerInventoryScreen inv = new PlayerInventoryScreen();
 	public OpenedScreen screen;

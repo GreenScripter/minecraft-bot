@@ -8,7 +8,7 @@ import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
 import greenscripter.minecraft.packet.c2s.play.PlayerMoveRotationPacket;
 import greenscripter.minecraft.utils.Vector;
 
-public class PositionData extends PlayData {
+public class PositionData implements PlayData {
 
 	public Vector pos = new Vector();
 	public float pitch;
