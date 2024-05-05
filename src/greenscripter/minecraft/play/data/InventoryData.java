@@ -17,6 +17,11 @@ public class InventoryData extends PlayData {
 	public int hotbarSlot;
 
 	public OpenedScreen previous;
+	ServerConnection sc;
+
+	public void init(ServerConnection sc) {
+		this.sc = sc;
+	}
 
 	public OpenedScreen getActiveScreen() {
 		if (screen == null) {
@@ -32,16 +37,16 @@ public class InventoryData extends PlayData {
 		return screen;
 	}
 
-	public void setHotbarSlot(ServerConnection sc, int slot) {
+	public void setHotbarSlot(int slot) {
 		hotbarSlot = slot;
 		sc.sendPacket(new HotbarSlotPacket(slot));
 	}
 
-	public void clickButton(ServerConnection sc, int button) {
+	public void clickButton(int button) {
 		sc.sendPacket(new ClickContainerButtonPacket(getActiveScreen().windowId, button));
 	}
 
-	public void closeScreen(ServerConnection sc) {
+	public void closeScreen() {
 		sc.sendPacket(new CloseContainerPacket(getActiveScreen().windowId));
 		if (screen != null && screen.slots != null) {
 			inv.replicateInvFrom(screen);
@@ -61,7 +66,7 @@ public class InventoryData extends PlayData {
 		}
 	}
 
-	public void shiftClickSlot(ServerConnection sc, Slot slot) {
+	public void shiftClickSlot(Slot slot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {
 			System.err.println(slot + " is not part of the active screen " + screen.windowId);
@@ -227,7 +232,7 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void doubleClickSlot(ServerConnection sc, Slot slot) {
+	public void doubleClickSlot(Slot slot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {
 			System.err.println(slot + " is not part of the active screen " + screen.windowId);
@@ -272,11 +277,11 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void swapOffhand(ServerConnection sc, Slot slot) {
-		swapSlots(sc, slot, 40);
+	public void swapOffhand(Slot slot) {
+		swapSlots(slot, 40);
 	}
 
-	public void swapSlots(ServerConnection sc, Slot slot, int hotbarSlot) {
+	public void swapSlots(Slot slot, int hotbarSlot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {
 			System.err.println(slot + " is not part of the active screen " + screen.windowId);
@@ -302,7 +307,7 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void leftClickSlot(ServerConnection sc, Slot slot) {
+	public void leftClickSlot(Slot slot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {
 			System.err.println(slot + " is not part of the active screen " + screen.windowId);
@@ -340,7 +345,7 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void rightClickSlot(ServerConnection sc, Slot slot) {
+	public void rightClickSlot(Slot slot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {
 			System.err.println(slot + " is not part of the active screen " + screen.windowId);
@@ -388,7 +393,7 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void dropItem(ServerConnection sc, Slot slot) {
+	public void dropItem(Slot slot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {
 			System.err.println(slot + " is not part of the active screen " + screen.windowId);
@@ -405,7 +410,7 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void dropCursorItem(ServerConnection sc) {
+	public void dropCursorItem() {
 		OpenedScreen screen = getActiveScreen();
 		Slot slot = screen.cursor;
 
@@ -416,7 +421,7 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void dropAllCursorItems(ServerConnection sc) {
+	public void dropAllCursorItems() {
 		OpenedScreen screen = getActiveScreen();
 		Slot slot = screen.cursor;
 
@@ -427,7 +432,7 @@ public class InventoryData extends PlayData {
 		sc.sendPacket(p);
 	}
 
-	public void dropAllItems(ServerConnection sc, Slot slot) {
+	public void dropAllItems(Slot slot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {
 			System.err.println(slot + " is not part of the active screen " + screen.windowId);

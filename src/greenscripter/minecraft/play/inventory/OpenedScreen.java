@@ -48,6 +48,15 @@ public class OpenedScreen {
 		return slots[slots.length - 1 - (8 - index)];
 	}
 
+	public int getHotbarIndex(Slot slot) {
+		for (int i = 0; i < 9; i++) {
+			if (slot == getHotbarSlot(i)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	public int getOtherSlotsCount() {
 		return slots.length - 36;
 	}
