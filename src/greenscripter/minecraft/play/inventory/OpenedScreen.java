@@ -155,7 +155,7 @@ public class OpenedScreen {
 			if (slot.present && slot.itemId == type) {
 				count += slot.getItemInfo().maxStack - slot.itemCount;
 			} else if (!slot.present) {
-				count += Slot.itemInfo.get(type).maxStack;
+				count += ItemId.info(type).maxStack;
 			}
 		}
 		return count;

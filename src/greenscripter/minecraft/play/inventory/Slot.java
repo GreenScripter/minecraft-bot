@@ -1,10 +1,7 @@
 package greenscripter.minecraft.play.inventory;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-import greenscripter.minecraft.gameinfo.Registries;
 import greenscripter.minecraft.gameinfo.Registries.ItemInfo;
 import greenscripter.minecraft.nbt.NBTTagCompound;
 
@@ -46,24 +43,14 @@ public class Slot {
 		}
 	}
 
-	public static Map<Integer, String> itemRegistry = Registries.registriesFromIds.get("minecraft:item");
-	public static Map<String, Integer> reverseItemRegistry = new HashMap<>();
-	public static Map<Integer, ItemInfo> itemInfo = new HashMap<>();
-	static {
-		for (var id : itemRegistry.entrySet()) {
-			itemInfo.put(id.getKey(), Registries.itemInfo.get(id.getValue()));
-			reverseItemRegistry.put(id.getValue(), id.getKey());
-		}
-	}
-
 	public String getItemId() {
 		if (!present) return null;
-		return itemRegistry.get(itemId);
+		return ItemId.itemRegistry.get(itemId);
 	}
 
 	public ItemInfo getItemInfo() {
 		if (!present) return null;
-		return itemInfo.get(itemId);
+		return ItemId.itemInfo.get(itemId);
 	}
 
 	public boolean equivalent(Slot other) {

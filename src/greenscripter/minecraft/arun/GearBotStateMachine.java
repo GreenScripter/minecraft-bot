@@ -1,16 +1,15 @@
 package greenscripter.minecraft.arun;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.gameinfo.BlockStates;
-import greenscripter.minecraft.gameinfo.RegistryTags;
 import greenscripter.minecraft.packet.c2s.play.PlayerCommandPacket;
 import greenscripter.minecraft.play.data.InventoryData;
 import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.data.WorldData;
+import greenscripter.minecraft.play.inventory.ItemId;
 import greenscripter.minecraft.play.inventory.OpenedScreen;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.play.statemachine.BreakBlockState;
@@ -36,10 +35,10 @@ class GearBotState extends PlayerState {
 			if (FindWoodState.countLogs(inv.getActiveScreen()) < 5) {
 				e.push(new FindWoodState());
 			}
-			if (OpenedScreen.countItems(Slot.reverseItemRegistry.get("minecraft:crafting_table"), inv.getActiveScreen().getInventoryIterator()) < 2) {
+			if (OpenedScreen.countItems(ItemId.get("minecraft:crafting_table"), inv.getActiveScreen().getInventoryIterator()) < 2) {
 				e.pushNow(new CraftTable());
 			}
-			
+
 		});
 	}
 }
@@ -70,7 +69,7 @@ class CraftTable extends PlayerState {
 			//pick up table
 			inv.leftClickSlot(active.getOtherSlot(0));
 
-			List<Slot> slots = OpenedScreen.getSlotsMatching(s -> s.present && s.itemId == Slot.reverseItemRegistry.get("minecraft:crafting_table"), active.getInventoryIterator());
+			List<Slot> slots = OpenedScreen.getSlotsMatching(s -> s.present && s.itemId == ItemId.get("minecraft:crafting_table"), active.getInventoryIterator());
 			if (slots.isEmpty()) {
 				slots = OpenedScreen.getEmptySlots(active.getInventoryIterator());
 			}
@@ -100,7 +99,7 @@ class PlaceCraftingTableState extends PlayerState {
 			InventoryData inv = e.value.getData(InventoryData.class);
 			OpenedScreen active = inv.getActiveScreen();
 
-			List<Slot> slots = OpenedScreen.getSlotsMatching(s -> s.present && s.itemId == Slot.reverseItemRegistry.get("minecraft:crafting_table"), active.getInventoryIterator());
+			List<Slot> slots = OpenedScreen.getSlotsMatching(s -> s.present && s.itemId == ItemId.get("minecraft:crafting_table"), active.getInventoryIterator());
 			if (slots.isEmpty()) e.pop();
 			int hotbarSlot = active.getHotbarIndex(slots.get(0));
 			if (hotbarSlot == -1) {
@@ -120,12 +119,7 @@ class PlaceCraftingTableState extends PlayerState {
 class FindWoodState extends FindBlocksState {
 
 	static boolean[] logs = BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:logs");
-	static Set<Integer> logItems = new HashSet<>();
-	static {
-		for (String id : RegistryTags.itemTags.get("minecraft:logs")) {
-			logItems.add(Slot.reverseItemRegistry.get(id));
-		}
-	}
+	static Set<Integer> logItems = ItemId.tags("minecraft:logs");
 
 	public static int countLogs(OpenedScreen inv) {
 		return OpenedScreen.countItems(s -> logItems.contains(s.itemId), inv.getInventoryIterator());
