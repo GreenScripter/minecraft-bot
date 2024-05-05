@@ -14,7 +14,7 @@ public class ItemId {
 	public static Map<Integer, String> itemRegistry = Registries.registriesFromIds.get("minecraft:item");
 	public static Map<String, Integer> reverseItemRegistry = new HashMap<>();
 	public static Map<Integer, ItemInfo> itemInfo = new HashMap<>();
-	public static Map<Integer, Set<Integer>> itemTags = new HashMap<>();
+	public static Map<String, Set<Integer>> itemTags = new HashMap<>();
 	static {
 		for (var id : itemRegistry.entrySet()) {
 			itemInfo.put(id.getKey(), Registries.itemInfo.get(id.getValue()));
@@ -22,7 +22,7 @@ public class ItemId {
 		}
 		for (var tag : RegistryTags.itemTags.entrySet()) {
 			Set<Integer> ids = new HashSet<>();
-			itemTags.put(reverseItemRegistry.get(tag.getKey()), ids);
+			itemTags.put(tag.getKey(), ids);
 			for (String s : tag.getValue()) {
 				ids.add(reverseItemRegistry.get(s));
 			}
@@ -45,20 +45,12 @@ public class ItemId {
 		return Registries.itemInfo.get(id);
 	}
 
-	public static Set<String> stringTags(int id) {
-		return RegistryTags.getItemTag(get(id));
-	}
-
 	public static Set<String> stringTags(String id) {
 		return RegistryTags.getItemTag(id);
 	}
 
-	public static Set<Integer> tags(int id) {
-		return itemTags.get(id);
-	}
-
 	public static Set<Integer> tags(String id) {
-		return itemTags.get(get(id));
+		return itemTags.get(id);
 	}
 
 }
