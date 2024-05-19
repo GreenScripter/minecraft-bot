@@ -101,14 +101,15 @@ public class OpenedScreen {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < getOtherSlotsCount(); i++) {
-			sb.append(" " + getOtherSlot(i));
+			sb.append(" " + getOtherSlot(i).toStringShort());
 			if (i % 9 == 8) sb.append("\n");
 		}
 		sb.append("\n");
 		for (int i = 0; i < 36; i++) {
-			sb.append(" " + getInventorySlot(i));
+			sb.append(" " + getInventorySlot(i).toStringShort());
 			if (i % 9 == 8) sb.append("\n");
 		}
+		sb.append("\nCursor: " + cursor.toStringShort());
 		return sb.toString();
 	}
 

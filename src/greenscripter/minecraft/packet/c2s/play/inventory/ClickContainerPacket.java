@@ -29,6 +29,10 @@ public class ClickContainerPacket extends Packet {
 		this.slot = slot;
 	}
 
+	public String toString() {
+		return "ClickContainerPacket [windowId=" + windowId + ", stateId=" + stateId + ", slot=" + slot + ", button=" + button + ", mode=" + mode + ", " + (changed != null ? "changed=" + changed + ", " : "") + (carriedItem != null ? "carriedItem=" + carriedItem : "") + "]";
+	}
+
 	public int id() {
 		return 0x0D;
 	}

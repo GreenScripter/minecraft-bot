@@ -30,6 +30,7 @@ import greenscripter.minecraft.play.handler.DeathPlayHandler;
 import greenscripter.minecraft.play.handler.EntityPlayHandler;
 import greenscripter.minecraft.play.handler.InventoryPlayHandler;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
+import greenscripter.minecraft.play.handler.PingPongPlayHandler;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.PlayerPlayHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
@@ -201,6 +202,7 @@ public class ServerConnection {
 
 	public void sendPacket(Packet p) {
 		try {
+			//			System.out.println(p);
 			this.out.writePacket(p);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -228,6 +230,7 @@ public class ServerConnection {
 	public static List<PlayHandler> getStandardHandlers() {
 		return new ArrayList<>(List.of(//
 				new KeepAlivePlayHandler(), //
+				new PingPongPlayHandler(), //
 				new DeathPlayHandler(), //
 				new WorldPlayHandler(), //
 				new TeleportRequestPlayHandler(),//

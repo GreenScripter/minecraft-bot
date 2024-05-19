@@ -57,7 +57,7 @@ public class PointlessPathfindHandler extends PlayHandler {
 			pos.pos.x = p.x;
 			pos.pos.y = p.y;
 			pos.pos.z = p.z;
-			sc.out.writePacket(p);
+			sc.sendPacket(p);
 			return;
 		}
 

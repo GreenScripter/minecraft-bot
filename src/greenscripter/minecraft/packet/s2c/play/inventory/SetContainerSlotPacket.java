@@ -25,7 +25,7 @@ public class SetContainerSlotPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		windowId = in.read();
+		windowId = in.readByte();
 		stateId = in.readVarInt();
 		slotId = in.readShort();
 		data = in.readSlot();

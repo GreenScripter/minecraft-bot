@@ -37,13 +37,9 @@ public class PathfindTest {
 					ClientInfoPacket p = new ClientInfoPacket();
 					p.viewDistance = 0;
 					next.forEach(sc -> {
-						try {
-							if (!sc.name.equals("bot0")) return;
-							sc.out.writePacket(p);
-							sc.getData(ClientConfigData.class).viewDistance = p.viewDistance;
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						if (!sc.name.equals("bot0")) return;
+						sc.sendPacket(p);
+						sc.getData(ClientConfigData.class).viewDistance = p.viewDistance;
 					});
 					connections.addAll(0, next);
 					next.clear();

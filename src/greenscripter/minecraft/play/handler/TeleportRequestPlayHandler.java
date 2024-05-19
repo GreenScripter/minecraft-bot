@@ -24,7 +24,7 @@ public class TeleportRequestPlayHandler extends PlayHandler {
 			pos.pos.z = req.z;
 			pos.pitch = req.pitch;
 			pos.yaw = req.yaw;
-			sc.out.writePacket(new TeleportConfirmPacket(req.teleportID));
+			sc.sendPacket(new TeleportConfirmPacket(req.teleportID));
 		}
 	}
 

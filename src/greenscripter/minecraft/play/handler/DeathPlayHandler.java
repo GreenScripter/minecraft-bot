@@ -14,7 +14,7 @@ public class DeathPlayHandler extends PlayHandler {
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		//		DeathPacket req = p.convert(new DeathPacket());
 		//		System.out.println(req.message);
-		sc.out.writePacket(new ClientStatusPacket());
+		sc.sendPacket(new ClientStatusPacket());
 	}
 
 	public List<Integer> handlesPackets() {

@@ -72,7 +72,7 @@ public class CirclePlayHandler extends PlayHandler {
 		move.y = pos.pos.y;
 		move.z = pos.pos.z;
 		move.pitch = pos.pitch;
-		sc.out.writePacket(move);
+		sc.sendPacket(move);
 	}
 
 	public boolean handlesTick() {

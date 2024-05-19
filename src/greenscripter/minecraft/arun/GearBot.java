@@ -42,7 +42,7 @@ public class GearBot {
 
 		GearBotGlobalData global = new GearBotGlobalData();
 
-		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
+		AsyncSwarmController controller = new AsyncSwarmController("localhost", 25568, handlers);
 		controller.joinCallback = sc -> {
 			if (sc.id % 10 == 0) {
 				sc.sendPacket(new ClientInfoPacket(10));

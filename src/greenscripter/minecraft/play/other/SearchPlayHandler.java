@@ -81,7 +81,7 @@ public class SearchPlayHandler extends PlayHandler {
 			pos.pos.x = p.x;
 			pos.pos.y = p.y;
 			pos.pos.z = p.z;
-			sc.out.writePacket(p);
+			sc.sendPacket(p);
 			return;
 		}
 		targetted.removeIf(t -> worldData.world.getBlock(t.x, t.y, t.z) <= 0);
@@ -120,8 +120,8 @@ public class SearchPlayHandler extends PlayHandler {
 			}
 
 			if (pathData.oldPos != null) {
-				sc.out.writePacket(new PlayerActionPacket(PlayerActionPacket.START_MINING, pathData.oldPos, (byte) 1, breakSeq++));
-				sc.out.writePacket(new PlayerActionPacket(PlayerActionPacket.FINISH_MINING, pathData.oldPos, (byte) 1, breakSeq++));
+				sc.sendPacket(new PlayerActionPacket(PlayerActionPacket.START_MINING, pathData.oldPos, (byte) 1, breakSeq++));
+				sc.sendPacket(new PlayerActionPacket(PlayerActionPacket.FINISH_MINING, pathData.oldPos, (byte) 1, breakSeq++));
 				targetted.remove(pathData.oldPos);
 
 				//				sc.out.writePacket(new ExecuteCommandPacket("setblock" + " " + pathState.oldPos.x + " " + (pathState.oldPos.y) + " " + pathState.oldPos.z + " minecraft:air"));

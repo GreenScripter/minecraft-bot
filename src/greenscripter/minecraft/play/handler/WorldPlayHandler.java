@@ -146,7 +146,7 @@ public class WorldPlayHandler extends PlayHandler {
 				if (sc.getData(ClientConfigData.class).viewDistance <= 1) {
 					ack.chunksPerTick = 0.01f;
 				}
-				sc.out.writePacket(ack);
+				sc.sendPacket(ack);
 			} else if (p.id == unloadChunkId) {
 				UnloadChunkPacket chunkunload = p.convert(new UnloadChunkPacket());
 				Chunk chunk = worldData.world.getChunk(chunkunload.x, chunkunload.z);

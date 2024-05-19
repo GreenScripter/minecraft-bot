@@ -25,6 +25,7 @@ public class InventoryPlayHandler extends PlayHandler {
 	public void handlePacket(UnknownPacket up, ServerConnection sc) throws IOException {
 		InventoryData data = sc.getData(InventoryData.class);
 		if (up.id == setContentId) {
+			//			System.out.println("set container");
 			SetContainerContentPacket p = up.convert(new SetContainerContentPacket());
 			OpenedScreen screen = p.windowId == 0 ? data.inv : data.getActiveScreen();
 			if (screen.windowId == p.windowId) {
@@ -34,9 +35,11 @@ public class InventoryPlayHandler extends PlayHandler {
 				}
 				for (int i = 0; i < p.slots.length; i++) {
 					screen.slots[i].become(p.slots[i]);
+					//					System.out.println("Replaced slot " + i + " with " + screen.slots[i]);
 				}
 				screen.cursor.become(p.cursor);
-				//				System.out.println("replace " + screen.stateId);
+				//				System.out.println("replaced cursor " + p.cursor);
+				//				System.out.println("replace " + p.stateId);
 			}
 		} else if (up.id == setPropertyId) {
 			SetContainerPropertyPacket p = up.convert(new SetContainerPropertyPacket());
@@ -58,6 +61,13 @@ public class InventoryPlayHandler extends PlayHandler {
 				if (endDelta <= 36) {
 					screen.slots[slot].become(p.data);
 					//					System.out.println("passed along update from " + p.windowId + " to " + screen.stateId + " " + p.slotId + " to " + slot + " " + p.data);
+				}
+			} else if (p.windowId == -1) {
+				//				System.out.println("Legacy cursor set. " + p.data);
+				if (p.data == null) {
+					screen.cursor.setCount(0);
+				} else {
+					screen.cursor.become(p.data);
 				}
 			}
 		} else if (up.id == closeId) {

@@ -13,7 +13,15 @@ public class Slot {
 	public NBTTagCompound nbt;
 
 	public String toString() {
-		return "Slot [present=" + present + ", itemId=" + itemId + ", itemCount=" + itemCount + ", nbt=" + nbt + "]";
+		return "Slot [present=" + present + ", itemId=" + itemId + (present ? " " + getItemId() : "") + ", itemCount=" + itemCount + ", nbt=" + nbt + "]";
+	}
+
+	public String toStringShort() {
+		if (present) {
+			return itemCount + " " + getItemId() + (nbt != null ? " " + nbt : "");
+		} else {
+			return "empty";
+		}
 	}
 
 	public void become(Slot other) {

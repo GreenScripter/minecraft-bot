@@ -2,6 +2,7 @@ package greenscripter.minecraft.arun;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.gameinfo.BlockStates;
@@ -15,8 +16,11 @@ import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.play.statemachine.BreakBlockState;
 import greenscripter.minecraft.play.statemachine.PlayerMachine;
 import greenscripter.minecraft.play.statemachine.PlayerState;
+import greenscripter.minecraft.play.statemachine.StepsState;
+import greenscripter.minecraft.play.statemachine.WaitTicksState;
 import greenscripter.minecraft.utils.Direction;
 import greenscripter.minecraft.utils.Position;
+import greenscripter.statemachine.State;
 
 public class GearBotStateMachine extends PlayerMachine {
 
@@ -32,9 +36,13 @@ class GearBotState extends PlayerState {
 	public GearBotState() {
 		onTick(e -> {
 			InventoryData inv = e.value.getData(InventoryData.class);
+			System.out.println(FindWoodState.countLogs(inv.getActiveScreen()) + " logs");
 			if (FindWoodState.countLogs(inv.getActiveScreen()) < 5) {
-				e.push(new FindWoodState());
+				//				e.push(new FindWoodState());
+				System.out.println("Out of logs");
+				return;
 			}
+			System.out.println(OpenedScreen.countItems(ItemId.get("minecraft:crafting_table"), inv.getActiveScreen().getInventoryIterator()) + " crafting tables");
 			if (OpenedScreen.countItems(ItemId.get("minecraft:crafting_table"), inv.getActiveScreen().getInventoryIterator()) < 2) {
 				e.pushNow(new CraftTable());
 			}
@@ -45,40 +53,109 @@ class GearBotState extends PlayerState {
 
 class CraftTable extends PlayerState {
 
+	int tick = 0;
+
 	public CraftTable() {
 		onTick(e -> {
+			if (tick < 100) {
+				tick++;
+				return;
+			}
 			InventoryData inv = e.value.getData(InventoryData.class);
 
 			OpenedScreen active = inv.getActiveScreen();
 			List<Slot> logSlots = OpenedScreen.getSlotsMatching(s -> FindWoodState.logItems.contains(s.itemId), active.getInventoryIterator());
-			//pickup logs
-			inv.leftClickSlot(logSlots.get(0));
-			//place 1 log in crafting grid
-			inv.rightClickSlot(active.getOtherSlot(1));
-			//put logs back
-			inv.leftClickSlot(logSlots.get(0));
-			//pick up planks
-			inv.leftClickSlot(active.getOtherSlot(0));
-
-			//place crafting table recipe
-			inv.rightClickSlot(active.getOtherSlot(1));
-			inv.rightClickSlot(active.getOtherSlot(2));
-			inv.rightClickSlot(active.getOtherSlot(3));
-			inv.rightClickSlot(active.getOtherSlot(4));
-
-			//pick up table
-			inv.leftClickSlot(active.getOtherSlot(0));
-
-			List<Slot> slots = OpenedScreen.getSlotsMatching(s -> s.present && s.itemId == ItemId.get("minecraft:crafting_table"), active.getInventoryIterator());
-			if (slots.isEmpty()) {
-				slots = OpenedScreen.getEmptySlots(active.getInventoryIterator());
+			List<Slot> airSlots = OpenedScreen.getEmptySlots(active.getInventoryIterator());
+			//			inv.leftClickSlot(active.getInventorySlot(10));
+			//			System.out.println(logSlots.get(0));
+			var it = active.getOtherIterator();
+			while (it.hasNext()) {
+				System.out.println(it.next());
 			}
-			if (slots.isEmpty()) {
-				inv.dropAllCursorItems();
-			} else {
-				inv.leftClickSlot(slots.get(0));
-			}
-			e.pop();
+			//			inv.dropAllCursorItems();
+			//			inv.dropItem(active.slots[36]);
+			//			inv.shiftClickSlot(active.getOtherSlot(0));
+			System.out.println("Clicked " + active.getSlotId(logSlots.get(0)));
+			//			inv.leftClickSlot(logSlots.get(0));
+			//			//			inv.leftClickSlot(airSlots.get(0));
+			//			inv.leftClickSlot(active.getOtherSlot(1));
+			//			inv.shiftClickSlot(active.getOtherSlot(0));
+			StepsState s = new StepsState();
+			s.requirements = e2 -> {
+				if (active != inv.getActiveScreen()) return false;
+				return true;
+			};
+
+			s.interstage = e2 -> {
+				//				e2.push(new WaitTicksState(2));
+			};
+
+			s.prestep = e2 -> {
+				System.out.println(active);
+			};
+
+			s.next(e2 -> {
+				//pickup logs
+				inv.leftClickSlot(logSlots.get(0));
+			});
+			s.next(e2 -> {
+				//place 1 log in crafting grid
+				inv.rightClickSlot(active.getOtherSlot(1));
+			});
+			s.next(e2 -> {
+
+				//put logs back
+				inv.leftClickSlot(logSlots.get(0));
+			});
+
+			s.next(e2 -> {
+
+				//pick up planks
+				inv.leftClickSlot(active.getOtherSlot(0));
+			});
+
+			s.next(e2 -> {
+
+				//place crafting table recipe
+				inv.rightClickSlot(active.getOtherSlot(1));
+			});
+
+			s.next(e2 -> {
+
+				inv.rightClickSlot(active.getOtherSlot(2));
+			});
+
+			s.next(e2 -> {
+
+				inv.rightClickSlot(active.getOtherSlot(3));
+			});
+
+			s.next(e2 -> {
+
+				inv.rightClickSlot(active.getOtherSlot(4));
+			});
+
+			s.next(e2 -> {
+
+				//pick up table
+				inv.leftClickSlot(active.getOtherSlot(0));
+			});
+
+			s.next(e2 -> {
+
+				List<Slot> slots = OpenedScreen.getSlotsMatching(sl -> sl.present && sl.itemId == ItemId.get("minecraft:crafting_table"), active.getInventoryIterator());
+				if (slots.isEmpty()) {
+					slots = OpenedScreen.getEmptySlots(active.getInventoryIterator());
+				}
+				if (slots.isEmpty()) {
+					inv.dropAllCursorItems();
+				} else {
+					inv.leftClickSlot(slots.get(0));
+				}
+			});
+
+			e.swapTo(s);
+
 		});
 	}
 }
@@ -129,7 +206,7 @@ class FindWoodState extends FindBlocksState {
 		super(logs, false, e2 -> {
 			InventoryData inv = e2.value.getData(InventoryData.class);
 			int count = countLogs(inv.getActiveScreen());
-			return count > 20;
+			return count > 5;
 		});
 	}
 }

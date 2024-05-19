@@ -13,7 +13,7 @@ public class KeepAlivePlayHandler extends PlayHandler {
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		if (p.id == KeepAlivePacket.id) {
-			sc.out.writePacket(new KeepAliveReplyPacket(p.convert(new KeepAlivePacket()).value));
+			sc.sendPacket(new KeepAliveReplyPacket(p.convert(new KeepAlivePacket()).value));
 		}
 	}
 
