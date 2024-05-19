@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import greenscripter.minecraft.ServerConnection;

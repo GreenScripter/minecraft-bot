@@ -15,7 +15,7 @@ public class PingPongPlayHandler extends PlayHandler {
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		if (p.id == pingId) {
-			System.out.println("Ponged "+p.convert(new PingPacket()).value);
+			//			System.out.println("Ponged "+p.convert(new PingPacket()).value);
 			sc.sendPacket(new PongPacket(p.convert(new PingPacket()).value));
 		}
 	}

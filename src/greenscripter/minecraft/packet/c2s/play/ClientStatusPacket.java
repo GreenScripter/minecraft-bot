@@ -19,6 +19,10 @@ public class ClientStatusPacket extends Packet {
 
 	public ClientStatusPacket() {}
 
+	public ClientStatusPacket(int actionID) {
+		this.actionID = actionID;
+	}
+
 	public int id() {
 		return 0x08;
 	}

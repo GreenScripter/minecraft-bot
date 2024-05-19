@@ -6,26 +6,20 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class KeepAlivePacket extends Packet {
+public class AwardStatsPacket extends Packet {
 
-	public long value;
-
-	public KeepAlivePacket() {}
-
-	public KeepAlivePacket(long value) {
-		this.value = value;
-	}
+	public AwardStatsPacket() {}
 
 	public int id() {
-		return 0x24;
+		return 0x04;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		out.writeLong(value);
+		throw new UnsupportedOperationException();
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		value = in.readLong();
+		// Packet just for checking present.
 	}
 
 }

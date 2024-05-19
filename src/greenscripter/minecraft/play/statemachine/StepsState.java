@@ -21,7 +21,7 @@ public class StepsState extends PlayerState {
 			if (index >= steps.size()) {
 				e.pop();
 			}
-			System.out.println("Performing step " + index);
+			//			System.out.println("Performing step " + index);
 			if (prestep != null) {
 				prestep.tick(e);
 			}
