@@ -157,6 +157,8 @@ public class ServerConnection {
 				}
 				LoginSuccessPacket success = p.convert(new LoginSuccessPacket());
 				System.out.println("Logged in " + success.name + " " + success.uuid + " " + success.properties);
+				name = success.name;
+				uuid = success.uuid;
 				out.writePacket(new LoginAcknowledgePacket());
 				connectionState = ConnectionState.CONFIGURATION;
 				//				System.out.println("Finished Login");

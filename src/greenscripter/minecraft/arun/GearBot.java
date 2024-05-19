@@ -4,6 +4,13 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import java.io.File;
+import java.nio.file.Files;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import greenscripter.minecraft.AccountList;
 import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.gameinfo.BlockStates;
@@ -26,11 +33,13 @@ public class GearBot {
 	static boolean[] logs = BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:logs");
 	static boolean[] leaves = BlockStates.addTagToBlockSet(BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:leaves"), "minecraft:wart_blocks");
 	static boolean[] diamonds = BlockStates.addToBlockSet(BlockStates.addToBlockSet(BlockStates.getBlockSet(), "minecraft:diamond_ore"), "minecraft:deepslate_diamond_ore");
-	
+
 	public static IndicatorServer render;
 
 	public static void main(String[] args) throws Exception {
 		render = new IndicatorServer(24464);
+		AccountList accounts = new Gson().fromJson(Files.readString(new File("accountlist.json").toPath()), AccountList.class);
+		System.out.println("Accounts: " + accounts);
 
 		List<PlayHandler> handlers = ServerConnection.getStandardHandlers();
 		WorldPlayHandler worldHandler = new WorldPlayHandler();
@@ -62,8 +71,13 @@ public class GearBot {
 				machine.tick();
 			}));
 		};
+
+		controller.namesToUUIDs = accounts::getUUID;
+		controller.botNames = accounts::getName;
+		controller.bungeeMode = true;
+
 		controller.start();
-		controller.connect(1, 40);
+		controller.connect(accounts.size(), 5000);
 
 	}
 
