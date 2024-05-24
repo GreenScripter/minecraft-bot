@@ -29,3 +29,8 @@ New or missing packet types can be created by extending Packet, and need not be 
 See the existing handler classes for examples, the built in handlers are in no way special and alternate custom implementations could be used instead.
 ## Raw Game Info
 Sometimes you need to find a piece of info about a generic item or block state. In this library, everything is tracked by its protocol id in almost every case. To look up information about an item or block state by id, the greenscripter.minecraft.gameinfo package provides lookup tables by id for determining various information, such as what block identifier (eg. minecraft:dirt) a block state has, or if an item's max stack size.
+
+## Authentication
+This library does not support logging in as premium minecraft players directly, however it does support connecting to BungeeCord backends.  
+To log in to premium servers, sign in to all bot accounts with https://github.com/GreenScripter/MultiViaProxy and then set up the bots to join the proxy using the correct uuids on bungee mode. The proxy can then select the right accounts and handle authentication.  
+This also allows the bots to connected to other versions of the game, though note that ViaProxy is not a perfect analog to an actual server of the appropriate version, so there may be some issues.
