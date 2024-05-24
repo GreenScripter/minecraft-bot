@@ -51,10 +51,11 @@ public class AsyncSwarmController {
 		for (int i = 0; i < botCount; i++) {
 			int c = botIds.get();
 			new Thread(() -> {
+				String name = botNames.apply(c);
+				UUID uuid = namesToUUIDs.apply(name);
+				ServerConnection sc = new ServerConnection(serverIP, serverPort, name, uuid, globalHandlers);
 				try {
-					String name = botNames.apply(c);
-					UUID uuid = namesToUUIDs.apply(name);
-					ServerConnection sc = new ServerConnection(serverIP, serverPort, name, uuid, globalHandlers);
+					sc.connect();
 					localHandlers.apply(sc).forEach(sc::addPlayHandler);
 					sc.owner = Thread.currentThread();
 					sc.id = c;
@@ -71,6 +72,9 @@ public class AsyncSwarmController {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					synchronized (dead) {
+						dead.add(sc);
+					}
 				}
 			}).start();
 			try {
@@ -79,6 +83,39 @@ public class AsyncSwarmController {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void reconnectDead(List<ServerConnection> dead, long joinDelay) {
+		for (ServerConnection serverConn : dead) {
+			ServerConnection sc = serverConn;
+			new Thread(() -> {
+				try {
+					sc.connect();
+					sc.owner = Thread.currentThread();
+					while (true) {
+						sc.step();
+						if (sc.connectionState.equals(ServerConnection.ConnectionState.PLAY)) {
+							synchronized (next) {
+								sc.owner = null;
+								next.add(sc);
+							}
+							break;
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					synchronized (this.dead) {
+						this.dead.add(sc);
+					}
+				}
+			}).start();
+			try {
+				Thread.sleep(joinDelay);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	/**
@@ -102,10 +139,11 @@ public class AsyncSwarmController {
 	/**
 	 * Take connections out of the dead pool.
 	 */
-	public void takeDead(List<ServerConnection> toRemove) {
+	public List<ServerConnection> takeDead(List<ServerConnection> toRemove) {
 		synchronized (dead) {
 			dead.removeAll(toRemove);
 		}
+		return toRemove;
 	}
 
 	/**

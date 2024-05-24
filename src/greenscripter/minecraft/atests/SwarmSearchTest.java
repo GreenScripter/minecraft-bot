@@ -108,6 +108,7 @@ public class SwarmSearchTest {
 					String name = args.length != 0 ? args[0] + c : "bot" + c;
 					UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
 					ServerConnection sc = new ServerConnection("localhost", 20255, name, uuid, handler);
+					sc.connect();
 					sc.id = c;
 					//					sc.bungeeMode = true;
 					//				connections.add(sc);

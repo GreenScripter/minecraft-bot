@@ -181,7 +181,7 @@ public class MCInputStream extends DataInputStream {
 			slot.itemId = readVarInt();
 			slot.itemCount = readByte();
 			NBTComponent nbt = readNBT();
-			if (nbt.isCompound()) {
+			if (nbt != null && nbt.isCompound()) {
 				slot.nbt = nbt.asCompound();
 			}
 		}

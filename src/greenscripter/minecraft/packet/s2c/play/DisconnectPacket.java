@@ -1,4 +1,4 @@
-package greenscripter.minecraft.packet.s2c.play.self;
+package greenscripter.minecraft.packet.s2c.play;
 
 import java.io.IOException;
 
@@ -7,13 +7,14 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class DeathPacket extends Packet {
+public class DisconnectPacket extends Packet {
 
-	public int entityId;
-	public NBTComponent message;
+	public NBTComponent reason;
+
+	public DisconnectPacket() {}
 
 	public int id() {
-		return 0x3A;
+		return 0x1B;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
@@ -21,8 +22,7 @@ public class DeathPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		entityId = in.readVarInt();
-		message = in.readNBT();
+		reason = in.readNBT();
 	}
 
 }

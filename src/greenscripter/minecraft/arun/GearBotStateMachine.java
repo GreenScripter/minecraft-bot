@@ -176,7 +176,7 @@ class FindWoodState extends FindBlocksState {
 		super(logs, false, e2 -> {
 			InventoryData inv = e2.value.getData(InventoryData.class);
 			int count = countLogs(inv.getActiveScreen());
-			return count > 5;
+			return count > 20;
 		});
 	}
 }

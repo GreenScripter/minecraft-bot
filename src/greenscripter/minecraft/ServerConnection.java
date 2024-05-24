@@ -27,6 +27,7 @@ import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.play.data.PlayData;
 import greenscripter.minecraft.play.data.RegistryData;
 import greenscripter.minecraft.play.handler.DeathPlayHandler;
+import greenscripter.minecraft.play.handler.DisconnectHandler;
 import greenscripter.minecraft.play.handler.EntityPlayHandler;
 import greenscripter.minecraft.play.handler.InventoryPlayHandler;
 import greenscripter.minecraft.play.handler.KeepAlivePlayHandler;
@@ -71,7 +72,15 @@ public class ServerConnection {
 
 	PeekInputStream peeker;
 
-	public ServerConnection(String hostname, int port, String name, UUID uuid, List<PlayHandler> playHandler) throws IOException {
+	public ServerConnection(String hostname, int port, String name, UUID uuid, List<PlayHandler> playHandler) {
+		this.name = name;
+		this.uuid = uuid;
+		this.hostname = hostname;
+		this.port = port;
+		playHandler.forEach(this::addPlayHandler);
+	}
+
+	public synchronized void connect() throws IOException {
 		channel = SocketChannel.open();
 		channel.connect(new InetSocketAddress(hostname, port));
 		channel.configureBlocking(true);
@@ -81,11 +90,6 @@ public class ServerConnection {
 		in = new MCInputStream(peeker);
 		out = new MCOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 		connectionState = ConnectionState.HANDSHAKE;
-		this.name = name;
-		this.uuid = uuid;
-		this.hostname = hostname;
-		this.port = port;
-		playHandler.forEach(this::addPlayHandler);
 	}
 
 	public synchronized ServerConnection addPlayHandler(PlayHandler p) {
@@ -176,13 +180,13 @@ public class ServerConnection {
 				}
 				if (p.id == 5) {
 					RegistryConfigPacket rp = p.convert(new RegistryConfigPacket());
-					getData(RegistryData.class).configuredRegistry = rp.data;
+					getData(RegistryData.class).configuredRegistry = rp.data.asCompound();
 				}
 			}
 
 			case PLAY -> {
 				//				in.available();
-				if (!blocking && !(peeker.peek() > 0)) return;
+				if (!blocking && peeker.peek() <= 0) return;
 				//				if (!blocking && !(in.available() > 1)) return;
 
 				UnknownPacket p = in.readGeneralPacket();
@@ -238,7 +242,8 @@ public class ServerConnection {
 				new TeleportRequestPlayHandler(),//
 				new EntityPlayHandler(),//
 				new PlayerPlayHandler(),//
-				new InventoryPlayHandler()//
+				new InventoryPlayHandler(),//
+				new DisconnectHandler()//
 		));
 	}
 }

@@ -28,6 +28,7 @@ public class ThreadedSwarmHandling {
 					String name = "bot" + c;
 					UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
 					ServerConnection sc = new ServerConnection("localhost", 20255, name, uuid, handler);
+					sc.connect();
 					sc.blocking = true;
 					boolean started = false;
 					//					sc.bungeeMode = true;

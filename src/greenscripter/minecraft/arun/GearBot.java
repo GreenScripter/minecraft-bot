@@ -8,7 +8,6 @@ import java.io.File;
 import java.nio.file.Files;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import greenscripter.minecraft.AccountList;
 import greenscripter.minecraft.AsyncSwarmController;
@@ -51,7 +50,7 @@ public class GearBot {
 
 		GearBotGlobalData global = new GearBotGlobalData();
 
-		AsyncSwarmController controller = new AsyncSwarmController("localhost", 25568, handlers);
+		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
 		controller.joinCallback = sc -> {
 			if (sc.id % 10 == 0) {
 				sc.sendPacket(new ClientInfoPacket(10));
@@ -74,10 +73,15 @@ public class GearBot {
 
 		controller.namesToUUIDs = accounts::getUUID;
 		controller.botNames = accounts::getName;
-		controller.bungeeMode = true;
+		//				controller.bungeeMode = true;
 
 		controller.start();
-		controller.connect(accounts.size(), 5000);
+		controller.connect(accounts.size(), 50);
+
+		while (true) {
+			Thread.sleep(1000);
+			controller.reconnectDead(controller.takeDead(controller.getDead()), 50);
+		}
 
 	}
 

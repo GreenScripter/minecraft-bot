@@ -15,7 +15,8 @@ public class PeekInputStream extends FilterInputStream {
 	}
 
 	SocketChannel channel;
-	ByteBuffer storage = ByteBuffer.allocate(1 * 1024 * 1024);
+	ByteBuffer storage = ByteBuffer.allocate(3 * 1024 * 1024);
+	ByteBuffer temp = ByteBuffer.allocate(3 * 1024 * 1024);
 
 	public int peek() throws IOException {
 		if (storage.hasRemaining()) return storage.remaining();
@@ -25,6 +26,56 @@ public class PeekInputStream extends FilterInputStream {
 		channel.configureBlocking(true);
 		storage.flip();
 		return read;
+	}
+
+	private void addToPeek() throws IOException {
+		temp.clear();
+		if (storage.hasRemaining()) temp.put(storage);
+
+		channel.configureBlocking(false);
+		channel.read(temp);
+		channel.configureBlocking(true);
+
+		ByteBuffer next = storage;
+		storage = temp;
+		temp = next;
+
+		storage.flip();
+	}
+
+	private int peekVarInt() throws IOException {
+		if (storage.remaining() < 5) {
+			addToPeek();
+		}
+		int pos = storage.position();
+
+		int value = 0;
+		int bitOffset = 0;
+		byte currentByte;
+		do {
+			if (bitOffset == 35) throw new RuntimeException("VarInt is too big");
+
+			currentByte = (byte) storage.get(pos);
+			pos++;
+			value |= (currentByte & 0b01111111) << bitOffset;
+
+			bitOffset += 7;
+		} while ((currentByte & 0b10000000) != 0);
+
+		return value;
+	}
+
+	public boolean peekPacket() throws IOException {
+		try {
+			int size = peekVarInt();
+			if (size <= storage.remaining()) {
+				return true;
+			}
+			addToPeek();
+			return size <= storage.remaining();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public int read() throws IOException {
