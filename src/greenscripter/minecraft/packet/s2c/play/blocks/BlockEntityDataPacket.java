@@ -25,7 +25,7 @@ public class BlockEntityDataPacket extends Packet {
 	public void fromBytes(MCInputStream in) throws IOException {
 		pos = in.readPosition();
 		type = in.readVarInt();
-		nbt = in.readNBT();
+		nbt = (NBTTagCompound) in.readNBT();
 	}
 
 }

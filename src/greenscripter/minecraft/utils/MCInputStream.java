@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import greenscripter.minecraft.nbt.NBTComponent;
-import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.play.inventory.Slot;
@@ -143,8 +142,8 @@ public class MCInputStream extends DataInputStream {
 		return t;
 	}
 
-	public NBTTagCompound readNBT() throws IOException {
-		NBTTagCompound tag = NBTComponent.readNetworkNBT(this);
+	public NBTComponent readNBT() throws IOException {
+		NBTComponent tag = NBTComponent.readNetworkNBT(this);
 		return tag;
 	}
 
@@ -181,7 +180,10 @@ public class MCInputStream extends DataInputStream {
 		if (slot.present) {
 			slot.itemId = readVarInt();
 			slot.itemCount = readByte();
-			slot.nbt = readNBT();
+			NBTComponent nbt = readNBT();
+			if (nbt.isCompound()) {
+				slot.nbt = nbt.asCompound();
+			}
 		}
 		return slot;
 	}

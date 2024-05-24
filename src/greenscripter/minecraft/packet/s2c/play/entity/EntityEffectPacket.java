@@ -2,7 +2,7 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.nbt.NBTTagCompound;
+import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
@@ -14,7 +14,7 @@ public class EntityEffectPacket extends Packet {
 	public byte amplifier;
 	public int duration;
 	public byte flags;
-	public NBTTagCompound factorCodec;
+	public NBTComponent factorCodec;
 
 	public static final byte FLAG_IS_AMBIENT = 0x01;
 	public static final byte FLAG_SHOW_PARTICLES = 0x02;

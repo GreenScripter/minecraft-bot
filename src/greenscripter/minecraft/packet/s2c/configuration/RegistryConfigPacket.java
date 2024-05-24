@@ -2,14 +2,14 @@ package greenscripter.minecraft.packet.s2c.configuration;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.nbt.NBTTagCompound;
+import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class RegistryConfigPacket extends Packet {
 
-	public NBTTagCompound data;
+	public NBTComponent data;
 
 	public RegistryConfigPacket() {}
 

@@ -192,14 +192,15 @@ public abstract class NBTComponent {
 		return (NBTTagCompound) getType(id).read(in);
 	}
 
-	public static NBTTagCompound readNetworkNBT(MCInputStream in) throws IOException {
+	public static NBTComponent readNetworkNBT(MCInputStream in) throws IOException {
 		byte id = in.readByte();
 		if (id == 0) return null;
 		if (id != TAG_Compound) {
-			System.err.println(id);
-			throw new IOException("No wrapper compound on NBT");
+			//appearently chat components can be just a string
+			//			System.err.println(id);
+			//			throw new IOException("No wrapper compound on NBT");
 		}
-		return (NBTTagCompound) getType(id).read(in);
+		return (NBTComponent) getType(id).read(in);
 	}
 
 	public static void writeNBT(MCOutputStream out, NBTTagCompound c) throws IOException {

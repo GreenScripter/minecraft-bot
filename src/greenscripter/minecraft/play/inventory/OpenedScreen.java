@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import greenscripter.minecraft.nbt.NBTTagCompound;
+import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.utils.IndexIterator;
 
 public class OpenedScreen {
 
-	public NBTTagCompound title;
+	public NBTComponent title;
 	public int windowId;
 	public int windowType;
 	public int stateId;

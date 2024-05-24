@@ -41,7 +41,7 @@ public class ChunkDataPacket extends Packet {
 	public void fromBytes(MCInputStream in) throws IOException {
 		chunkX = in.readInt();
 		chunkZ = in.readInt();
-		heightmap = in.readNBT();
+		heightmap = in.readNBT().asCompound();
 		data = new byte[in.readVarInt()];
 		in.readFully(data);
 		//		System.out.println(data.length + " bytes for " + chunkX + ", " + chunkZ);
@@ -54,7 +54,7 @@ public class ChunkDataPacket extends Packet {
 			b.zinchunk = (byte) (packed_xz & 15);
 			b.y = in.readShort();
 			b.type = in.readVarInt();
-			b.data = in.readNBT();
+			b.data = (NBTTagCompound) in.readNBT();
 			//			System.out.println((chunkX * 16 + b.xinchunk) + " " + b.y + " " + (chunkZ * 16 + b.zinchunk));
 			//			System.out.println(b.type + " " + b.data);
 			blockEntities.add(b);

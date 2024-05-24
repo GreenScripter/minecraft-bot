@@ -2,7 +2,7 @@ package greenscripter.minecraft.packet.s2c.play.inventory;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.nbt.NBTTagCompound;
+import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
@@ -11,7 +11,7 @@ public class OpenContainerPacket extends Packet {
 
 	public int windowId;
 	public int windowType;
-	public NBTTagCompound title;
+	public NBTComponent title;
 
 	public OpenContainerPacket() {}
 

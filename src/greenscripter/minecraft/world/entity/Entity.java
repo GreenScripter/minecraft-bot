@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import greenscripter.minecraft.ServerConnection;
-import greenscripter.minecraft.nbt.NBTTagCompound;
+import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.Vector;
 import greenscripter.minecraft.world.entity.metadata.EMByte;
@@ -64,7 +64,7 @@ public class Entity {
 		return (metadata[0].asByte().value & 0x80) == 1;
 	}
 
-	public NBTTagCompound getName() {
+	public NBTComponent getName() {
 		return metadata[1].asOTextComponent().value;
 	}
 
