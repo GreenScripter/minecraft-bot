@@ -25,4 +25,8 @@ public abstract class PlayHandler {
 		return List.of();
 	}
 
+	public void handleDisconnect(ServerConnection sc) throws IOException {
+
+	}
+
 }

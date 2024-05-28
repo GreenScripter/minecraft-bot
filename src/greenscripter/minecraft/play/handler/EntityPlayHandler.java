@@ -1,5 +1,6 @@
 package greenscripter.minecraft.play.handler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -210,6 +211,15 @@ public class EntityPlayHandler extends PlayHandler {
 			}
 		}
 
+	}
+
+	public void handleDisconnect(ServerConnection sc) {
+		WorldData worldData = sc.getData(WorldData.class);
+		if (worldData.world != null) {
+			for (Entity e : new ArrayList<>(worldData.world.entities.values())) {
+				worldData.world.unloadEntity(e, sc);
+			}
+		}
 	}
 
 	public List<Integer> handlesPackets() {

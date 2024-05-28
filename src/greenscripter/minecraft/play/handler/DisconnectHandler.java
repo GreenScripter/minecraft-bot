@@ -15,7 +15,7 @@ public class DisconnectHandler extends PlayHandler {
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		if (p.id == disconnectId) {
 			DisconnectPacket packet = p.convert(new DisconnectPacket());
-			System.err.println("Disconnected for " + packet.reason.toString());
+			System.err.println(sc.name + " disconnected for " + packet.reason.toString());
 			sc.connectionState = ServerConnection.ConnectionState.DISCONNECTED;
 			sc.socket.close();
 		}

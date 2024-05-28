@@ -224,6 +224,18 @@ public class WorldPlayHandler extends PlayHandler {
 		return List.of(chunkDataId, respawnId, loginPlayId, unloadChunkId, explosionId, blockUpdateId, sectionUpdateId, blockEntityDataId);
 	}
 
+	public void handleDisconnect(ServerConnection sc) {
+		WorldData worldData = sc.getData(WorldData.class);
+		if (worldData.world != null) {
+			synchronized (worlds) {
+				for (Chunk c : new ArrayList<>(worldData.world.chunks.values())) {
+					worldData.world.unloadChunk(c, sc);
+				}
+			}
+		}
+
+	}
+
 	public static interface ChunkFirstLoadListener {
 
 		public void chunkLoaded(ServerConnection sc, Chunk chunk) throws IOException;

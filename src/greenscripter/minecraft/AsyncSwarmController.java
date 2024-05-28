@@ -233,10 +233,22 @@ public class AsyncSwarmController {
 					}
 					synchronized (dead) {
 						dead.addAll(remove);
-						if (deathCallback != null) try {
-							remove.forEach(deathCallback);
-						} catch (Exception e) {
-							e.printStackTrace();
+						if (deathCallback != null) {
+							for (ServerConnection sc : remove) {
+								try {
+									deathCallback.accept(sc);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								for (PlayHandler handler : sc.getPlayHandlers()) {
+									try {
+										handler.handleDisconnect(sc);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								}
+
+							}
 						}
 					}
 

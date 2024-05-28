@@ -1,6 +1,7 @@
 package greenscripter.minecraft.arun;
 
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -73,16 +74,21 @@ public class GearBot {
 
 		controller.namesToUUIDs = accounts::getUUID;
 		controller.botNames = accounts::getName;
-		//				controller.bungeeMode = true;
+//		controller.bungeeMode = true;
 
 		controller.start();
-		controller.connect(accounts.size(), 50);
+		controller.connect(accounts.size(), 60);
 
+		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			Thread.sleep(1000);
-			controller.reconnectDead(controller.takeDead(controller.getDead()), 50);
+			String line = scanner.nextLine();
+			handle(controller, line);
 		}
 
+	}
+
+	public static void handle(AsyncSwarmController controller, String line) {
+		controller.reconnectDead(controller.takeDead(controller.getDead()), 6000);
 	}
 
 	public static void updateBox(int id, BlockBox box, String dimension, int color) {
