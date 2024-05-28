@@ -50,6 +50,8 @@ public class ServerConnection {
 
 	public String name;
 	public UUID uuid;
+	public String targetName;
+	public UUID targetUuid;
 	public String hostname;
 	public int port;
 	public int id;
@@ -75,12 +77,16 @@ public class ServerConnection {
 	public ServerConnection(String hostname, int port, String name, UUID uuid, List<PlayHandler> playHandler) {
 		this.name = name;
 		this.uuid = uuid;
+		this.targetName = name;
+		this.targetUuid = uuid;
 		this.hostname = hostname;
 		this.port = port;
 		playHandler.forEach(this::addPlayHandler);
 	}
 
 	public synchronized void connect() throws IOException {
+		name = targetName;
+		uuid = targetUuid;
 		channel = SocketChannel.open();
 		channel.connect(new InetSocketAddress(hostname, port));
 		channel.configureBlocking(true);
