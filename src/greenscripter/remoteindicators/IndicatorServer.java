@@ -2,8 +2,10 @@ package greenscripter.remoteindicators;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -182,6 +184,16 @@ public class IndicatorServer {
 	public void removeShape(int id) {
 		shapes.remove(id);
 		outgoingShapes.add(new Update(id, null, true));
+	}
+
+	public Set<Integer> getShapes() {
+		synchronized (shapes) {
+			return new HashSet<>(shapes.keySet());
+		}
+	}
+
+	public Shape getShape(int id) {
+		return shapes.get(id);
 	}
 
 	record Update(int id, Shape s, boolean delete) {

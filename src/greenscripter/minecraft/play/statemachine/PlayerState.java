@@ -9,8 +9,8 @@ import greenscripter.statemachine.State;
 
 public class PlayerState extends State<ServerConnection> {
 
-	List<PlayHandler> gameHandlers = new ArrayList<>();
-	List<PlayHandler> stickyGameHandlers = new ArrayList<>();
+	public List<PlayHandler> gameHandlers = new ArrayList<>();
+	public List<PlayHandler> stickyGameHandlers = new ArrayList<>();
 
 	public PlayerState() {
 		onInit(e -> {

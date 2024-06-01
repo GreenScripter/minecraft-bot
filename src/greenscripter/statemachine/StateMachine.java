@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * The StateMachine functions are:
@@ -31,16 +32,18 @@ import java.util.Map;
  */
 public class StateMachine<T> {
 
-	List<State<T>> stack = new ArrayList<>();
+	public List<State<T>> stack = new ArrayList<>();
 	Map<String, State<T>> namedStates = new HashMap<>();
-	Storage storage = new Storage();
-	T value;
+	public Storage storage = new Storage();
+	public T value;
 
 	private Map<Class<?>, Long> profilingTimers = new HashMap<>();
 
 	private boolean needsInit = false;
 	private State<T> initWith = null;
 	public boolean profiling = false;
+
+	public List<Consumer<State<T>>> stateChangeListeners = new ArrayList<>();
 
 	public StateMachine(T t) {
 		this.value = t;
@@ -49,6 +52,16 @@ public class StateMachine<T> {
 	public void printProfiler() {
 		for (var e : profilingTimers.entrySet()) {
 			System.out.println(e.getKey() + ": " + e.getValue());
+		}
+	}
+
+	private void onStateChange(State<T> s) {
+		for (Consumer<State<T>> c : stateChangeListeners) {
+			try {
+				c.accept(s);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
 		}
 	}
 
@@ -145,6 +158,7 @@ public class StateMachine<T> {
 		needsInit = true;
 		initWith = start;
 
+		onStateChange(state);
 		stack.add(state);
 	}
 
@@ -168,6 +182,7 @@ public class StateMachine<T> {
 			} catch (ThrownReturn e) {
 			}
 		}
+		onStateChange(state);
 		stack.add(state);
 		needsInit = true;
 		initWith = previous;

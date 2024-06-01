@@ -126,7 +126,7 @@ public class ServerConnection {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends PlayData> T getData(Class<T> type) {
+	public synchronized <T extends PlayData> T getData(Class<T> type) {
 		PlayData s = playData.get(type);
 		if (s == null) {
 			s = PlayData.createData(type, this);
@@ -135,7 +135,7 @@ public class ServerConnection {
 		return (T) s;
 	}
 
-	public <T extends PlayData> void setData(Class<T> type, T t) {
+	public synchronized <T extends PlayData> void setData(Class<T> type, T t) {
 		playData.put(type, t);
 	}
 
