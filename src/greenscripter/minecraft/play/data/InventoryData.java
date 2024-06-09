@@ -1,11 +1,14 @@
 package greenscripter.minecraft.play.data;
 
+import java.util.List;
+
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.c2s.play.inventory.ClickContainerButtonPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.ClickContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.ClickContainerPacket.SlotChange;
 import greenscripter.minecraft.packet.c2s.play.inventory.CloseContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.HotbarSlotPacket;
+import greenscripter.minecraft.play.inventory.ItemUtils;
 import greenscripter.minecraft.play.inventory.OpenedScreen;
 import greenscripter.minecraft.play.inventory.PlayerInventoryScreen;
 import greenscripter.minecraft.play.inventory.Slot;
@@ -446,5 +449,14 @@ public class InventoryData implements PlayData {
 		slot.setCount(0);
 		p.changed.add(new SlotChange(slotId, slot));
 		sc.sendPacket(p);
+	}
+	
+	public void emptyCursor() {
+		List<Slot> targets = ItemUtils.getEmptySlots(getActiveScreen().getInventoryIterator());
+		if (targets.isEmpty()) {
+			dropAllCursorItems();
+		} else {
+			leftClickSlot(targets.get(0));
+		}
 	}
 }
