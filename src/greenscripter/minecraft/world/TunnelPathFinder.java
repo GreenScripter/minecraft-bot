@@ -14,6 +14,7 @@ public class TunnelPathFinder extends PathFinder {
 	{
 		BlockStates.addToBlockSet(sideDanger, "minecraft:lava");
 		BlockStates.addToBlockSet(sideDanger, "minecraft:water");
+		BlockStates.addToBlockSet(sideDanger, "minecraft:gravel");
 		for (BlockState s : BlockStates.idsToStates.values()) {
 			if ("true".equals(s.properties().get("waterlogged"))) {
 				sideDanger[s.id()] = true;
@@ -99,10 +100,45 @@ public class TunnelPathFinder extends PathFinder {
 		return initial;
 	}
 
+	public boolean checkSides(int x, int y, int z) {
+		if (world.isColliding(x + 1, y, z, sideDanger)) {
+			return false;
+		}
+		if (world.isColliding(x - 1, y, z, sideDanger)) {
+			return false;
+		}
+		if (world.isColliding(x, y, z + 1, sideDanger)) {
+			return false;
+		}
+		if (world.isColliding(x, y, z - 1, sideDanger)) {
+			return false;
+		}
+		return true;
+	}
+
+	public boolean isPassibleAir(int x, int y, int z) {
+		return world.isPassiblePlayer(x, y, z, PathFinder.pathFindable);
+	}
+
 	List<AStarNode> add = new ArrayList<>();
 
 	public void aStarNeighbors(AStarNode parent, List<AStarNode> blocks, Set<Long> endpoint) {
 		super.aStarNeighbors(parent, add, endpoint);
+		double basePriority = 1;
+
+		for (int i = -10; i <= 10; i += 1) {
+			if (isPassibleAir(parent.pos.x, parent.pos.y + i, parent.pos.z)) {
+				basePriority = 1;
+				basePriority -= Math.abs(i);
+				AStarNode newNode = new AStarNode(new Position(parent.pos.x, parent.pos.y + i, parent.pos.z), parent, -basePriority);
+				newNode.extraCost += Math.abs(i);
+				if (Math.abs(i) == 10) {
+					newNode.extraCost -= 10 + 1;
+				}
+				blocks.add(newNode);
+			}
+		}
+
 		for (AStarNode n : add) {
 			if (n.parent != null) {
 				n.extraCost += 0.9;

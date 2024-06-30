@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class ServerConnection {
 
 	@SuppressWarnings("unchecked")
 	private List<PlayHandler>[] packetTypes = new List[200];
-	private List<PlayHandler> ticking = new ArrayList<>();
+	private List<PlayHandler> ticking = new CopyOnWriteArrayList<>();
 
 	SocketChannel channel;
 

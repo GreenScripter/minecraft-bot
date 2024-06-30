@@ -22,6 +22,16 @@ public class BlockStates {
 	public static Map<Integer, BlockState> idsToStates = new HashMap<>();
 	public static boolean[] noCollideIds;
 
+	public static boolean missingOrInSet(int it, boolean[] set) {
+		if (it < 0) return true;
+		return set[it];
+	}
+
+	public static boolean presentInSet(int it, boolean[] set) {
+		if (it < 0) return false;
+		return set[it];
+	}
+
 	public static Map<String, List<String>> getBlockProperties(String block) {
 		return blockProperties.get(block);
 	}
@@ -44,6 +54,22 @@ public class BlockStates {
 
 	public static boolean[] getBlockSet() {
 		return new boolean[noCollideIds.length];
+	}
+
+	public static boolean[] getBlockSetOf(String... blockId) {
+		boolean[] set = getBlockSet();
+		for (String id : blockId) {
+			addToBlockSet(set, id);
+		}
+		return set;
+	}
+
+	public static boolean[] getBlockSetOfTags(String... blockId) {
+		boolean[] set = getBlockSet();
+		for (String id : blockId) {
+			addTagToBlockSet(set, id);
+		}
+		return set;
 	}
 
 	public static boolean[] addToBlockSet(boolean[] set, String blockId) {

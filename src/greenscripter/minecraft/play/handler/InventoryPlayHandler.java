@@ -11,6 +11,7 @@ import greenscripter.minecraft.packet.s2c.play.inventory.OpenContainerPacket;
 import greenscripter.minecraft.packet.s2c.play.inventory.SetContainerContentPacket;
 import greenscripter.minecraft.packet.s2c.play.inventory.SetContainerPropertyPacket;
 import greenscripter.minecraft.packet.s2c.play.inventory.SetContainerSlotPacket;
+import greenscripter.minecraft.packet.s2c.play.inventory.SetHeldItemPacket;
 import greenscripter.minecraft.play.data.InventoryData;
 import greenscripter.minecraft.play.inventory.OpenedScreen;
 
@@ -21,6 +22,7 @@ public class InventoryPlayHandler extends PlayHandler {
 	int setSlotId = new SetContainerSlotPacket().id();
 	int closeId = new ForceCloseContainerPacket().id();
 	int openId = new OpenContainerPacket().id();
+	int hotbarSlotId = new SetHeldItemPacket().id();
 
 	public void handlePacket(UnknownPacket up, ServerConnection sc) throws IOException {
 		InventoryData data = sc.getData(InventoryData.class);
@@ -95,11 +97,14 @@ public class InventoryPlayHandler extends PlayHandler {
 				screen.title = p.title;
 
 			}
+		} else if (up.id == hotbarSlotId) {
+			SetHeldItemPacket p = up.convert(new SetHeldItemPacket());
+			data.hotbarSlot = p.slot;
 		}
 
 	}
 
 	public List<Integer> handlesPackets() {
-		return List.of(setContentId, setPropertyId, setSlotId, closeId, openId);
+		return List.of(setContentId, setPropertyId, setSlotId, closeId, openId, hotbarSlotId);
 	}
 }

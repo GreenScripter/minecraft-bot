@@ -1,5 +1,7 @@
 package greenscripter.minecraft.play.data;
 
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import greenscripter.minecraft.ServerConnection;
@@ -24,6 +26,18 @@ public class InventoryData implements PlayData {
 
 	public void init(ServerConnection sc) {
 		this.sc = sc;
+	}
+
+	public Iterator<Slot> getInvIt() {
+		return getActiveScreen().getInventoryIterator();
+	}
+
+	public Iterator<Slot> getHotIt() {
+		return getActiveScreen().getHotbarIterator();
+	}
+
+	public Iterator<Slot> getOthIt() {
+		return getActiveScreen().getOtherIterator();
 	}
 
 	public OpenedScreen getActiveScreen() {
@@ -450,13 +464,16 @@ public class InventoryData implements PlayData {
 		p.changed.add(new SlotChange(slotId, slot));
 		sc.sendPacket(p);
 	}
-	
+
 	public void emptyCursor() {
-		List<Slot> targets = ItemUtils.getEmptySlots(getActiveScreen().getInventoryIterator());
-		if (targets.isEmpty()) {
-			dropAllCursorItems();
-		} else {
-			leftClickSlot(targets.get(0));
+		if (getActiveScreen().cursor.present) {
+			List<Slot> targets = ItemUtils.getSlotsFittingItem(getActiveScreen().cursor, getActiveScreen().getInventoryIterator());
+			targets.sort(Comparator.comparingInt((Slot s) -> s.present ? s.itemCount : 0).reversed());
+			if (targets.isEmpty()) {
+				dropAllCursorItems();
+			} else {
+				leftClickSlot(targets.get(0));
+			}
 		}
 	}
 }

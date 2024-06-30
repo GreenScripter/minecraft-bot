@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import greenscripter.minecraft.gameinfo.Registries;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.utils.IndexIterator;
 
@@ -97,6 +98,8 @@ public class OpenedScreen {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(this.getClass() + "\n");
+		sb.append(this.windowId + " " + this.windowType + " " + Registries.registriesFromIds.get("minecraft:menu").get(windowType) + "\n");
 		for (int i = 0; i < getOtherSlotsCount(); i++) {
 			sb.append(" " + getOtherSlot(i).toStringShort());
 			if (i % 9 == 8) sb.append("\n");

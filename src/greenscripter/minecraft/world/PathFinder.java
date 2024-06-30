@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 import greenscripter.minecraft.gameinfo.BlockStates;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
@@ -44,6 +45,7 @@ public class PathFinder {
 		Position at = start.copy();
 		List<Vector> path = new ArrayList<>();
 		while (isPassible(at.add(0, -1, 0))) {
+			if (at.y < world.min_y) break;
 			if (previous.y - at.y >= maxSpeed) {
 				previous = at;
 				at = at.copy();
@@ -148,7 +150,19 @@ public class PathFinder {
 		if (new Vector(startBlock).multiply(1, 0, 1).distanceTo(new Vector(endBlock).multiply(1, 0, 1)) > 200) {
 			return upAndOver(new Vector(startBlock), new Vector(endBlock), -1);
 		}
-		var blocks = aStar(startBlock, List.of(), endBlock, -1);
+		var blocks = aStar(startBlock, List.of(), endBlock, -1, null);
+		if (blocks == null) return null;
+		List<Vector> path = new ArrayList<>();
+		for (Position p : blocks) {
+			path.add(new Vector(p));
+		}
+		mergeStraightLines(path, maxSpeed);
+		return path;
+
+	}
+
+	public List<Vector> pathfind(Position startBlock, Predicate<Position> endBlock) {
+		var blocks = aStar(startBlock, List.of(), null, -1, endBlock);
 		if (blocks == null) return null;
 		List<Vector> path = new ArrayList<>();
 		for (Position p : blocks) {
@@ -163,9 +177,9 @@ public class PathFinder {
 		return upAndOver(new Vector(startBlock), new Vector(endBlock), -1);
 	}
 
-	public List<Position> aStar(Position startBlock, List<Vector> endNear, Position endBlock, double nearLength) {
+	public List<Position> aStar(Position startBlock, List<Vector> endNear, Position endBlock, double nearLength, Predicate<Position> endCondition) {
 
-		if (startBlock == null || (endBlock == null && endNear.isEmpty())) {
+		if (startBlock == null || (endBlock == null && endNear.isEmpty() && endCondition == null)) {
 			return null;
 		}
 		if (startBlock.equals(endBlock)) {
@@ -181,8 +195,7 @@ public class PathFinder {
 		}
 		if (endBlock != null)
 			endPoints.add(((long) endBlock.x << 32) + endBlock.z);
-		else
-			endBlock = new Position((int) Math.floor(endNear.get(0).x), (int) Math.floor(endNear.get(0).y), (int) Math.floor(endNear.get(0).z));
+		else if (!endNear.isEmpty()) endBlock = new Position((int) Math.floor(endNear.get(0).x), (int) Math.floor(endNear.get(0).y), (int) Math.floor(endNear.get(0).z));
 
 		for (int i = 0; i < endNear.size(); i++) {
 			Vector end = endNear.get(i);
@@ -204,7 +217,7 @@ public class PathFinder {
 		active.add(startNode.pos);
 
 		long start = System.currentTimeMillis();
-		BlockBox box = new BlockBox(startBlock, endBlock).expand(restrictRadius);
+		BlockBox box = new BlockBox(startBlock, endBlock == null ? startBlock : endBlock).expand(restrictRadius);
 
 		List<AStarNode> next = new ArrayList<>();
 		loop: while (nodes.size() > 0) {
@@ -220,7 +233,7 @@ public class PathFinder {
 			aStarNeighbors(current, next, endPoints);
 
 			for (AStarNode node : next) {
-				node.cost += node.pos.getManhattanDistance(endBlock);
+				if (endBlock != null) node.cost += node.pos.getManhattanDistance(endBlock);
 
 				AStarNode otherNode = seen.get(node.pos);
 				if (otherNode != null) {
@@ -241,6 +254,9 @@ public class PathFinder {
 					//							world.setState(node.pos.x, node.pos.y, node.pos.z, (byte) (world.getState(node.pos.x, node.pos.y, node.pos.z) - 1));
 					//						}
 					if (endBlock != null && node.pos.equals(endBlock)) {
+						break loop;
+					}
+					if (endCondition != null && endCondition.test(node.pos)) {
 						break loop;
 					}
 					for (int i = 0; i < endNear.size(); i++) {
@@ -383,7 +399,7 @@ public class PathFinder {
 	public List<Vector> aStar(Vector start, Vector end, double radius) {
 		Position startBlock = findValidStartNear(start);
 
-		return blockPathToCoordinates(aStar(startBlock, List.of(end), null, radius));
+		return blockPathToCoordinates(aStar(startBlock, List.of(end), null, radius, null));
 	}
 
 	public List<Vector> aStar(Vector start, List<Vector> ends, double radius) {
@@ -392,7 +408,7 @@ public class PathFinder {
 		//		ChatUtils.message("Took " + (System.nanoTime() - startTime) + " nanoseconds to find valid start");
 
 		//		startTime = System.nanoTime();
-		List<Position> aStarResult = aStar(startBlock, ends, null, radius);
+		List<Position> aStarResult = aStar(startBlock, ends, null, radius, null);
 		//		ChatUtils.message("Took " + (System.nanoTime() - startTime) + " nanoseconds to a*");
 
 		//		startTime = System.nanoTime();
@@ -405,7 +421,7 @@ public class PathFinder {
 	public List<Vector> aStar(Vector start, Position end) {
 		Position startBlock = findValidStartNear(start);
 		//		System.out.println("Path start at " + startBlock+" original: "+start);
-		return blockPathToCoordinates(aStar(startBlock, List.of(), end, -1));
+		return blockPathToCoordinates(aStar(startBlock, List.of(), end, -1, null));
 	}
 
 	public List<Vector> blockPathToCoordinates(List<Position> blocks) {

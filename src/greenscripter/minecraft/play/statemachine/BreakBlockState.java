@@ -1,6 +1,7 @@
 package greenscripter.minecraft.play.statemachine;
 
 import greenscripter.minecraft.gameinfo.BlockStates;
+import greenscripter.minecraft.gameinfo.BlockStates.BlockState;
 import greenscripter.minecraft.gameinfo.RegistryTags;
 import greenscripter.minecraft.play.data.InventoryData;
 import greenscripter.minecraft.play.data.PositionData;
@@ -14,17 +15,37 @@ import greenscripter.remoteindicators.IndicatorServer;
 public class BreakBlockState extends PlayerState {
 
 	public IndicatorServer render;
+	public Position block;
 	int shapeId;
+
+	public static boolean[] indestructible;
+	static {
+		indestructible = BlockStates.getBlockSetOf(//
+				"minecraft:bedrock", //
+				"minecraft:water", //
+				"minecraft:lava", //
+				"minecraft:nether_portal", //
+				"minecraft:end_portal_frame", //
+				"minecraft:end_portal");
+	}
 
 	public BreakBlockState(Position block) {
 		this(null, block);
 	}
 
+	long start;
+
 	public BreakBlockState(IndicatorServer render, Position block) {
+		this.block = block;
 		this.render = render;
 		onInit(e -> {
+			start = System.currentTimeMillis();
 			WorldData data = e.value.getData(WorldData.class);
 			PositionData pos = e.value.getData(PositionData.class);
+			int blockId = data.world.getBlock(block);
+			if (blockId <= 0 || indestructible[blockId]) {
+				e.pop();
+			}
 			if (render != null) shapeId = render.addCuboid(data.world.id, new Vector(block.x, block.y, block.z), new Vector(block.x + 1, block.y + 1, block.z + 1), IndicatorServer.getColor(255, 0, 0, 255));
 			InventoryData inv = e.value.getData(InventoryData.class);
 			String target = getBlockItemTag(data.world.getBlock(block));
@@ -56,6 +77,9 @@ public class BreakBlockState extends PlayerState {
 			}
 		});
 		onTick(e -> {
+			if (System.currentTimeMillis() - start > 60 * 1000) {
+				e.pop();
+			}
 			WorldData data = e.value.getData(WorldData.class);
 			PositionData pos = e.value.getData(PositionData.class);
 
@@ -76,7 +100,12 @@ public class BreakBlockState extends PlayerState {
 	}
 
 	public static String getBlockItemTag(int blockId) {
-		String block = BlockStates.getState(blockId).block();
+		BlockState state = BlockStates.getState(blockId);
+		if (state == null) {
+			System.out.println("Unknown block " + blockId);
+			return null;
+		}
+		String block = state.block();
 		if (RegistryTags.matchesBlockTag("minecraft:mineable_pickaxe", block)) {
 			return "minecraft:pickaxes";
 		}

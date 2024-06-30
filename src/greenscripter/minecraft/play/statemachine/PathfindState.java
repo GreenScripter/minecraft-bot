@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.function.Predicate;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.play.data.PositionData;
@@ -18,6 +19,7 @@ public class PathfindState extends PlayerState {
 	public PathFinder finder;
 	public Position start;
 	public Position target;
+	public Predicate<Position> targetFunction;
 	public List<Vector> followPath;
 	public StateTickCallback<ServerConnection> noPath;
 	public StateTickCallback<ServerConnection> travelFailed;
@@ -26,14 +28,28 @@ public class PathfindState extends PlayerState {
 	public List<Integer> pathIds = new ArrayList<>();
 	ExecutorService exec;
 
+	public PathfindState(ExecutorService exec, PathFinder finder, Position start, Predicate<Position> target) {
+		this(exec, finder, start, null, target);
+
+	}
+
 	public PathfindState(ExecutorService exec, PathFinder finder, Position start, Position target) {
+		this(exec, finder, start, target, null);
+	}
+
+	public PathfindState(ExecutorService exec, PathFinder finder, Position start, Position t, Predicate<Position> targetFunc) {
 		this.finder = finder;
 		this.start = start;
-		this.target = target;
+		this.target = t;
 		this.exec = exec;
+		this.targetFunction = targetFunc;
 
 		var future = exec.submit(() -> {
-			followPath = finder.pathfind(start, target);
+			if (target != null) {
+				followPath = finder.pathfind(start, target);
+			} else if (targetFunction != null) {
+				followPath = finder.pathfind(start, targetFunction);
+			}
 		});
 
 		onTick(e -> {
@@ -41,6 +57,9 @@ public class PathfindState extends PlayerState {
 				if (followPath == null) {
 					if (noPath != null) noPath.tick(e);
 					e.popNow();
+				}
+				if (target == null) {
+					target = new Position(followPath.get(followPath.size() - 1));
 				}
 				PositionData pos = e.value.getData(PositionData.class);
 				followPath = finder.getPacketVectors(followPath, pos.pos);

@@ -1,6 +1,7 @@
 package greenscripter.minecraft.play.inventory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,22 @@ public class ItemUtils {
 		return s -> s.present && id == s.itemId;
 	}
 
+	public static Predicate<Slot> matchesIds(String... ids) {
+		int[] intIds = new int[ids.length];
+		for (int i = 0; i < ids.length; i++) {
+			intIds[i] = ItemId.get(ids[i]);
+		}
+		return matchesIds(intIds);
+	}
+
+	public static Predicate<Slot> matchesIds(int... ids) {
+		HashSet<Integer> idSet = new HashSet<>();
+		for (int id : ids) {
+			idSet.add(id);
+		}
+		return s -> s.present && idSet.contains(s.itemId);
+	}
+
 	public static Slot slot(int type, int count) {
 		Slot s = new Slot();
 		s.present = count > 0;
@@ -47,6 +64,10 @@ public class ItemUtils {
 			if (slot.present) count += slot.itemCount;
 		}
 		return count;
+	}
+
+	public static int countItems(String type, Iterator<Slot> slots) {
+		return countItems(ItemId.get(type), slots);
 	}
 
 	public static int countItems(int type, Iterator<Slot> slots) {
@@ -100,6 +121,10 @@ public class ItemUtils {
 			}
 		}
 		return count;
+	}
+
+	public static int countSlotsWithItem(String type, Iterator<Slot> slots) {
+		return countSlotsWithItem(ItemId.get(type), slots);
 	}
 
 	public static int countSlotsWithItem(int type, Iterator<Slot> slots) {
@@ -174,6 +199,10 @@ public class ItemUtils {
 		return result;
 	}
 
+	public static List<Slot> getSlotsWithItem(String type, Iterator<Slot> slots) {
+		return getSlotsWithItem(ItemId.get(type), slots);
+	}
+
 	public static List<Slot> getSlotsWithItem(int type, Iterator<Slot> slots) {
 		List<Slot> result = new ArrayList<>();
 		while (slots.hasNext()) {
@@ -205,7 +234,7 @@ public class ItemUtils {
 		List<Slot> result = new ArrayList<>();
 		while (slots.hasNext()) {
 			Slot slot = slots.next();
-			if (slot.present && slot.itemId == type)
+			if (slot.present && slot.itemId == type && slot.getItemInfo().maxStack > slot.itemCount)
 				result.add(slot);
 			else if (!slot.present) result.add(slot);
 
@@ -217,7 +246,7 @@ public class ItemUtils {
 		List<Slot> result = new ArrayList<>();
 		while (slots.hasNext()) {
 			Slot slot = slots.next();
-			if (slot.equivalent(type))
+			if (slot.equivalent(type) && slot.getItemInfo().maxStack - slot.itemCount >= type.itemCount)
 				result.add(slot);
 			else if (!slot.present) result.add(slot);
 		}

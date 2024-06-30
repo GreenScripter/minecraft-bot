@@ -203,13 +203,13 @@ public abstract class NBTComponent {
 		return (NBTComponent) getType(id).read(in);
 	}
 
-	public static void writeNBT(MCOutputStream out, NBTTagCompound c) throws IOException {
+	public static void writeNBT(MCOutputStream out, NBTComponent c) throws IOException {
 		out.writeByte(c.getType());
 		out.writeUTF("");
 		c.write(out);
 	}
 
-	public static void writeNetworkNBT(MCOutputStream out, NBTTagCompound c) throws IOException {
+	public static void writeNetworkNBT(MCOutputStream out, NBTComponent c) throws IOException {
 		if (c == null) {
 			out.writeByte(0);
 			return;
