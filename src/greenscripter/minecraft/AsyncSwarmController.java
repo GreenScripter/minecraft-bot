@@ -39,6 +39,8 @@ public class AsyncSwarmController {
 	public Consumer<ServerConnection> joinCallback = null;
 	public Runnable tickCallback = null;
 
+	public ServerConnection ticking = null;
+
 	Thread tickThread;
 
 	public AsyncSwarmController(String ip, int port, List<PlayHandler> globalHandlers) {
@@ -200,6 +202,7 @@ public class AsyncSwarmController {
 				ArrayList<ServerConnection> copy = new ArrayList<>(connections);
 
 				for (ServerConnection sc : copy) {
+					ticking = sc;
 					try {
 						sc.step();
 
@@ -222,6 +225,7 @@ public class AsyncSwarmController {
 					packets += (sc.in.packetCounter);
 					sc.in.packetCounter = 0;
 				}
+				ticking = null;
 
 				if (!remove.isEmpty()) synchronized (remove) {
 					synchronized (extract) {

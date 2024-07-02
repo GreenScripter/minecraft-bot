@@ -257,6 +257,7 @@ public class PathFinder {
 						break loop;
 					}
 					if (endCondition != null && endCondition.test(node.pos)) {
+						endBlock = node.pos.copy();
 						break loop;
 					}
 					for (int i = 0; i < endNear.size(); i++) {

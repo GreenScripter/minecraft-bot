@@ -76,11 +76,11 @@ public class Chunk {
 		return ((0xFFFFFFFFl & z) << 32) | (0xFFFFFFFFl & x);
 	}
 
-	public static int getZ(long merged) {
+	public static int getX(long merged) {
 		return (int) (0xFFFFFFFFl & merged);
 	}
 
-	public static int getX(long merged) {
+	public static int getZ(long merged) {
 		return (int) (merged >>> 32);
 	}
 

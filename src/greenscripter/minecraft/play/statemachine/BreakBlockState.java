@@ -34,6 +34,7 @@ public class BreakBlockState extends PlayerState {
 	}
 
 	long start;
+	int targetting;
 
 	public BreakBlockState(IndicatorServer render, Position block) {
 		this.block = block;
@@ -46,6 +47,7 @@ public class BreakBlockState extends PlayerState {
 			if (blockId <= 0 || indestructible[blockId]) {
 				e.pop();
 			}
+			targetting = blockId;
 			if (render != null) shapeId = render.addCuboid(data.world.id, new Vector(block.x, block.y, block.z), new Vector(block.x + 1, block.y + 1, block.z + 1), IndicatorServer.getColor(255, 0, 0, 255));
 			InventoryData inv = e.value.getData(InventoryData.class);
 			String target = getBlockItemTag(data.world.getBlock(block));
@@ -82,6 +84,9 @@ public class BreakBlockState extends PlayerState {
 			}
 			WorldData data = e.value.getData(WorldData.class);
 			PositionData pos = e.value.getData(PositionData.class);
+
+			targetting = data.world.getBlock(block);
+//			System.out.println(targetting);
 
 			if (pos.getEyePos().distanceTo(new Vector(block)) >= 6) {
 				e.pop();
@@ -122,5 +127,9 @@ public class BreakBlockState extends PlayerState {
 			return "minecraft:swords";
 		}
 		return null;
+	}
+
+	public String toString() {
+		return super.toString() + " " + block + " " + BlockStates.getState(targetting);
 	}
 }
