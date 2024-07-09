@@ -19,6 +19,7 @@ public class BreakBlockState extends PlayerState {
 	int shapeId;
 
 	public static boolean[] indestructible;
+	public static boolean[] air;
 	static {
 		indestructible = BlockStates.getBlockSetOf(//
 				"minecraft:bedrock", //
@@ -27,6 +28,7 @@ public class BreakBlockState extends PlayerState {
 				"minecraft:nether_portal", //
 				"minecraft:end_portal_frame", //
 				"minecraft:end_portal");
+		air = BlockStates.getBlockSetOf("minecraft:air", "minecraft:cave_air", "minecraft:void_air");
 	}
 
 	public BreakBlockState(Position block) {
@@ -44,7 +46,7 @@ public class BreakBlockState extends PlayerState {
 			WorldData data = e.value.getData(WorldData.class);
 			PositionData pos = e.value.getData(PositionData.class);
 			int blockId = data.world.getBlock(block);
-			if (blockId <= 0 || indestructible[blockId]) {
+			if (blockId <= 0 || indestructible[blockId] || air[blockId]) {
 				e.pop();
 			}
 			targetting = blockId;
@@ -86,7 +88,13 @@ public class BreakBlockState extends PlayerState {
 			PositionData pos = e.value.getData(PositionData.class);
 
 			targetting = data.world.getBlock(block);
-//			System.out.println(targetting);
+			//			System.out.println(targetting);
+			if (BlockStates.presentInSet(targetting, air)) {
+				e.popNow();
+			}
+			if (BlockStates.presentInSet(targetting, indestructible)) {
+				e.popNow();
+			}
 
 			if (pos.getEyePos().distanceTo(new Vector(block)) >= 6) {
 				e.pop();

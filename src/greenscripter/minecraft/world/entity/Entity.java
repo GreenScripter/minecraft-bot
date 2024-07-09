@@ -117,6 +117,24 @@ public class Entity {
 		return false;
 	}
 
+	public int getHookedEntity() {
+		if (metadata[8] != null && metadata[8].isVarInt()) {
+			return metadata[8].asVarInt().value;
+		}
+		return 0;
+	}
+
+	public int getProjectileOwner() {
+		return data;
+	}
+
+	public boolean isCatchable() {
+		if (metadata[9] != null && metadata[9].isBoolean()) {
+			return metadata[9].asBoolean().value;
+		}
+		return false;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends EntityMetadata> T getMetadataAtOrNull(Class<T> type, int index) {
 		if (metadata[index] == null) return null;

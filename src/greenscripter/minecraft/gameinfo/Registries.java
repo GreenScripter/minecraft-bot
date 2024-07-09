@@ -14,6 +14,10 @@ import com.google.gson.reflect.TypeToken;
 
 public class Registries {
 
+	public static void main(String[] args) {
+		System.out.println(registries.keySet());
+	}
+
 	public static Map<String, Integer> registryIds = new HashMap<>();
 	public static Map<Integer, String> idsOfRegistries = new HashMap<>();
 	public static Map<String, Map<String, Integer>> registries = new HashMap<>();
@@ -29,6 +33,14 @@ public class Registries {
 	public static boolean[] safeAttack;
 
 	public static Map<String, ItemInfo> itemInfo = new HashMap<>();
+
+	public static Integer get(String registry, String name) {
+		return registries.get(registry).get(name);
+	}
+
+	public static String get(String registry, Integer id) {
+		return registriesFromIds.get(registry).get(id);
+	}
 
 	static {
 		long start = System.currentTimeMillis();
@@ -52,7 +64,7 @@ public class Registries {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		safeAttack = new boolean[Registries.registries.get("minecraft:entity_type").values().stream().max(Integer::compareTo).orElse(0)];
+		safeAttack = new boolean[Registries.registries.get("minecraft:entity_type").values().stream().max(Integer::compareTo).orElse(0) + 1];
 		for (int i = 0; i < safeAttack.length; i++) {
 			safeAttack[i] = true;
 		}
@@ -156,7 +168,7 @@ public class Registries {
 			}
 			itemInfo.add("attackSpeed", new JsonPrimitive(4+item.getAttributeModifiers(EquipmentSlot.MAINHAND).get(EntityAttributes.GENERIC_ATTACK_SPEED).stream().mapToDouble(m -> m.getValue()).sum()));
 			itemInfo.add("attackDamage", new JsonPrimitive(1+item.getAttributeModifiers(EquipmentSlot.MAINHAND).get(EntityAttributes.GENERIC_ATTACK_DAMAGE).stream().mapToDouble(m -> m.getValue()).sum()));
-
+	
 			itemInfo.add("isBlock", new JsonPrimitive(item instanceof BlockItem));
 	
 			if (item instanceof BlockItem block) {

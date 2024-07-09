@@ -40,6 +40,14 @@ public class InventoryData implements PlayData {
 		return getActiveScreen().getOtherIterator();
 	}
 
+	public Slot getMainHandSlot() {
+		return getActiveScreen().getHotbarSlot(hotbarSlot);
+	}
+
+	public OpenedScreen getScreen() {
+		return getActiveScreen();
+	}
+
 	public OpenedScreen getActiveScreen() {
 		if (screen == null) {
 			return inv;

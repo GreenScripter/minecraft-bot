@@ -135,6 +135,7 @@ public class PathfindState extends PlayerState {
 				if (render != null) for (int id : pathIds) {
 					render.removeShape(id);
 				}
+				PathfindState.this.finished(e.state);
 			});
 		}
 	}

@@ -99,12 +99,18 @@ public class PathFinder {
 
 		List<Vector> part;
 		part = pathFind(start, new Vector(start.x, 322, start.z), radius);
-		if (part == null) return null;
+		if (part == null) {
+//			System.out.println("Failed first part");
+			return null;
+		}
 		path.addAll(part);
 		path.addAll(getBeamPath(new Vector(start.x, 322, start.z), new Vector(end.x, 322, end.z)));
 		part = pathFind(new Vector(end.x, 322, end.z), end, radius);
-		if (part == null) return null;
-		path.addAll(part);
+		if (part != null) {
+			path.addAll(part);
+		} else {
+//			System.out.println("Failed second part");
+		}
 
 		return path;
 	}
@@ -148,7 +154,8 @@ public class PathFinder {
 
 	public List<Vector> pathfind(Position startBlock, Position endBlock) {
 		if (new Vector(startBlock).multiply(1, 0, 1).distanceTo(new Vector(endBlock).multiply(1, 0, 1)) > 200) {
-			return upAndOver(new Vector(startBlock), new Vector(endBlock), -1);
+			List<Vector> path = upAndOver(new Vector(startBlock), new Vector(endBlock), -1);
+			return path;
 		}
 		var blocks = aStar(startBlock, List.of(), endBlock, -1, null);
 		if (blocks == null) return null;

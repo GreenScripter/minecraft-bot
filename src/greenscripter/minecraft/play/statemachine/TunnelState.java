@@ -46,7 +46,6 @@ public class TunnelState extends PlayerState {
 		this.target = t;
 		this.exec = exec;
 		this.targetFunction = targetFunc;
-
 		future = exec.submit(() -> {
 			if (target != null) {
 				followPath = finder.pathfind(start, target);
@@ -157,6 +156,7 @@ public class TunnelState extends PlayerState {
 				if (render != null) for (int id : pathIds) {
 					render.removeShape(id);
 				}
+				TunnelState.this.finished(e.state);
 			});
 		}
 	}

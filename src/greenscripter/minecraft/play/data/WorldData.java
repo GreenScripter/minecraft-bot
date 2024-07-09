@@ -5,6 +5,7 @@ import greenscripter.minecraft.packet.c2s.play.InteractEntityPacket;
 import greenscripter.minecraft.packet.c2s.play.PlayerActionPacket;
 import greenscripter.minecraft.packet.c2s.play.UseItemOnPacket;
 import greenscripter.minecraft.packet.c2s.play.UseItemPacket;
+import greenscripter.minecraft.play.statemachine.BreakBlockState;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.world.World;
 
@@ -44,7 +45,8 @@ public class WorldData implements PlayData {
 	}
 
 	public boolean finishBreaking(ServerConnection sc, Position pos) {
-		if (world.getBlock(pos) == 0) {
+		int type = world.getBlock(pos);
+		if (type <= 0 || BreakBlockState.air[type]) {
 			return true;
 		}
 		sc.sendPacket(new PlayerActionPacket(PlayerActionPacket.FINISH_MINING, pos, (byte) 1, breakSeq++));

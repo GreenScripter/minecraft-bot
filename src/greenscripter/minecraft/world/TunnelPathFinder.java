@@ -37,6 +37,8 @@ public class TunnelPathFinder extends PathFinder {
 	public boolean[] fast = BlockStates.unionBlockSet(noCollides, noCollides);
 	{
 		BlockStates.addToBlockSet(fast, "minecraft:netherrack");
+		BlockStates.addToBlockSet(fast, "minecraft:cave_air");
+		BlockStates.addToBlockSet(fast, "minecraft:void_air");
 	}
 
 	public TunnelPathFinder() {
