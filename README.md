@@ -1,5 +1,6 @@
 # GreenScripter's Minecraft Bot Swarm Library
-A fairly lightweight Java library for creating swarms of minecraft bots around the 100-1000 bot range to play on cracked vanilla and paper servers on version 1.20.4.  
+# 1.21 still WIP, see 1.20.4 branch.
+A fairly lightweight Java library for creating swarms of minecraft bots around the 100-1000 bot range to play on cracked vanilla and paper servers on version 1.21.  
 See the greenscripter.minecraft.atests package for some examples of varying quality.  
 In order to actually support a swarm on the larger end you need a fairly powerful server. Making most of the bots not load chunks and instead rely on the shared world of a global WorldPlayHandler is recommended. 
 ## Handlers
