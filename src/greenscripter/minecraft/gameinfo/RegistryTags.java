@@ -53,7 +53,7 @@ public class RegistryTags {
 	static {
 		long start = System.currentTimeMillis();
 		try {
-			Map<String, String> itemTagJsons = ResourceExtractor.getJSONs("greenscripter/minecraft/resources/data/minecraft/tags/items");
+			Map<String, String> itemTagJsons = ResourceExtractor.getJSONs("greenscripter/minecraft/resources/data/minecraft/tags/item");
 			for (var e : itemTagJsons.entrySet()) {
 				Set<String> parts = new HashSet<>();
 				JsonElement element = JsonParser.parseString(e.getValue());
@@ -75,7 +75,7 @@ public class RegistryTags {
 		}
 
 		try {
-			Map<String, String> blockTagJsons = ResourceExtractor.getJSONs("greenscripter/minecraft/resources/data/minecraft/tags/blocks");
+			Map<String, String> blockTagJsons = ResourceExtractor.getJSONs("greenscripter/minecraft/resources/data/minecraft/tags/block");
 			for (var e : blockTagJsons.entrySet()) {
 				Set<String> parts = new HashSet<>();
 				JsonElement element = JsonParser.parseString(e.getValue());

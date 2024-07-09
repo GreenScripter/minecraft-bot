@@ -119,16 +119,16 @@ public class BreakBlockState extends PlayerState {
 			return null;
 		}
 		String block = state.block();
-		if (RegistryTags.matchesBlockTag("minecraft:mineable_pickaxe", block)) {
+		if (RegistryTags.matchesBlockTag("minecraft:mineable/pickaxe", block)) {
 			return "minecraft:pickaxes";
 		}
-		if (RegistryTags.matchesBlockTag("minecraft:mineable_shovel", block)) {
+		if (RegistryTags.matchesBlockTag("minecraft:mineable/shovel", block)) {
 			return "minecraft:shovels";
 		}
-		if (RegistryTags.matchesBlockTag("minecraft:mineable_axe", block)) {
+		if (RegistryTags.matchesBlockTag("minecraft:mineable/axe", block)) {
 			return "minecraft:axes";
 		}
-		if (RegistryTags.matchesBlockTag("minecraft:mineable_hoe", block)) {
+		if (RegistryTags.matchesBlockTag("minecraft:mineable/hoe", block)) {
 			return "minecraft:hoes";
 		}
 		if (RegistryTags.matchesBlockTag("minecraft:sword_efficient", block)) {

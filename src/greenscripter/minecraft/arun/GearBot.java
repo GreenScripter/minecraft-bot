@@ -51,7 +51,7 @@ public class GearBot {
 
 		GearBotGlobalData global = new GearBotGlobalData();
 
-		AsyncSwarmController controller = new AsyncSwarmController("localhost", 25568, handlers);
+		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
 		controller.joinCallback = sc -> {
 			if (sc.id % 10 == 0) {
 				sc.sendPacket(new ClientInfoPacket(10));
@@ -74,10 +74,10 @@ public class GearBot {
 
 		controller.namesToUUIDs = accounts::getUUID;
 		controller.botNames = accounts::getName;
-		controller.bungeeMode = true;
+//		controller.bungeeMode = true;
 
 		controller.start();
-		controller.connect(accounts.size(), 60000);
+		controller.connect(accounts.size(), 600);
 
 		try (Scanner scanner = new Scanner(System.in)) {
 			while (true) {

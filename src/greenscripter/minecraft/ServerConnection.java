@@ -155,7 +155,7 @@ public class ServerConnection {
 
 				UnknownPacket p = in.readGeneralPacket();
 				int compression = -1;
-				if (p.id() == 3) {
+				if (p.id() == new SetCompressionPacket().id()) {
 					var compress = p.convert(new SetCompressionPacket());
 					if (compress.value >= 0) {
 						compression = compress.value;
@@ -177,15 +177,15 @@ public class ServerConnection {
 			case CONFIGURATION -> {
 				out.writePacket(new ClientInfoConfigPacket());
 				UnknownPacket p = in.readGeneralPacket();
-				if (p.id == 2) {
+				if (p.id == new AckFinishConfigPacket().id()) {
 					out.writePacket(new AckFinishConfigPacket());
 					connectionState = ConnectionState.PLAY;
 					//					System.out.println("Finished Configuration");
 				}
-				if (p.id == 3) {
+				if (p.id == new KeepAliveReplyConfigPacket().id()) {
 					out.writePacket(new KeepAliveReplyConfigPacket(p.convert(new KeepAliveConfigPacket()).value));
 				}
-				if (p.id == 5) {
+				if (p.id == new RegistryConfigPacket().id()) {
 					RegistryConfigPacket rp = p.convert(new RegistryConfigPacket());
 					getData(RegistryData.class).configuredRegistry = rp.data.asCompound();
 				}
