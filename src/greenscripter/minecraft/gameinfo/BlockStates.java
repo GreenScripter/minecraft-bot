@@ -152,6 +152,7 @@ public class BlockStates {
 			Map<String, JsonElement> registries = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
 			for (var e : registries.entrySet()) {
 				String block = e.getKey();
+				Definition def = null;
 
 				Map<String, List<String>> properties = new HashMap<>();
 				if (e.getValue().getAsJsonObject().get("properties") != null) {
@@ -168,11 +169,23 @@ public class BlockStates {
 				}
 				BlockStates.blockProperties.put(block, properties);
 
+				if (e.getValue().getAsJsonObject().get("definition") != null) {
+					JsonObject definition = e.getValue().getAsJsonObject().get("definition").getAsJsonObject();
+					String type = definition.has("type") ? definition.get("type").getAsString() : null;
+					String block_set_type = definition.has("block_set_type") ? definition.get("block_set_type").getAsString() : null;
+					String wood_type = definition.has("wood_type") ? definition.get("wood_type").getAsString() : null;
+					String color = definition.has("color") ? definition.get("color").getAsString() : null;
+					String tree = definition.has("tree") ? definition.get("tree").getAsString() : null;
+					String weathering_state = definition.has("weathering_state") ? definition.get("weathering_state").getAsString() : null;
+					String base_state = definition.has("base_state") && definition.get("base_state").getAsJsonObject().has("Name") ? definition.get("base_state").getAsJsonObject().get("Name").getAsString() : null;
+					def = new Definition(type, block_set_type, wood_type, color, tree, weathering_state, base_state);
+				}
+
 				List<BlockState> states = new ArrayList<>(e.getValue().getAsJsonObject().get("states").getAsJsonArray().size());
 				for (var s : e.getValue().getAsJsonObject().get("states").getAsJsonArray()) {
 					var state = s.getAsJsonObject();
 					int stateId = state.get("id").getAsInt();
-					BlockState blockState = new BlockState(stateId, block, new HashMap<>(), state.get("default") != null, noCollide.contains(stateId));
+					BlockState blockState = new BlockState(stateId, block, new HashMap<>(), state.get("default") != null, noCollide.contains(stateId), def);
 					if (state.get("properties") != null) for (var p : state.get("properties").getAsJsonObject().entrySet()) {
 						blockState.properties.put(p.getKey(), p.getValue().getAsString());
 					}
@@ -196,7 +209,9 @@ public class BlockStates {
 
 	}
 
-	public static record BlockState(int id, String block, Map<String, String> properties, boolean isDefault, boolean noCollision) {
+	public static record Definition(String type, String block_set_type, String wood_type, String color, String tree, String weathering_state, String base_state) {}
+
+	public static record BlockState(int id, String block, Map<String, String> properties, boolean isDefault, boolean noCollision, Definition definition) {
 
 		public String format() {
 			return block + "" + properties.toString().replace("{", "[").replace("}", "]");
