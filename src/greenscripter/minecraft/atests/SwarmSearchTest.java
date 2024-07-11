@@ -38,7 +38,7 @@ public class SwarmSearchTest {
 					p.viewDistance = 4;
 					next.forEach(sc -> {
 						try {
-//							if (!sc.name.equals("bot0")) return;
+							//							if (!sc.name.equals("bot0")) return;
 							sc.out.writePacket(p);
 							sc.getData(ClientConfigData.class).viewDistance = p.viewDistance;
 						} catch (IOException e) {

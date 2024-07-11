@@ -34,7 +34,7 @@ public class TreeBot {
 		handlers.add(worldHandler);
 
 		TreeBotGlobalData global = new TreeBotGlobalData();
-		
+
 		worldHandler.worlds.getSearchFor(null, logs, false, true).render = render;
 
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);

@@ -73,6 +73,5 @@ public class StreamCache<T> {
 		outCache.finish(out);
 	}
 
-	public static record Pair<T, S>(T t, S s) {
-	}
+	public static record Pair<T, S>(T t, S s) {}
 }

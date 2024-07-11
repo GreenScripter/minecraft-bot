@@ -88,61 +88,227 @@ public abstract class EntityMetadata {
 
 	public abstract void read(MCInputStream in) throws IOException;
 
-	public boolean isByte() {return this instanceof EMByte;}
-	public boolean isVarInt() {return this instanceof EMVarInt;}
-	public boolean isVarLong() {return this instanceof EMVarLong;}
-	public boolean isFloat() {return this instanceof EMFloat;}
-	public boolean isString() {return this instanceof EMString;}
-	public boolean isTextComponent() {return this instanceof EMTextComponent;}
-	public boolean isOTextComponent() {return this instanceof EMOTextComponent;}
-	public boolean isSlot() {return this instanceof EMSlot;}
-	public boolean isBoolean() {return this instanceof EMBoolean;}
-	public boolean isRotations() {return this instanceof EMRotations;}
-	public boolean isPosition() {return this instanceof EMPosition;}
-	public boolean isOPosition() {return this instanceof EMOPosition;}
-	public boolean isDirection() {return this instanceof EMDirection;}
-	public boolean isOUUID() {return this instanceof EMOUUID;}
-	public boolean isBlockState() {return this instanceof EMBlockState;}
-	public boolean isOBlockState() {return this instanceof EMOBlockState;}
-	public boolean isNBT() {return this instanceof EMNBT;}
-	public boolean isParticle() {return this instanceof EMParticle;}
-	public boolean isVillagerData() {return this instanceof EMVillagerData;}
-	public boolean isOVarInt() {return this instanceof EMOVarInt;}
-	public boolean isPose() {return this instanceof EMPose;}
-	public boolean isCatVariant() {return this instanceof EMCatVariant;}
-	public boolean isFrogVariant() {return this instanceof EMFrogVariant;}
-	public boolean isOGlobalPosition() {return this instanceof EMOGlobalPosition;}
-	public boolean isPaintingVariant() {return this instanceof EMPaintingVariant;}
-	public boolean isSnifferState() {return this instanceof EMSnifferState;}
-	public boolean isVector3() {return this instanceof EMVector3;}
-	public boolean isQuaternion() {return this instanceof EMQuaternion;}
-	
-	public EMByte asByte() {return (EMByte) this;}
-	public EMVarInt asVarInt() {return (EMVarInt) this;}
-	public EMVarLong asVarLong() {return (EMVarLong) this;}
-	public EMFloat asFloat() {return (EMFloat) this;}
-	public EMString asString() {return (EMString) this;}
-	public EMTextComponent asTextComponent() {return (EMTextComponent) this;}
-	public EMOTextComponent asOTextComponent() {return (EMOTextComponent) this;}
-	public EMSlot asSlot() {return (EMSlot) this;}
-	public EMBoolean asBoolean() {return (EMBoolean) this;}
-	public EMRotations asRotations() {return (EMRotations) this;}
-	public EMPosition asPosition() {return (EMPosition) this;}
-	public EMOPosition asOPosition() {return (EMOPosition) this;}
-	public EMDirection asDirection() {return (EMDirection) this;}
-	public EMOUUID asOUUID() {return (EMOUUID) this;}
-	public EMBlockState asBlockState() {return (EMBlockState) this;}
-	public EMOBlockState asOBlockState() {return (EMOBlockState) this;}
-	public EMNBT asNBT() {return (EMNBT) this;}
-	public EMParticle asParticle() {return (EMParticle) this;}
-	public EMVillagerData asVillagerData() {return (EMVillagerData) this;}
-	public EMOVarInt asOVarInt() {return (EMOVarInt) this;}
-	public EMPose asPose() {return (EMPose) this;}
-	public EMCatVariant asCatVariant() {return (EMCatVariant) this;}
-	public EMFrogVariant asFrogVariant() {return (EMFrogVariant) this;}
-	public EMOGlobalPosition asOGlobalPosition() {return (EMOGlobalPosition) this;}
-	public EMPaintingVariant asPaintingVariant() {return (EMPaintingVariant) this;}
-	public EMSnifferState asSnifferState() {return (EMSnifferState) this;}
-	public EMVector3 asVector3() {return (EMVector3) this;}
-	public EMQuaternion asQuaternion() {return (EMQuaternion) this;}
+	public boolean isByte() {
+		return this instanceof EMByte;
+	}
+
+	public boolean isVarInt() {
+		return this instanceof EMVarInt;
+	}
+
+	public boolean isVarLong() {
+		return this instanceof EMVarLong;
+	}
+
+	public boolean isFloat() {
+		return this instanceof EMFloat;
+	}
+
+	public boolean isString() {
+		return this instanceof EMString;
+	}
+
+	public boolean isTextComponent() {
+		return this instanceof EMTextComponent;
+	}
+
+	public boolean isOTextComponent() {
+		return this instanceof EMOTextComponent;
+	}
+
+	public boolean isSlot() {
+		return this instanceof EMSlot;
+	}
+
+	public boolean isBoolean() {
+		return this instanceof EMBoolean;
+	}
+
+	public boolean isRotations() {
+		return this instanceof EMRotations;
+	}
+
+	public boolean isPosition() {
+		return this instanceof EMPosition;
+	}
+
+	public boolean isOPosition() {
+		return this instanceof EMOPosition;
+	}
+
+	public boolean isDirection() {
+		return this instanceof EMDirection;
+	}
+
+	public boolean isOUUID() {
+		return this instanceof EMOUUID;
+	}
+
+	public boolean isBlockState() {
+		return this instanceof EMBlockState;
+	}
+
+	public boolean isOBlockState() {
+		return this instanceof EMOBlockState;
+	}
+
+	public boolean isNBT() {
+		return this instanceof EMNBT;
+	}
+
+	public boolean isParticle() {
+		return this instanceof EMParticle;
+	}
+
+	public boolean isVillagerData() {
+		return this instanceof EMVillagerData;
+	}
+
+	public boolean isOVarInt() {
+		return this instanceof EMOVarInt;
+	}
+
+	public boolean isPose() {
+		return this instanceof EMPose;
+	}
+
+	public boolean isCatVariant() {
+		return this instanceof EMCatVariant;
+	}
+
+	public boolean isFrogVariant() {
+		return this instanceof EMFrogVariant;
+	}
+
+	public boolean isOGlobalPosition() {
+		return this instanceof EMOGlobalPosition;
+	}
+
+	public boolean isPaintingVariant() {
+		return this instanceof EMPaintingVariant;
+	}
+
+	public boolean isSnifferState() {
+		return this instanceof EMSnifferState;
+	}
+
+	public boolean isVector3() {
+		return this instanceof EMVector3;
+	}
+
+	public boolean isQuaternion() {
+		return this instanceof EMQuaternion;
+	}
+
+	public EMByte asByte() {
+		return (EMByte) this;
+	}
+
+	public EMVarInt asVarInt() {
+		return (EMVarInt) this;
+	}
+
+	public EMVarLong asVarLong() {
+		return (EMVarLong) this;
+	}
+
+	public EMFloat asFloat() {
+		return (EMFloat) this;
+	}
+
+	public EMString asString() {
+		return (EMString) this;
+	}
+
+	public EMTextComponent asTextComponent() {
+		return (EMTextComponent) this;
+	}
+
+	public EMOTextComponent asOTextComponent() {
+		return (EMOTextComponent) this;
+	}
+
+	public EMSlot asSlot() {
+		return (EMSlot) this;
+	}
+
+	public EMBoolean asBoolean() {
+		return (EMBoolean) this;
+	}
+
+	public EMRotations asRotations() {
+		return (EMRotations) this;
+	}
+
+	public EMPosition asPosition() {
+		return (EMPosition) this;
+	}
+
+	public EMOPosition asOPosition() {
+		return (EMOPosition) this;
+	}
+
+	public EMDirection asDirection() {
+		return (EMDirection) this;
+	}
+
+	public EMOUUID asOUUID() {
+		return (EMOUUID) this;
+	}
+
+	public EMBlockState asBlockState() {
+		return (EMBlockState) this;
+	}
+
+	public EMOBlockState asOBlockState() {
+		return (EMOBlockState) this;
+	}
+
+	public EMNBT asNBT() {
+		return (EMNBT) this;
+	}
+
+	public EMParticle asParticle() {
+		return (EMParticle) this;
+	}
+
+	public EMVillagerData asVillagerData() {
+		return (EMVillagerData) this;
+	}
+
+	public EMOVarInt asOVarInt() {
+		return (EMOVarInt) this;
+	}
+
+	public EMPose asPose() {
+		return (EMPose) this;
+	}
+
+	public EMCatVariant asCatVariant() {
+		return (EMCatVariant) this;
+	}
+
+	public EMFrogVariant asFrogVariant() {
+		return (EMFrogVariant) this;
+	}
+
+	public EMOGlobalPosition asOGlobalPosition() {
+		return (EMOGlobalPosition) this;
+	}
+
+	public EMPaintingVariant asPaintingVariant() {
+		return (EMPaintingVariant) this;
+	}
+
+	public EMSnifferState asSnifferState() {
+		return (EMSnifferState) this;
+	}
+
+	public EMVector3 asVector3() {
+		return (EMVector3) this;
+	}
+
+	public EMQuaternion asQuaternion() {
+		return (EMQuaternion) this;
+	}
 }

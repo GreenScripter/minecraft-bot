@@ -83,8 +83,8 @@ public class AsyncSwarmHandling {
 				new TeleportRequestPlayHandler(), //
 				new WorldPlayHandler(),//, //
 				new EntityPlayHandler()//, //
-//				new CirclePlayHandler()
-				);
+		//				new CirclePlayHandler()
+		);
 
 		int start = args.length == 2 ? Integer.parseInt(args[1]) : 0;
 		for (int i = 0 + start; i < 400 + start; i++) {

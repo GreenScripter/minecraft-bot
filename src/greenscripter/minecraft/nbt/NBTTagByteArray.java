@@ -25,6 +25,7 @@ public class NBTTagByteArray extends NBTComponent {
 		out.writeInt(data.length);
 		out.write(data);
 	}
+
 	public String toString() {
 		return Arrays.toString(data);
 	}

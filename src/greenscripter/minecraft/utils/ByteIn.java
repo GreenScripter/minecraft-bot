@@ -22,9 +22,9 @@ public class ByteIn extends ByteArrayInputStream {
 		this.pos = 0;
 		this.count = b.length;
 	}
-	
+
 	public int getPos() {
 		return this.pos;
 	}
-	
+
 }

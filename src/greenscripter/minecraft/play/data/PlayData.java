@@ -11,6 +11,7 @@ public interface PlayData {
 	public static Map<Class<? extends PlayData>, Supplier<? extends PlayData>> playData = new PlayDataMap();
 
 	static class PlayDataMap extends HashMap<Class<? extends PlayData>, Supplier<? extends PlayData>> {
+
 		PlayDataMap() {
 			this.put(PositionData.class, PositionData::new);
 			this.put(RegistryData.class, RegistryData::new);

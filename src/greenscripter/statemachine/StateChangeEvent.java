@@ -9,5 +9,4 @@ public class StateChangeEvent<T> extends StateEvent<T> {
 		this.other = other;
 	}
 
-	
 }

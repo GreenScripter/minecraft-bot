@@ -74,7 +74,7 @@ public class GearBot {
 
 		controller.namesToUUIDs = accounts::getUUID;
 		controller.botNames = accounts::getName;
-//		controller.bungeeMode = true;
+		//		controller.bungeeMode = true;
 
 		controller.start();
 		controller.connect(accounts.size(), 600);

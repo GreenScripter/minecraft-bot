@@ -66,11 +66,11 @@ public class Position {
 	public Position copy() {
 		return new Position(x, y, z);
 	}
-	
+
 	public Vector center() {
 		return new Vector(this);
 	}
-	
+
 	public Vector corner() {
 		return new Vector(x, y, z);
 	}

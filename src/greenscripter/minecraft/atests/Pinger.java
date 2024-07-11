@@ -42,7 +42,6 @@ public class Pinger {
 		return new PingResponse(resp.value, ping, pingReal);
 	}
 
-	public static record PingResponse(String value, long ping, long pingReal) {
-	}
+	public static record PingResponse(String value, long ping, long pingReal) {}
 
 }

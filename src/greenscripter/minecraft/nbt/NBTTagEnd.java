@@ -14,7 +14,7 @@ public class NBTTagEnd extends NBTComponent {
 	}
 
 	public void write(MCOutputStream out) {}
-	
+
 	public int hashCode() {
 		return 1234567;
 	}

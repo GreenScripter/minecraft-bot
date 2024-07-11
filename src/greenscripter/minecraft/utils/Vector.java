@@ -73,7 +73,7 @@ public class Vector {
 		double f = vec.z - this.z;
 		return Math.sqrt(d * d + e * e + f * f);
 	}
-	
+
 	public double distanceTo(Position vec) {
 		double d = vec.x - this.x;
 		double e = vec.y - this.y;
@@ -87,7 +87,7 @@ public class Vector {
 		double f = vec.z - this.z;
 		return d * d + e * e + f * f;
 	}
-	
+
 	public double squaredDistanceTo(Position vec) {
 		double d = vec.x - this.x;
 		double e = vec.y - this.y;

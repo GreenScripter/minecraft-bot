@@ -9,7 +9,7 @@ import greenscripter.minecraft.utils.MCInputStream;
 public class ChunkDataDecoder {
 
 	public static void decode(Chunk c, byte[] data) throws IOException {
-//		long start = System.nanoTime();
+		//		long start = System.nanoTime();
 		ChunkStream in = new ChunkStream(new ByteArrayInputStream(data));
 		//		boolean anyBig = false;
 		for (int i = 0; i < c.height / 16; i++) {
@@ -20,7 +20,7 @@ public class ChunkDataDecoder {
 			//			}
 
 		}
-//		System.out.println(System.nanoTime()-start);
+		//		System.out.println(System.nanoTime()-start);
 		//		if (anyBig) {
 		//			var out = new FileOutputStream("chunkSpam.txt");
 		//			for (int y = 0; y < c.height; y++) {

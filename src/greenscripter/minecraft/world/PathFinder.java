@@ -100,7 +100,7 @@ public class PathFinder {
 		List<Vector> part;
 		part = pathFind(start, new Vector(start.x, 322, start.z), radius);
 		if (part == null) {
-//			System.out.println("Failed first part");
+			//			System.out.println("Failed first part");
 			return null;
 		}
 		path.addAll(part);
@@ -109,7 +109,7 @@ public class PathFinder {
 		if (part != null) {
 			path.addAll(part);
 		} else {
-//			System.out.println("Failed second part");
+			//			System.out.println("Failed second part");
 		}
 
 		return path;
