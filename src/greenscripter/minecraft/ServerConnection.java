@@ -189,7 +189,7 @@ public class ServerConnection {
 				}
 				if (p.id == RegistryConfigPacket.packetId) {
 					RegistryConfigPacket rp = p.convert(new RegistryConfigPacket());
-					getData(RegistryData.class).configuredRegistry = rp.data.asCompound();
+					getData(RegistryData.class).registries.put(rp.registry.name, rp.registry);
 				}
 				if (p.id == ServerKnownPacksConfigPacket.packetId) {
 					out.writePacket(new ClientKnownPacksConfigPacket());

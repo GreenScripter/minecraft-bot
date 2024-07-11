@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.gameinfo.BlockStates;
-import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.play.AckChunksPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.BlockEntityDataPacket;
@@ -22,6 +21,7 @@ import greenscripter.minecraft.play.data.ClientConfigData;
 import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.data.RegistryData;
 import greenscripter.minecraft.play.data.WorldData;
+import greenscripter.minecraft.utils.DynamicRegistry.RegistryEntry;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.world.BlockEntity;
 import greenscripter.minecraft.world.Chunk;
@@ -63,22 +63,16 @@ public class WorldPlayHandler extends PlayHandler {
 
 				worldData.world = worlds.getWorld(respawn.dimensionName);
 				if (worldData.world == null) {
+					RegistryData registryData = sc.getData(RegistryData.class);
+					RegistryEntry ent = registryData.getRegistry("minecraft:dimension_type").get(respawn.dimensionType);
+					
 					World world = new World();
 					world.id = respawn.dimensionName;
-					world.dimensionType = respawn.dimensionType;
+					world.dimensionType = ent.entryId;
 					world.worlds = worlds;
 
-					RegistryData registryData = sc.getData(RegistryData.class);
-					var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
-					NBTTagCompound type = null;
-					for (NBTTagCompound c : dimensionTypeList.value) {
-						if (c.get("name").asString().value.equals(world.dimensionType)) {
-							type = c.get("element").asCompound();
-							break;
-						}
-					}
-					world.height = type.get("height").asInt().value;
-					world.min_y = type.get("min_y").asInt().value;
+					world.height = ent.data.asCompound().get("height").asInt().value;
+					world.min_y = ent.data.asCompound().get("min_y").asInt().value;
 
 					worlds.worlds.put(world.id, world);
 
@@ -92,23 +86,18 @@ public class WorldPlayHandler extends PlayHandler {
 
 				worldData.world = worlds.getWorld(respawn.dimensionName);
 				if (worldData.world == null) {
+					RegistryData registryData = sc.getData(RegistryData.class);
+					RegistryEntry ent = registryData.getRegistry("minecraft:dimension_type").get(respawn.dimensionType);
+
 					World world = new World();
 					world.id = respawn.dimensionName;
 					System.out.println("Loaded world " + world.id);
-					world.dimensionType = respawn.dimensionType;
+					world.dimensionType = ent.entryId;
 					world.worlds = worlds;
 
-					RegistryData registryData = sc.getData(RegistryData.class);
-					var dimensionTypeList = registryData.configuredRegistry.get("minecraft:dimension_type").asCompound().get("value").asList(NBTTagCompound.class);
-					NBTTagCompound type = null;
-					for (NBTTagCompound c : dimensionTypeList.value) {
-						if (c.get("name").asString().value.equals(world.dimensionType)) {
-							type = c.get("element").asCompound();
-							break;
-						}
-					}
-					world.height = type.get("height").asInt().value;
-					world.min_y = type.get("min_y").asInt().value;
+
+					world.height = ent.data.asCompound().get("height").asInt().value;
+					world.min_y = ent.data.asCompound().get("min_y").asInt().value;
 
 					worlds.worlds.put(world.id, world);
 

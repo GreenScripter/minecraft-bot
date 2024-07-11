@@ -24,7 +24,7 @@ public class LoginPlayPacket extends Packet {
 	public boolean reducedDebug;
 	public boolean enableRespawnScreen;
 	public boolean limitedCrafting;
-	public String dimensionType;
+	public int dimensionType;
 	public String dimensionName;
 	public long seedHash;
 	public byte gamemode;
@@ -35,6 +35,7 @@ public class LoginPlayPacket extends Packet {
 	public String deathDimension;
 	public Position deathLocation;
 	public int portalCooldown;
+	public boolean enforcesSecureChat;
 
 	public int id() {
 		return packetId;
@@ -58,7 +59,7 @@ public class LoginPlayPacket extends Packet {
 		enableRespawnScreen = in.readBoolean();
 		limitedCrafting = in.readBoolean();
 
-		dimensionType = in.readString();
+		dimensionType = in.readVarInt();
 		dimensionName = in.readString();
 		seedHash = in.readLong();
 		gamemode = in.readByte();
@@ -71,6 +72,7 @@ public class LoginPlayPacket extends Packet {
 			deathLocation = in.readPosition();
 		}
 		portalCooldown = in.readVarInt();
+		enforcesSecureChat = in.readBoolean();
 	}
 	/*
 	  	buf.writeInt(this.playerEntityId);

@@ -12,7 +12,7 @@ public class RespawnPacket extends Packet {
 
 	public static final int packetId = PacketIds.getS2CPlayId("minecraft:respawn");
 
-	public String dimensionType;
+	public int dimensionType;
 	public String dimensionName;
 	public long seedHash;
 	public byte gamemode;
@@ -34,7 +34,7 @@ public class RespawnPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		dimensionType = in.readString();
+		dimensionType = in.readVarInt();
 		dimensionName = in.readString();
 		seedHash = in.readLong();
 		gamemode = in.readByte();
