@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 
 public class ResourceExtractor {
 
-	//java -DbundlerMainClass=net.minecraft.data.Main -jar mojang_1.20.4.jar --reports --server
+	//java -DbundlerMainClass=net.minecraft.data.Main -jar mojang_1.21.jar --reports --server
 
 	public static void main(String[] args) throws URISyntaxException, IOException {
 		System.out.println(getJSONs("greenscripter/minecraft/resources/data/minecraft/tags/item"));
@@ -43,6 +43,8 @@ public class ResourceExtractor {
 			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
 				Path p = it.next();
 				if (!Files.isDirectory(p)) {
+					if (p.getFileName().toString().startsWith(".")) continue;
+
 					String pathName = p.toString().substring(pathLength);
 					result.put(pathName, Files.readString(p));
 				}

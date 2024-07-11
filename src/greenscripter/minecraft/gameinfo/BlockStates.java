@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 public class BlockStates {
 
 	public static void main(String[] args) {
-		System.out.println(getState(12959));
+		System.out.println(RegistryTags.blockTags);
 	}
 
 	public static Map<String, Map<String, List<String>>> blockProperties = new HashMap<>();
