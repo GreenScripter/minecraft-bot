@@ -15,6 +15,11 @@ public class NBTTagEnd extends NBTComponent {
 
 	public void write(MCOutputStream out) {}
 
+	public NBTTagEnd copy() {
+		NBTTagEnd copy = new NBTTagEnd();
+		return copy;
+	}
+
 	public int hashCode() {
 		return 1234567;
 	}

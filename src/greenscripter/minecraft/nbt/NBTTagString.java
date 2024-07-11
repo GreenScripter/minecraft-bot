@@ -24,6 +24,12 @@ public class NBTTagString extends NBTComponent {
 		out.writeUTF(value);
 	}
 
+	public NBTTagString copy() {
+		NBTTagString copy = new NBTTagString();
+		copy.value = value;
+		return copy;
+	}
+
 	public String toString() {
 		return "\"" + value + "\"";
 	}

@@ -30,6 +30,15 @@ public class NBTTagIntArray extends NBTComponent {
 		}
 	}
 
+	public NBTTagIntArray copy() {
+		NBTTagIntArray copy = new NBTTagIntArray();
+		if (value != null) {
+			copy.value = new int[value.length];
+			System.arraycopy(value, 0, copy.value, 0, value.length);
+		}
+		return copy;
+	}
+
 	public String toString() {
 		return Arrays.toString(value);
 	}

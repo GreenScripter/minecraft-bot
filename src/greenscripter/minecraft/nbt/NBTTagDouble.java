@@ -24,6 +24,12 @@ public class NBTTagDouble extends NBTComponent {
 		out.writeDouble(value);
 	}
 
+	public NBTTagDouble copy() {
+		NBTTagDouble copy = new NBTTagDouble();
+		copy.value = value;
+		return copy;
+	}
+
 	public String toString() {
 		return value + "d";
 	}

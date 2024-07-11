@@ -40,6 +40,14 @@ public class NBTTagCompound extends NBTComponent {
 		out.writeByte(TAG_End);
 	}
 
+	public NBTTagCompound copy() {
+		NBTTagCompound copy = new NBTTagCompound();
+		for (var e : components.entrySet()) {
+			copy.components.put(e.getKey(), e.getValue().copy());
+		}
+		return copy;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");

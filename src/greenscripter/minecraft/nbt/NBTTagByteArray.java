@@ -26,6 +26,15 @@ public class NBTTagByteArray extends NBTComponent {
 		out.write(data);
 	}
 
+	public NBTTagByteArray copy() {
+		NBTTagByteArray copy = new NBTTagByteArray();
+		if (data != null) {
+			copy.data = new byte[data.length];
+			System.arraycopy(data, 0, copy.data, 0, data.length);
+		}
+		return copy;
+	}
+
 	public String toString() {
 		return Arrays.toString(data);
 	}

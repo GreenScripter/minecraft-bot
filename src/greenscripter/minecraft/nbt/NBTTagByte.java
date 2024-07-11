@@ -25,6 +25,12 @@ public class NBTTagByte extends NBTComponent {
 		out.writeByte(value);
 	}
 
+	public NBTTagByte copy() {
+		NBTTagByte copy = new NBTTagByte();
+		copy.value = value;
+		return copy;
+	}
+
 	public String toString() {
 		return value + "b";
 	}

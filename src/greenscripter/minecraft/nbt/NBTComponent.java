@@ -28,6 +28,8 @@ public abstract class NBTComponent {
 
 	public abstract void write(MCOutputStream out) throws IOException;
 
+	public abstract NBTComponent copy();
+
 	public boolean isEnd() {
 		return getType() == TAG_End;
 	}

@@ -24,6 +24,12 @@ public class NBTTagShort extends NBTComponent {
 		out.writeShort(value);
 	}
 
+	public NBTTagShort copy() {
+		NBTTagShort copy = new NBTTagShort();
+		copy.value = value;
+		return copy;
+	}
+
 	public String toString() {
 		return value + "s";
 	}

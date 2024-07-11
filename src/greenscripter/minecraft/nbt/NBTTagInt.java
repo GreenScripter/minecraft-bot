@@ -24,6 +24,12 @@ public class NBTTagInt extends NBTComponent {
 		out.writeInt(value);
 	}
 
+	public NBTTagInt copy() {
+		NBTTagInt copy = new NBTTagInt();
+		copy.value = value;
+		return copy;
+	}
+
 	public String toString() {
 		return value + "";
 	}

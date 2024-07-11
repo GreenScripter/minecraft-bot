@@ -24,6 +24,12 @@ public class NBTTagFloat extends NBTComponent {
 		out.writeFloat(value);
 	}
 
+	public NBTTagFloat copy() {
+		NBTTagFloat copy = new NBTTagFloat();
+		copy.value = value;
+		return copy;
+	}
+
 	public String toString() {
 		return value + "f";
 	}

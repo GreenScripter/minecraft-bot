@@ -24,6 +24,12 @@ public class NBTTagLong extends NBTComponent {
 		out.writeLong(value);
 	}
 
+	public NBTTagLong copy() {
+		NBTTagLong copy = new NBTTagLong();
+		copy.value = value;
+		return copy;
+	}
+
 	public String toString() {
 		return value + "l";
 	}

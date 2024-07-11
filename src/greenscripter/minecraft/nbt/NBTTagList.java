@@ -44,6 +44,18 @@ public class NBTTagList<T extends NBTComponent> extends NBTComponent {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public NBTTagList<T> copy() {
+		NBTTagList<T> copy = new NBTTagList<T>();
+		if (value != null) {
+			copy.listType = listType;
+			for (T t : value) {
+				copy.value.add((T) t.copy());
+			}
+		}
+		return copy;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
