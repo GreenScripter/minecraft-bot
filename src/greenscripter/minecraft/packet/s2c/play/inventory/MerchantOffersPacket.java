@@ -2,12 +2,15 @@ package greenscripter.minecraft.packet.s2c.play.inventory;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class MerchantOffersPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:merchant_offers");
 
 	public int windowId;
 	public Trade[] trades;
@@ -19,7 +22,7 @@ public class MerchantOffersPacket extends Packet {
 	public MerchantOffersPacket() {}
 
 	public int id() {
-		return 0x2B;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

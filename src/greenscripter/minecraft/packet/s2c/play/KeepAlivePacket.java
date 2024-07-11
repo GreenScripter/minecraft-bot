@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class KeepAlivePacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:keep_alive");
 
 	public long value;
 
@@ -17,7 +20,7 @@ public class KeepAlivePacket extends Packet {
 	}
 
 	public int id() {
-		return 0x24;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

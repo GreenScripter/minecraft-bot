@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class PickupItemPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:take_item_entity");
 
 	public int entityID;
 	public int collectorEntityID;
@@ -15,7 +18,7 @@ public class PickupItemPacket extends Packet {
 	public PickupItemPacket() {}
 
 	public int id() {
-		return 0x6C;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

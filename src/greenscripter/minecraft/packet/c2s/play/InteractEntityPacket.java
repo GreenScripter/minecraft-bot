@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.play;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class InteractEntityPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:interact");
 
 	public int entityId;
 	public int type;
@@ -26,7 +29,7 @@ public class InteractEntityPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x13;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

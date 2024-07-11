@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class DamageEventPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:damage_event");
 
 	public int entityID;
 	public int damageTypeID;
@@ -17,7 +20,7 @@ public class DamageEventPacket extends Packet {
 	public DamageEventPacket() {}
 
 	public int id() {
-		return 0x19;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

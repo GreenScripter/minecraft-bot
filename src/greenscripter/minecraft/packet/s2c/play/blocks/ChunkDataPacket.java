@@ -5,6 +5,7 @@ import java.util.List;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
@@ -12,6 +13,8 @@ import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ChunkDataPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:level_chunk_with_light");
 
 	public int chunkX;
 	public int chunkZ;
@@ -23,7 +26,7 @@ public class ChunkDataPacket extends Packet {
 	//lighting not implemented
 
 	public int id() {
-		return 0x25;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

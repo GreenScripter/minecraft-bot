@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class EntityVelocityPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_entity_motion");
 
 	public int entityID;
 	public short velocityX;
@@ -16,7 +19,7 @@ public class EntityVelocityPacket extends Packet {
 	public EntityVelocityPacket() {}
 
 	public int id() {
-		return 0x58;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

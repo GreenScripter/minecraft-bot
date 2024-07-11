@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.configuration;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ClientInfoConfigPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPacketId("configuration", "minecraft:client_information");
 
 	public String locale = "en_US";
 	public byte viewDistance = 0;
@@ -20,7 +23,7 @@ public class ClientInfoConfigPacket extends Packet {
 	public ClientInfoConfigPacket() {}
 
 	public int id() {
-		return 0;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

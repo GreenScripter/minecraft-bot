@@ -12,10 +12,13 @@ import com.google.gson.JsonParser;
 public class PacketIds {
 
 	public static void main(String[] args) {
-		System.out.println(packetIdsClientbound);
-		System.out.println(packetIdsServerbound);
-		System.out.println(packetsFromIdsClientbound);
-		System.out.println(packetsFromIdsServerbound);
+		//		System.out.println(packetIdsClientbound);
+		//		System.out.println(packetIdsServerbound);
+		//		System.out.println(packetsFromIdsClientbound);
+		//		System.out.println(packetsFromIdsServerbound);
+		for (var e : getS2CPhase("play").entrySet()) {
+			System.out.println(e.getKey() + " " + e.getValue() + " 0x" + Integer.toHexString(e.getValue()));
+		}
 	}
 
 	public static Map<String, Map<String, Integer>> packetIdsClientbound = new HashMap<>();
@@ -23,52 +26,52 @@ public class PacketIds {
 	public static Map<String, Map<Integer, String>> packetsFromIdsClientbound = new HashMap<>();
 	public static Map<String, Map<Integer, String>> packetsFromIdsServerbound = new HashMap<>();
 
-	public static Map<String, Integer> getClientPhase(String name) {
+	public static Map<String, Integer> getS2CPhase(String name) {
 		return packetIdsClientbound.get(name);
 	}
 
-	public static Map<String, Integer> getServerPhase(String name) {
+	public static Map<String, Integer> getC2SPhase(String name) {
 		return packetIdsServerbound.get(name);
 	}
 
-	public static int getClientPacketId(String phase, String name) {
+	public static int getS2CPacketId(String phase, String name) {
 		Map<String, Integer> ids = packetIdsClientbound.get(phase);
 		if (ids == null) return -1;
 		return ids.get(name);
 	}
 
-	public static int getServerPacketId(String phase, String name) {
+	public static int getC2SPacketId(String phase, String name) {
 		Map<String, Integer> ids = packetIdsServerbound.get(phase);
 		if (ids == null) return -1;
 		return ids.get(name);
 	}
 
-	public static String getClientPacketName(String phase, int name) {
+	public static String getS2CPacketName(String phase, int name) {
 		Map<Integer, String> ids = packetsFromIdsClientbound.get(phase);
 		if (ids == null) return null;
 		return ids.get(name);
 	}
 
-	public static String getServerPacketName(String phase, int name) {
+	public static String getC2SPacketName(String phase, int name) {
 		Map<Integer, String> ids = packetsFromIdsServerbound.get(phase);
 		if (ids == null) return null;
 		return ids.get(name);
 	}
 
-	public static int getClientPlayId(String name) {
-		return getClientPacketId("play", name);
+	public static int getS2CPlayId(String name) {
+		return getS2CPacketId("play", name);
 	}
 
-	public static int getServerPlayId(String name) {
-		return getServerPacketId("play", name);
+	public static int getC2SPlayId(String name) {
+		return getC2SPacketId("play", name);
 	}
 
-	public static String getClientPlayName(int name) {
-		return getClientPacketName("play", name);
+	public static String getS2CPlayName(int name) {
+		return getS2CPacketName("play", name);
 	}
 
-	public static String getServerPlayName(int name) {
-		return getServerPacketName("play", name);
+	public static String getC2SPlayName(int name) {
+		return getC2SPacketName("play", name);
 	}
 
 	static {
@@ -88,7 +91,7 @@ public class PacketIds {
 						packetsFromIdsClientbound.get(e.getKey()).put(e2.getValue().getAsJsonObject().get("protocol_id").getAsInt(), e2.getKey());
 					}
 				}
-				
+
 				if (e.getValue().getAsJsonObject().get("serverbound") != null) {
 					for (var e2 : e.getValue().getAsJsonObject().get("serverbound").getAsJsonObject().asMap().entrySet()) {
 						packetIdsServerbound.get(e.getKey()).put(e2.getKey(), e2.getValue().getAsJsonObject().get("protocol_id").getAsInt());

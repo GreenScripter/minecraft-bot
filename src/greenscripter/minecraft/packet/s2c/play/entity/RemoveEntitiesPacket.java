@@ -2,18 +2,21 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class RemoveEntitiesPacket extends Packet {
 
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:remove_entities");
+
 	public int[] ids;
 
 	public RemoveEntitiesPacket() {}
 
 	public int id() {
-		return 0x40;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

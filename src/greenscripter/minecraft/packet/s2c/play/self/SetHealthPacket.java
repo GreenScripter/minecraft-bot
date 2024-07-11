@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.self;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class SetHealthPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_health");
 
 	public float health;
 	public int food;
@@ -15,7 +18,7 @@ public class SetHealthPacket extends Packet {
 	public SetHealthPacket() {}
 
 	public int id() {
-		return 0x5B;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

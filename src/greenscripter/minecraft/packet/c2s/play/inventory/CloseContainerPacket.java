@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.play.inventory;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class CloseContainerPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:container_close");
 
 	public int windowId;
 
@@ -17,7 +20,7 @@ public class CloseContainerPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x0E;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

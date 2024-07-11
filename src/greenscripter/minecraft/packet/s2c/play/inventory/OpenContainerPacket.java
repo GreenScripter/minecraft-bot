@@ -2,12 +2,15 @@ package greenscripter.minecraft.packet.s2c.play.inventory;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class OpenContainerPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:open_screen");
 
 	public int windowId;
 	public int windowType;
@@ -16,7 +19,7 @@ public class OpenContainerPacket extends Packet {
 	public OpenContainerPacket() {}
 
 	public int id() {
-		return 0x31;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

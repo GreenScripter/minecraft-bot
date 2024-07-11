@@ -5,12 +5,15 @@ import java.util.List;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.Position;
 
 public class LoginPlayPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:login");
 
 	public int entityId;
 	public boolean isHardcore;
@@ -34,7 +37,7 @@ public class LoginPlayPacket extends Packet {
 	public int portalCooldown;
 
 	public int id() {
-		return 0x29;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
@@ -54,8 +57,7 @@ public class LoginPlayPacket extends Packet {
 		reducedDebug = in.readBoolean();
 		enableRespawnScreen = in.readBoolean();
 		limitedCrafting = in.readBoolean();
-		
-		
+
 		dimensionType = in.readString();
 		dimensionName = in.readString();
 		seedHash = in.readLong();
@@ -72,26 +74,26 @@ public class LoginPlayPacket extends Packet {
 	}
 	/*
 	  	buf.writeInt(this.playerEntityId);
-        buf.writeBoolean(this.hardcore);
-        buf.writeCollection(this.dimensionIds, PacketByteBuf::writeRegistryKey);
-        buf.writeVarInt(this.maxPlayers);
-        buf.writeVarInt(this.viewDistance);
-        buf.writeVarInt(this.simulationDistance);
-        buf.writeBoolean(this.reducedDebugInfo);
-        buf.writeBoolean(this.showDeathScreen);
-        buf.writeBoolean(this.doLimitedCrafting);
-        this.commonPlayerSpawnInfo.write(buf);
-        
-        
+	    buf.writeBoolean(this.hardcore);
+	    buf.writeCollection(this.dimensionIds, PacketByteBuf::writeRegistryKey);
+	    buf.writeVarInt(this.maxPlayers);
+	    buf.writeVarInt(this.viewDistance);
+	    buf.writeVarInt(this.simulationDistance);
+	    buf.writeBoolean(this.reducedDebugInfo);
+	    buf.writeBoolean(this.showDeathScreen);
+	    buf.writeBoolean(this.doLimitedCrafting);
+	    this.commonPlayerSpawnInfo.write(buf);
+	    
+	    
 	 	buf.writeRegistryKey(this.dimensionType);
-        buf.writeRegistryKey(this.dimension);
-        buf.writeLong(this.seed);
-        buf.writeByte(this.gameMode.getId());
-        buf.writeByte(GameMode.getId(this.prevGameMode));
-        buf.writeBoolean(this.isDebug);
-        buf.writeBoolean(this.isFlat);
-        buf.writeOptional(this.lastDeathLocation, PacketByteBuf::writeGlobalPos);
-        buf.writeVarInt(this.portalCooldown);
+	    buf.writeRegistryKey(this.dimension);
+	    buf.writeLong(this.seed);
+	    buf.writeByte(this.gameMode.getId());
+	    buf.writeByte(GameMode.getId(this.prevGameMode));
+	    buf.writeBoolean(this.isDebug);
+	    buf.writeBoolean(this.isFlat);
+	    buf.writeOptional(this.lastDeathLocation, PacketByteBuf::writeGlobalPos);
+	    buf.writeVarInt(this.portalCooldown);
 	 */
 	/*
 	Entity ID	Int	The player's Entity ID (EID).

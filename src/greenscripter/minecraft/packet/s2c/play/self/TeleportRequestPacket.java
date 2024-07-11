@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.self;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class TeleportRequestPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:player_position");
 
 	public double x;
 	public double y;
@@ -17,7 +20,7 @@ public class TeleportRequestPacket extends Packet {
 	public int teleportID;
 
 	public int id() {
-		return 0x3E;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

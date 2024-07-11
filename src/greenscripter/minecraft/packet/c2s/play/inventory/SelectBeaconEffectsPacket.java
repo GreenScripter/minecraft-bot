@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.play.inventory;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class SelectBeaconEffectsPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:set_beacon");
 
 	public boolean hasPrimary;
 	public int primaryId;
@@ -30,7 +33,7 @@ public class SelectBeaconEffectsPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x2B;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

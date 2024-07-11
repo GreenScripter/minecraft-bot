@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.play.inventory;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class HotbarSlotPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:set_carried_item");
 
 	public int slot;
 
@@ -17,7 +20,7 @@ public class HotbarSlotPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x2C;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

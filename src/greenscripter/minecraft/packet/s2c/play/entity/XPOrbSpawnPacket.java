@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class XPOrbSpawnPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:add_experience_orb");
 
 	public int entityID;
 	public double x;
@@ -17,7 +20,7 @@ public class XPOrbSpawnPacket extends Packet {
 	public XPOrbSpawnPacket() {}
 
 	public int id() {
-		return 0x02;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

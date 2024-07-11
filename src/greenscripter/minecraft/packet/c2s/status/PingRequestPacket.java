@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.status;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class PingRequestPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPacketId("status", "minecraft:ping_request");
 
 	public long value;
 
@@ -17,7 +20,7 @@ public class PingRequestPacket extends Packet {
 	}
 
 	public int id() {
-		return 1;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

@@ -2,12 +2,15 @@ package greenscripter.minecraft.packet.c2s.play;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.Position;
 
 public class PlayerActionPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:player_action");
 
 	public int status;
 	public Position pos;
@@ -26,7 +29,7 @@ public class PlayerActionPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x21;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

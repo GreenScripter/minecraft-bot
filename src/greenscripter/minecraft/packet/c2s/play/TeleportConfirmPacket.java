@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.play;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class TeleportConfirmPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:accept_teleportation");
 
 	public int value;
 
@@ -17,7 +20,7 @@ public class TeleportConfirmPacket extends Packet {
 	}
 
 	public int id() {
-		return 0;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

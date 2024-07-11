@@ -4,11 +4,14 @@ import java.util.UUID;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class LoginSuccessPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPacketId("login", "minecraft:game_profile");
 
 	public String name;
 	public UUID uuid;
@@ -17,7 +20,7 @@ public class LoginSuccessPacket extends Packet {
 	public LoginSuccessPacket() {}
 
 	public int id() {
-		return 2;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

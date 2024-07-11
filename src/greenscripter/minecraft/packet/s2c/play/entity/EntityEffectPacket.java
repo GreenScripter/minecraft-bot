@@ -2,12 +2,15 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class EntityEffectPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:update_mob_effect");
 
 	public int entityId;
 	public int effectId;
@@ -23,7 +26,7 @@ public class EntityEffectPacket extends Packet {
 	public EntityEffectPacket() {}
 
 	public int id() {
-		return 0x72;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

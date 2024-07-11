@@ -2,18 +2,21 @@ package greenscripter.minecraft.packet.s2c.status;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class PingResponsePacket extends Packet {
 
+	public static final int packetId = PacketIds.getS2CPacketId("status", "minecraft:pong_response");
+
 	public long value;
 
 	public PingResponsePacket() {}
 
 	public int id() {
-		return 1;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

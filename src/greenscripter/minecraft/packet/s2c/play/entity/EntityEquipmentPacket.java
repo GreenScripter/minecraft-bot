@@ -2,12 +2,15 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class EntityEquipmentPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_equipment");
 
 	public int entityID;
 	public Slot[] slots = new Slot[6];
@@ -17,7 +20,7 @@ public class EntityEquipmentPacket extends Packet {
 	public EntityEquipmentPacket() {}
 
 	public int id() {
-		return 0x59;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

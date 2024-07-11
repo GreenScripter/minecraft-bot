@@ -5,12 +5,15 @@ import java.util.List;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ClickContainerPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:container_click");
 
 	public int windowId;
 	public int stateId;
@@ -34,7 +37,7 @@ public class ClickContainerPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x0D;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

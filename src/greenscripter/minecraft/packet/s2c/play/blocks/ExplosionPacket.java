@@ -5,12 +5,15 @@ import java.util.List;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.Position;
 
 public class ExplosionPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:explode");
 
 	public double x;
 	public double y;
@@ -24,7 +27,7 @@ public class ExplosionPacket extends Packet {
 	//discard sound and particle data
 
 	public int id() {
-		return 0x1E;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

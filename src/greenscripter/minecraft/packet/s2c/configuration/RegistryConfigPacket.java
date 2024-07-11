@@ -2,6 +2,7 @@ package greenscripter.minecraft.packet.s2c.configuration;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
@@ -9,12 +10,14 @@ import greenscripter.minecraft.utils.MCOutputStream;
 
 public class RegistryConfigPacket extends Packet {
 
+	public static final int packetId = PacketIds.getS2CPacketId("configuration", "minecraft:registry_data");
+
 	public NBTComponent data;
 
 	public RegistryConfigPacket() {}
 
 	public int id() {
-		return 0x05;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

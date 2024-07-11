@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class SetPassengersPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_passengers");
 
 	public int entityId;
 	public int[] passengersIds;
@@ -14,7 +17,7 @@ public class SetPassengersPacket extends Packet {
 	public SetPassengersPacket() {}
 
 	public int id() {
-		return 0x5D;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

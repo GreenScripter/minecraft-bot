@@ -19,6 +19,7 @@ public class BlockStates {
 	public static void main(String[] args) {
 		System.out.println(getState(12959));
 	}
+
 	public static Map<String, Map<String, List<String>>> blockProperties = new HashMap<>();
 	public static Map<String, BlockState> defaultStates = new HashMap<>();
 	public static Map<String, List<BlockState>> blockStates = new HashMap<>();

@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class TeleportEntityPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:teleport_entity");
 
 	public int entityID;
 	public double x;
@@ -19,7 +22,7 @@ public class TeleportEntityPacket extends Packet {
 	public TeleportEntityPacket() {}
 
 	public int id() {
-		return 0x6D;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

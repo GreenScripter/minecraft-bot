@@ -2,12 +2,15 @@ package greenscripter.minecraft.packet.c2s.play;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.play.data.PlayerData;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class PlayerMoveRotationPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:move_player_rot");
 
 	public float yaw;
 	public float pitch;
@@ -25,7 +28,7 @@ public class PlayerMoveRotationPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x19;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

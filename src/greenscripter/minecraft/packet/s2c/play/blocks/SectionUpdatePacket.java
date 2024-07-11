@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.blocks;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class SectionUpdatePacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:section_blocks_update");
 
 	public int sectionX;
 	public int sectionY;
@@ -19,7 +22,7 @@ public class SectionUpdatePacket extends Packet {
 	public int[] ids;
 
 	public int id() {
-		return 0x47;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

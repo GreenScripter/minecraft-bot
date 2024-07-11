@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.self;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class SetExperiencePacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_experience");
 
 	public float progress;
 	public int level;
@@ -15,7 +18,7 @@ public class SetExperiencePacket extends Packet {
 	public SetExperiencePacket() {}
 
 	public int id() {
-		return 0x5A;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.c2s.configuration;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class KeepAliveReplyConfigPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPacketId("configuration", "minecraft:keep_alive");
 
 	public long value;
 
@@ -17,7 +20,7 @@ public class KeepAliveReplyConfigPacket extends Packet {
 	}
 
 	public int id() {
-		return 3;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

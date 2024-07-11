@@ -4,11 +4,14 @@ import java.util.UUID;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class EntitySpawnPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:add_entity");
 
 	public int entityID;
 	public UUID uuid;
@@ -27,7 +30,7 @@ public class EntitySpawnPacket extends Packet {
 	public EntitySpawnPacket() {}
 
 	public int id() {
-		return 0x01;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

@@ -3,11 +3,14 @@ package greenscripter.minecraft.packet.c2s.play;
 import java.io.IOException;
 import java.time.Instant;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ExecuteCommandPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:chat_command_signed");
 
 	public String command;
 	public Instant instant = Instant.now();
@@ -23,7 +26,7 @@ public class ExecuteCommandPacket extends Packet {
 	}
 
 	public int id() {
-		return 0x04;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

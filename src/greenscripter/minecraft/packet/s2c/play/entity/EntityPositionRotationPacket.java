@@ -2,11 +2,14 @@ package greenscripter.minecraft.packet.s2c.play.entity;
 
 import java.io.IOException;
 
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class EntityPositionRotationPacket extends Packet {
+
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:move_entity_pos_rot");
 
 	public int entityID;
 	public short deltaX;
@@ -19,7 +22,7 @@ public class EntityPositionRotationPacket extends Packet {
 	public EntityPositionRotationPacket() {}
 
 	public int id() {
-		return 0x2D;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
@@ -35,6 +38,5 @@ public class EntityPositionRotationPacket extends Packet {
 		pitch = in.readByte();
 		onGround = in.readBoolean();
 	}
-
 
 }
