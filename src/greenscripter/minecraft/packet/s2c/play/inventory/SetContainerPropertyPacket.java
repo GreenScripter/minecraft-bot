@@ -18,7 +18,7 @@ public class SetContainerPropertyPacket extends Packet {
 	public SetContainerPropertyPacket() {}
 
 	public int id() {
-		return 0x14;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

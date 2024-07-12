@@ -16,7 +16,7 @@ public class AckChunksPacket extends Packet {
 	public AckChunksPacket() {}
 
 	public int id() {
-		return 0x07;
+		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {

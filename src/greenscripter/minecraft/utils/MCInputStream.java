@@ -13,6 +13,8 @@ import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.play.inventory.Slot;
+import greenscripter.minecraft.play.inventory.components.Component;
+import greenscripter.minecraft.play.inventory.components.Components;
 
 public class MCInputStream extends DataInputStream {
 
@@ -176,16 +178,26 @@ public class MCInputStream extends DataInputStream {
 
 	public Slot readSlot() throws IOException {
 		Slot slot = new Slot();
-		slot.present = readBoolean();
+		slot.itemCount = readVarInt();
+		slot.present = slot.itemCount != 0;
 		if (slot.present) {
 			slot.itemId = readVarInt();
-			slot.itemCount = readByte();
-			NBTComponent nbt = readNBT();
-			if (nbt != null && nbt.isCompound()) {
-				slot.nbt = nbt.asCompound();
+			int componentsToAdd = readVarInt();
+			int componentsToRemove = readVarInt();
+
+			for (int i = 0; i < componentsToAdd; i++) {
+				slot.getComponents().setComponent(readComponent());
+			}
+
+			for (int i = 0; i < componentsToRemove; i++) {
+				slot.getComponents().removeComponent(i);
 			}
 		}
 		return slot;
+	}
+
+	public Component readComponent() throws IOException {
+		return Components.readComponent(this);
 	}
 
 	public InputStream wrapped() {

@@ -53,7 +53,7 @@ public class ItemUtils {
 		Slot s = new Slot();
 		s.present = count > 0;
 		s.itemId = type;
-		s.itemCount = (byte) count;
+		s.itemCount = count;
 		return s;
 	}
 

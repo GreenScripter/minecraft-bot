@@ -39,7 +39,7 @@ public class UnknownPacket extends Packet {
 	public <T extends Packet> T convert(T t) {
 		try {
 			t.fromBytes(new MCInputStream(new ByteArrayInputStream(data, offset, length)));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return t;

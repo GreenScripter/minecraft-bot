@@ -1,5 +1,6 @@
 package greenscripter.minecraft.utils;
 
+import java.util.List;
 import java.util.UUID;
 
 import java.io.ByteArrayOutputStream;
@@ -12,6 +13,8 @@ import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.play.inventory.Slot;
+import greenscripter.minecraft.play.inventory.components.Component;
+import greenscripter.minecraft.play.inventory.components.Components;
 
 public class MCOutputStream extends DataOutputStream {
 
@@ -102,6 +105,8 @@ public class MCOutputStream extends DataOutputStream {
 	}
 
 	public void writePacket(Packet packet) throws IOException {
+		//		System.out.println("Wrote id " + packet.id() + " " + packet);
+
 		var bout = new ByteArrayOutputStream();
 		MCOutputStream pout = new MCOutputStream(bout);
 		packet.toBytes(pout);
@@ -132,12 +137,32 @@ public class MCOutputStream extends DataOutputStream {
 	}
 
 	public void writeSlot(Slot slot) throws IOException {
-		writeBoolean(slot.present);
-		if (slot.present) {
-			writeVarInt(slot.itemId);
-			writeByte(slot.itemCount);
-			writeNBT(slot.nbt);
+		if (!slot.present) {
+			writeVarInt(0);
+			return;
 		}
+		writeVarInt(slot.itemCount);
+		if (slot.itemCount > 0) {
+			writeVarInt(slot.itemId);
+
+			List<Component> added = slot.getComponents().getAddedComponents();
+			List<Integer> removed = slot.getComponents().getRemovedComponents();
+
+			writeVarInt(added.size());
+			writeVarInt(removed.size());
+
+			for (Component c : added) {
+				writeComponent(c);
+			}
+
+			for (int i : removed) {
+				writeVarInt(i);
+			}
+		}
+	}
+
+	public void writeComponent(Component c) throws IOException {
+		Components.writeComponent(this, c);
 	}
 
 	public OutputStream wrapped() {

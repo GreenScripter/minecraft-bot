@@ -28,6 +28,7 @@ public class EntityMetaDataPacket extends Packet {
 	public void fromBytes(MCInputStream in) throws IOException {
 		entityID = in.readVarInt();
 		meta = EntityMetadata.readMetadata(meta, in);
+
 	}
 
 }

@@ -25,6 +25,39 @@ public class PacketIds {
 	public static Map<String, Map<String, Integer>> packetIdsServerbound = new HashMap<>();
 	public static Map<String, Map<Integer, String>> packetsFromIdsClientbound = new HashMap<>();
 	public static Map<String, Map<Integer, String>> packetsFromIdsServerbound = new HashMap<>();
+	static {
+		long start = System.currentTimeMillis();
+		try {
+			String registriesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/reports/packets.json");
+			Map<String, JsonElement> registries = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
+			for (var e : registries.entrySet()) {
+				packetIdsClientbound.put(e.getKey(), new HashMap<>());
+				packetIdsServerbound.put(e.getKey(), new HashMap<>());
+				packetsFromIdsClientbound.put(e.getKey(), new HashMap<>());
+				packetsFromIdsServerbound.put(e.getKey(), new HashMap<>());
+
+				if (e.getValue().getAsJsonObject().get("clientbound") != null) {
+					for (var e2 : e.getValue().getAsJsonObject().get("clientbound").getAsJsonObject().asMap().entrySet()) {
+						packetIdsClientbound.get(e.getKey()).put(e2.getKey(), e2.getValue().getAsJsonObject().get("protocol_id").getAsInt());
+						packetsFromIdsClientbound.get(e.getKey()).put(e2.getValue().getAsJsonObject().get("protocol_id").getAsInt(), e2.getKey());
+					}
+				}
+
+				if (e.getValue().getAsJsonObject().get("serverbound") != null) {
+					for (var e2 : e.getValue().getAsJsonObject().get("serverbound").getAsJsonObject().asMap().entrySet()) {
+						packetIdsServerbound.get(e.getKey()).put(e2.getKey(), e2.getValue().getAsJsonObject().get("protocol_id").getAsInt());
+						packetsFromIdsServerbound.get(e.getKey()).put(e2.getValue().getAsJsonObject().get("protocol_id").getAsInt(), e2.getKey());
+					}
+				}
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Took " + (System.currentTimeMillis() - start) + " ms to load packet ids.");
+
+	}
 
 	public static Map<String, Integer> getS2CPhase(String name) {
 		return packetIdsClientbound.get(name);
@@ -72,40 +105,6 @@ public class PacketIds {
 
 	public static String getC2SPlayName(int name) {
 		return getC2SPacketName("play", name);
-	}
-
-	static {
-		long start = System.currentTimeMillis();
-		try {
-			String registriesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/reports/packets.json");
-			Map<String, JsonElement> registries = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
-			for (var e : registries.entrySet()) {
-				packetIdsClientbound.put(e.getKey(), new HashMap<>());
-				packetIdsServerbound.put(e.getKey(), new HashMap<>());
-				packetsFromIdsClientbound.put(e.getKey(), new HashMap<>());
-				packetsFromIdsServerbound.put(e.getKey(), new HashMap<>());
-
-				if (e.getValue().getAsJsonObject().get("clientbound") != null) {
-					for (var e2 : e.getValue().getAsJsonObject().get("clientbound").getAsJsonObject().asMap().entrySet()) {
-						packetIdsClientbound.get(e.getKey()).put(e2.getKey(), e2.getValue().getAsJsonObject().get("protocol_id").getAsInt());
-						packetsFromIdsClientbound.get(e.getKey()).put(e2.getValue().getAsJsonObject().get("protocol_id").getAsInt(), e2.getKey());
-					}
-				}
-
-				if (e.getValue().getAsJsonObject().get("serverbound") != null) {
-					for (var e2 : e.getValue().getAsJsonObject().get("serverbound").getAsJsonObject().asMap().entrySet()) {
-						packetIdsServerbound.get(e.getKey()).put(e2.getKey(), e2.getValue().getAsJsonObject().get("protocol_id").getAsInt());
-						packetsFromIdsServerbound.get(e.getKey()).put(e2.getValue().getAsJsonObject().get("protocol_id").getAsInt(), e2.getKey());
-					}
-				}
-			}
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Took " + (System.currentTimeMillis() - start) + " ms to load packet ids.");
-
 	}
 
 }
