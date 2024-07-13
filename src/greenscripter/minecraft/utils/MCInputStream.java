@@ -185,8 +185,11 @@ public class MCInputStream extends DataInputStream {
 			int componentsToAdd = readVarInt();
 			int componentsToRemove = readVarInt();
 
+			//			System.out.println("Reading components of " + ItemId.get(slot.itemId) + " +" + componentsToAdd + " -" + componentsToRemove);
 			for (int i = 0; i < componentsToAdd; i++) {
-				slot.getComponents().setComponent(readComponent());
+				Component c = readComponent();
+				//				System.out.println("Read component " + i + " of " + ItemId.get(slot.itemId) + " " + c);
+				slot.getComponents().setComponent(c);
 			}
 
 			for (int i = 0; i < componentsToRemove; i++) {

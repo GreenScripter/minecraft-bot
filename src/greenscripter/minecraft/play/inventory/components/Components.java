@@ -116,10 +116,14 @@ public class Components {
 	}
 
 	public static Component readComponent(MCInputStream in) throws IOException {
-		return null;
+		int id = in.readVarInt();
+		Component c = ComponentIds.componentTypes.get(id).get();
+		c.fromBytes(in);
+		return c;
 	}
 
 	public static void writeComponent(MCOutputStream out, Component c) throws IOException {
+		out.writeVarInt(c.id());
 		c.toBytes(out);
 	}
 

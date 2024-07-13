@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.google.gson.Gson;
+
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
@@ -41,6 +43,12 @@ public abstract class Component {
 		}
 		return check.passed;
 	}
+	
+	private static final Gson gson = new Gson();
+	
+	public String toString() {
+		return gson.toJson(this);
+	}
 
 	private static class CheckingOutputStream extends OutputStream {
 
@@ -59,7 +67,7 @@ public abstract class Component {
 				return;
 			}
 
-			if (data[index] != b) {
+			if (data[index] != (byte) b) {
 				passed = false;
 				return;
 			}

@@ -26,7 +26,7 @@ public class PotionContentsComponent extends Component {
 	public void toBytes(MCOutputStream out) throws IOException {
 		out.writeVarInt(potionId);
 		out.writeBoolean(hasCustomColor);
-		out.writeInt(customColor);
+		if (hasCustomColor) out.writeInt(customColor);
 		out.writeVarInt(effects.size());
 		for (PotionEffect e : effects) {
 			e.toBytes(out);
@@ -36,7 +36,7 @@ public class PotionContentsComponent extends Component {
 	public void fromBytes(MCInputStream in) throws IOException {
 		potionId = in.readVarInt();
 		hasCustomColor = in.readBoolean();
-		customColor = in.readInt();
+		if (hasCustomColor) customColor = in.readInt();
 		int length = in.readVarInt();
 		for (int i = 0; i < length; i++) {
 			PotionEffect e = new PotionEffect();
@@ -47,6 +47,9 @@ public class PotionContentsComponent extends Component {
 
 	public PotionContentsComponent copy() {
 		PotionContentsComponent c = new PotionContentsComponent();
+		c.potionId = potionId;
+		c.hasCustomColor = hasCustomColor;
+		c.customColor = customColor;
 		for (PotionEffect e : effects) {
 			c.effects.add(e.copy());
 		}

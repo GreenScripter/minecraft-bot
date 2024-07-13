@@ -33,7 +33,10 @@ public class SetContainerContentPacket extends Packet {
 		int length = in.readVarInt();
 		slots = new Slot[length];
 		for (int i = 0; i < length; i++) {
+			//			System.out.println("Reading slot " + i);
 			slots[i] = in.readSlot();
+			//			System.out.println("Read slot " + i + " as " + slots[i]);
+
 		}
 		cursor = in.readSlot();
 	}
