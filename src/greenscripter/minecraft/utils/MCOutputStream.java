@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 import greenscripter.minecraft.nbt.NBTComponent;
-import greenscripter.minecraft.nbt.NBTTagCompound;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.play.inventory.components.Component;
@@ -114,7 +113,7 @@ public class MCOutputStream extends DataOutputStream {
 		writePacket(packet.id(), data);
 	}
 
-	public void writeNBT(NBTTagCompound nbt) throws IOException {
+	public void writeNBT(NBTComponent nbt) throws IOException {
 		NBTComponent.writeNetworkNBT(this, nbt);
 	}
 

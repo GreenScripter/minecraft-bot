@@ -79,4 +79,10 @@ public class Slot {
 		if (present == other.present && present == false) return true;
 		return present == other.present && itemId == other.itemId && Objects.equals(components, other.components);
 	}
+
+	public Slot copy() {
+		Slot s = new Slot();
+		s.become(this);
+		return s;
+	}
 }

@@ -1,0 +1,47 @@
+package greenscripter.minecraft.play.inventory.components;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import java.io.IOException;
+
+import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.utils.MCInputStream;
+import greenscripter.minecraft.utils.MCOutputStream;
+
+public class CanPlaceOnComponent extends Component {
+
+	public static final int componentId = ComponentIds.get("minecraft:can_place_on");
+
+	public List<BlockPredicate> predicates = new ArrayList<>();
+	public boolean showInTooltip = true;
+
+	public int id() {
+		return componentId;
+	}
+
+	public void toBytes(MCOutputStream out) throws IOException {
+		out.writeVarInt(predicates.size());
+		for (BlockPredicate e : predicates) {
+			e.toBytes(out);
+		}
+		out.writeBoolean(showInTooltip);
+	}
+
+	public void fromBytes(MCInputStream in) throws IOException {
+		int length = in.readVarInt();
+		for (int i = 0; i < length; i++) {
+			BlockPredicate e = new BlockPredicate();
+			e.fromBytes(in);
+		}
+		showInTooltip = in.readBoolean();
+	}
+
+	public CanPlaceOnComponent copy() {
+		CanPlaceOnComponent c = new CanPlaceOnComponent();
+		c.showInTooltip = showInTooltip;
+		c.predicates.addAll(predicates.stream().map(BlockPredicate::copy).toList());
+		return c;
+	}
+
+}
