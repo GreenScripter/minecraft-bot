@@ -3,7 +3,6 @@ package greenscripter.minecraft.play.inventory;
 import java.util.Objects;
 
 import greenscripter.minecraft.gameinfo.Registries.ItemInfo;
-import greenscripter.minecraft.play.inventory.components.Components;
 
 public class Slot {
 

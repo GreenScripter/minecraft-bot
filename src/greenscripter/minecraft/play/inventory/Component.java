@@ -1,4 +1,4 @@
-package greenscripter.minecraft.play.inventory.components;
+package greenscripter.minecraft.play.inventory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,9 +43,9 @@ public abstract class Component {
 		}
 		return check.passed;
 	}
-	
+
 	private static final Gson gson = new Gson();
-	
+
 	public String toString() {
 		return gson.toJson(this);
 	}

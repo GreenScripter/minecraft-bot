@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import greenscripter.minecraft.gameinfo.ComponentIds;
 import greenscripter.minecraft.nbt.NBTComponent;
+import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 

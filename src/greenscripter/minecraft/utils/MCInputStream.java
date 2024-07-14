@@ -12,9 +12,9 @@ import java.nio.charset.StandardCharsets;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
+import greenscripter.minecraft.play.inventory.Component;
+import greenscripter.minecraft.play.inventory.Components;
 import greenscripter.minecraft.play.inventory.Slot;
-import greenscripter.minecraft.play.inventory.components.Component;
-import greenscripter.minecraft.play.inventory.components.Components;
 
 public class MCInputStream extends DataInputStream {
 

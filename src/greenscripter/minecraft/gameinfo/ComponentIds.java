@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import greenscripter.minecraft.play.inventory.Component;
+import greenscripter.minecraft.play.inventory.Components;
 import greenscripter.minecraft.play.inventory.components.AttributeModifiersComponent;
 import greenscripter.minecraft.play.inventory.components.BannerPatternsComponent;
 import greenscripter.minecraft.play.inventory.components.BaseColorComponent;
@@ -15,8 +17,6 @@ import greenscripter.minecraft.play.inventory.components.BundleContentsComponent
 import greenscripter.minecraft.play.inventory.components.CanBreakComponent;
 import greenscripter.minecraft.play.inventory.components.CanPlaceOnComponent;
 import greenscripter.minecraft.play.inventory.components.ChargedProjectilesComponent;
-import greenscripter.minecraft.play.inventory.components.Component;
-import greenscripter.minecraft.play.inventory.components.Components;
 import greenscripter.minecraft.play.inventory.components.ContainerComponent;
 import greenscripter.minecraft.play.inventory.components.ContainerLootComponent;
 import greenscripter.minecraft.play.inventory.components.CreativeSlotLockComponent;
@@ -84,6 +84,7 @@ public class ComponentIds {
 	}
 
 	static {
+		long start = System.currentTimeMillis();
 		registerType(AttributeModifiersComponent::new);
 		registerType(BannerPatternsComponent::new);
 		registerType(BaseColorComponent::new);
@@ -141,5 +142,6 @@ public class ComponentIds {
 		registerType(UnbreakableComponent::new);
 		registerType(WritableBookContentComponent::new);
 		registerType(WrittenBookContentComponent::new);
+		System.out.println("Took " + (System.currentTimeMillis() - start) + " ms to load all component types.");
 	}
 }

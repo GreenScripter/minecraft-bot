@@ -1,4 +1,4 @@
-package greenscripter.minecraft.play.inventory.components;
+package greenscripter.minecraft.play.inventory;
 
 import java.util.ArrayList;
 import java.util.List;
