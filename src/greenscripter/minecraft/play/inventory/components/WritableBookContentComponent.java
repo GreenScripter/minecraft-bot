@@ -5,14 +5,14 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class WritableBookContentComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:writable_book_content");
+	public static final int componentId = ComponentData.get("minecraft:writable_book_content");
 
 	public List<Page> pages = new ArrayList<>();
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
@@ -13,7 +13,7 @@ import greenscripter.minecraft.utils.MCOutputStream;
 
 public class FoodComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:food");
+	public static final int componentId = ComponentData.get("minecraft:food");
 
 	public int nutrition;
 	public float saturation;

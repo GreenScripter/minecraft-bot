@@ -2,14 +2,14 @@ package greenscripter.minecraft.play.inventory.components;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class NoteBlockSoundComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:note_block_sound");
+	public static final int componentId = ComponentData.get("minecraft:note_block_sound");
 
 	public String sound;
 

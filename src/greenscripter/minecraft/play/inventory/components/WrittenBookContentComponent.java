@@ -5,7 +5,7 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
@@ -13,7 +13,7 @@ import greenscripter.minecraft.utils.MCOutputStream;
 
 public class WrittenBookContentComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:written_book_content");
+	public static final int componentId = ComponentData.get("minecraft:written_book_content");
 
 	public String rawTitle;
 	public String filteredTitle;

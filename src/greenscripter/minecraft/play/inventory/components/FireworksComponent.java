@@ -5,14 +5,14 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class FireworksComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:fireworks");
+	public static final int componentId = ComponentData.get("minecraft:fireworks");
 
 	public int flightDuration;
 	public List<FireworkExplosion> explosions = new ArrayList<>();

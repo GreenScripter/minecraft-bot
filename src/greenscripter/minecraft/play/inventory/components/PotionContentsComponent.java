@@ -5,14 +5,14 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class PotionContentsComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:potion_contents");
+	public static final int componentId = ComponentData.get("minecraft:potion_contents");
 
 	public int potionId;
 	public boolean hasCustomColor;

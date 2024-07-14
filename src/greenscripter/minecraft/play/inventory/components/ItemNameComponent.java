@@ -2,7 +2,7 @@ package greenscripter.minecraft.play.inventory.components;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
@@ -10,7 +10,7 @@ import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ItemNameComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:custom_name");
+	public static final int componentId = ComponentData.get("minecraft:custom_name");
 
 	public NBTComponent itemName;
 

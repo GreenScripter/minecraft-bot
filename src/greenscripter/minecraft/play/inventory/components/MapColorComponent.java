@@ -2,14 +2,14 @@ package greenscripter.minecraft.play.inventory.components;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class MapColorComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:map_color");
+	public static final int componentId = ComponentData.get("minecraft:map_color");
 
 	public int color;
 

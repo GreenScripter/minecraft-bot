@@ -5,7 +5,7 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
@@ -13,7 +13,7 @@ import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ChargedProjectilesComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:charged_projectiles");
+	public static final int componentId = ComponentData.get("minecraft:charged_projectiles");
 
 	public List<Slot> slots = new ArrayList<>();
 

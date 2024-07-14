@@ -2,7 +2,7 @@ package greenscripter.minecraft.play.inventory.components;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
@@ -10,7 +10,7 @@ import greenscripter.minecraft.utils.Position;
 
 public class LodestoneTrackerComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:lodestone_tracker");
+	public static final int componentId = ComponentData.get("minecraft:lodestone_tracker");
 
 	public boolean hasGlobalPosition;
 	public String dimension;

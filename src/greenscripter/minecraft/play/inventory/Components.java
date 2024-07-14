@@ -5,7 +5,7 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
@@ -104,7 +104,7 @@ public class Components {
 	}
 
 	public Components getDefaultComponents() {
-		return ComponentIds.defaultComponents.get(itemId);
+		return ComponentData.defaultComponents.get(itemId);
 	}
 
 	public Component getDefaultComponent(int id) {
@@ -117,7 +117,7 @@ public class Components {
 
 	public static Component readComponent(MCInputStream in) throws IOException {
 		int id = in.readVarInt();
-		Component c = ComponentIds.componentTypes.get(id).get();
+		Component c = ComponentData.componentTypes.get(id).get();
 		c.fromBytes(in);
 		return c;
 	}
@@ -145,7 +145,7 @@ public class Components {
 		for (int i = 0; i < components.length; i++) {
 			if (isComponentRemoved(i)) {
 				sb.append("Removed ");
-				sb.append(ComponentIds.get(i));
+				sb.append(ComponentData.get(i));
 				sb.append(", ");
 				any = true;
 			} else if (components[i] != null && components[i] != REMOVED) {

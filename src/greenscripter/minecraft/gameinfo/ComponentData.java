@@ -64,7 +64,7 @@ import greenscripter.minecraft.play.inventory.components.UnbreakableComponent;
 import greenscripter.minecraft.play.inventory.components.WritableBookContentComponent;
 import greenscripter.minecraft.play.inventory.components.WrittenBookContentComponent;
 
-public class ComponentIds {
+public class ComponentData {
 
 	public static Integer get(String name) {
 		return Registries.get("minecraft:data_component_type", name);
@@ -143,5 +143,6 @@ public class ComponentIds {
 		registerType(WritableBookContentComponent::new);
 		registerType(WrittenBookContentComponent::new);
 		System.out.println("Took " + (System.currentTimeMillis() - start) + " ms to load all component types.");
+		start = System.currentTimeMillis();
 	}
 }

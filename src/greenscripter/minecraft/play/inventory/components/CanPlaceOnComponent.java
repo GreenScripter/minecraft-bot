@@ -5,14 +5,14 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class CanPlaceOnComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:can_place_on");
+	public static final int componentId = ComponentData.get("minecraft:can_place_on");
 
 	public List<BlockPredicate> predicates = new ArrayList<>();
 	public boolean showInTooltip = true;

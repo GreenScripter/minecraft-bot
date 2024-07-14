@@ -6,14 +6,14 @@ import java.util.UUID;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ProfileComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:profile");
+	public static final int componentId = ComponentData.get("minecraft:profile");
 
 	public String name;
 	public UUID uuid;

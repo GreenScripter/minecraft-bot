@@ -5,14 +5,14 @@ import java.util.List;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class BannerPatternsComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:banner_patterns");
+	public static final int componentId = ComponentData.get("minecraft:banner_patterns");
 
 	public List<Layer> layers = new ArrayList<>();
 

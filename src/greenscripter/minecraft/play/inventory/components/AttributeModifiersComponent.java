@@ -6,14 +6,14 @@ import java.util.UUID;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class AttributeModifiersComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:attribute_modifiers");
+	public static final int componentId = ComponentData.get("minecraft:attribute_modifiers");
 
 	public List<Attribute> attributes = new ArrayList<>();
 	public boolean showInTooltip = true;

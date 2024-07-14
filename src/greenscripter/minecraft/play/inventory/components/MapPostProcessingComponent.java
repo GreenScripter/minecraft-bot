@@ -2,14 +2,14 @@ package greenscripter.minecraft.play.inventory.components;
 
 import java.io.IOException;
 
-import greenscripter.minecraft.gameinfo.ComponentIds;
+import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
 public class MapPostProcessingComponent extends Component {
 
-	public static final int componentId = ComponentIds.get("minecraft:damage");
+	public static final int componentId = ComponentData.get("minecraft:damage");
 
 	public int type;
 
