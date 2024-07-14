@@ -16,8 +16,8 @@ public class ToolComponent extends Component {
 	public static final int componentId = ComponentData.get("minecraft:tool");
 
 	public List<Rule> rules = new ArrayList<>();
-	public float defaultMiningSpeed;
-	public int damagePerBlock;
+	public float defaultMiningSpeed = 1;
+	public int damagePerBlock = 1;
 
 	public int id() {
 		return componentId;

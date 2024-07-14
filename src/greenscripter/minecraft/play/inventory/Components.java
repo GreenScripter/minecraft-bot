@@ -15,7 +15,7 @@ public class Components {
 	Component[] components = new Component[64];
 
 	public Components() {
-
+		itemId = -1;
 	}
 
 	public Components(int item) {
@@ -117,7 +117,7 @@ public class Components {
 
 	public static Component readComponent(MCInputStream in) throws IOException {
 		int id = in.readVarInt();
-		Component c = ComponentData.componentTypes.get(id).get();
+		Component c = ComponentData.getComponent(id);
 		c.fromBytes(in);
 		return c;
 	}

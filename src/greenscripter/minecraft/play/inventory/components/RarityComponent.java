@@ -36,4 +36,36 @@ public class RarityComponent extends Component {
 	public static final int RARE = 2;
 	public static final int EPIC = 3;
 
+	public static int getRarity(String name) {
+		if (name.equals("common")) {
+			return COMMON;
+		}
+		if (name.equals("uncommon")) {
+			return UNCOMMON;
+		}
+		if (name.equals("rare")) {
+			return RARE;
+		}
+		if (name.equals("epic")) {
+			return EPIC;
+		}
+		return COMMON;
+	}
+
+	public static String getRarity(int id) {
+		if (id == COMMON) {
+			return "common";
+		}
+		if (id == UNCOMMON) {
+			return "uncommon";
+		}
+		if (id == RARE) {
+			return "rare";
+		}
+		if (id == EPIC) {
+			return "epic";
+		}
+		return "common";
+	}
+
 }

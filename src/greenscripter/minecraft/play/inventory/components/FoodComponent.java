@@ -18,7 +18,7 @@ public class FoodComponent extends Component {
 	public int nutrition;
 	public float saturation;
 	public boolean canAlwaysEat;
-	public float secondsToEat;
+	public float secondsToEat = 1.6f;
 	public Slot convertsTo;
 
 	public List<Effect> effects = new ArrayList<>();
@@ -67,23 +67,23 @@ public class FoodComponent extends Component {
 
 	public static class Effect {
 
-		public PotionEffect type;
-		public float probability;
+		public PotionEffect effect;
+		public float probability = 1;
 
 		public void toBytes(MCOutputStream out) throws IOException {
-			type.toBytes(out);
+			effect.toBytes(out);
 			out.writeFloat(probability);
 		}
 
 		public void fromBytes(MCInputStream in) throws IOException {
-			type = new PotionEffect();
-			type.fromBytes(in);
+			effect = new PotionEffect();
+			effect.fromBytes(in);
 			probability = in.readFloat();
 		}
 
 		public Effect copy() {
 			Effect e = new Effect();
-			e.type = type.copy();
+			e.effect = effect.copy();
 			e.probability = probability;
 			return e;
 		}
