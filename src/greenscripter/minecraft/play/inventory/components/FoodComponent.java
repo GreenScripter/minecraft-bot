@@ -19,7 +19,7 @@ public class FoodComponent extends Component {
 	public float saturation;
 	public boolean canAlwaysEat;
 	public float secondsToEat = 1.6f;
-	public Slot convertsTo;
+	public Slot convertsTo = new Slot();
 
 	public List<Effect> effects = new ArrayList<>();
 
@@ -58,7 +58,8 @@ public class FoodComponent extends Component {
 		c.nutrition = nutrition;
 		c.saturation = saturation;
 		c.canAlwaysEat = canAlwaysEat;
-		c.convertsTo = convertsTo.copy();
+		c.secondsToEat = secondsToEat;
+		if (convertsTo != null) c.convertsTo = convertsTo.copy();
 		for (Effect e : effects) {
 			c.effects.add(e.copy());
 		}

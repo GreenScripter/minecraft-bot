@@ -15,7 +15,7 @@ public class TrimComponent extends Component {
 
 	public static final int componentId = ComponentData.get("minecraft:trim");
 
-	public int materialTrimTypePlusOne;
+	public int materialTrimTypePlusOne = 1;
 
 	public String assetName;
 	public int ingredient;

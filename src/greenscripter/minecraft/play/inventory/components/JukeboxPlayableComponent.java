@@ -13,7 +13,7 @@ public class JukeboxPlayableComponent extends Component {
 	public static final int componentId = ComponentData.get("minecraft:jukebox_playable");
 
 	public boolean directMode;
-	public String songName;
+	public String songName = "unset";
 
 	public int songType;
 	public SoundEvent soundEvent;

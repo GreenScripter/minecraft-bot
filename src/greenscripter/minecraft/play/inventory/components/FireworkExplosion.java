@@ -8,8 +8,8 @@ import greenscripter.minecraft.utils.MCOutputStream;
 public class FireworkExplosion {
 
 	public int shape;
-	public int[] colors;
-	public int[] fadeColors;
+	public int[] colors = new int[0];
+	public int[] fadeColors = new int[0];
 	public boolean hasTrail;
 	public boolean hasTwinkle;
 

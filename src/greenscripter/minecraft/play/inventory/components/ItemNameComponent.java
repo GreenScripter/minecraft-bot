@@ -10,7 +10,7 @@ import greenscripter.minecraft.utils.MCOutputStream;
 
 public class ItemNameComponent extends Component {
 
-	public static final int componentId = ComponentData.get("minecraft:custom_name");
+	public static final int componentId = ComponentData.get("minecraft:item_name");
 
 	public NBTComponent itemName;
 

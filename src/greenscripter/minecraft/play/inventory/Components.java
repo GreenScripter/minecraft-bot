@@ -3,13 +3,69 @@ package greenscripter.minecraft.play.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import greenscripter.minecraft.gameinfo.ComponentData;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
+import greenscripter.minecraft.utils.Pair;
 
 public class Components {
+
+	//Simple component tests
+	public static void main(String[] args) {
+		Slot slot = new Slot();
+		slot.itemCount = 5;
+		slot.itemId = ItemId.get("minecraft:dirt");
+		System.out.println(slot);
+		System.out.println(ComponentData.componentTypes.size());
+
+		for (var c : ComponentData.componentTypes.entrySet().stream().map(s -> new Pair<>(s.getKey(), s.getValue().get())).toList()) {
+			if (c.getU().intValue() != c.getV().id()) {
+				System.out.println("Incorrect component id " + c.getU() + " != " + c.getV().id());
+			}
+			ByteArrayOutputStream data = new ByteArrayOutputStream();
+			try {
+				c.v.toBytes(new MCOutputStream(data));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			Component a = c.v;
+			Component b = c.v.copy();
+			if (!a.equals(b)) {
+				System.out.println("    " + a);
+				System.out.println("    " + b);
+				System.out.println("        " + false);
+			}
+
+			try {
+				Component d = ComponentData.getComponent(c.u);
+				d.fromBytes(new MCInputStream(new ByteArrayInputStream(data.toByteArray())));
+				if (!d.equals(a)) {
+					System.out.println("    " + d);
+					System.out.println("    " + a);
+					System.out.println("        " + false);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		// Check all default item components.
+		for (var entry : ComponentData.defaultComponents.entrySet()) {
+			Components cs = entry.getValue();
+			if (!cs.equals(cs.copy())) {
+				System.out.println(ItemId.get(entry.getKey()));
+				System.out.println("    " + cs);
+				System.out.println("    " + cs.copy());
+				System.out.println("        " + cs.equals(cs.copy()));
+			}
+		}
+	}
 
 	public int itemId;
 	Component[] components = new Component[64];
@@ -139,6 +195,10 @@ public class Components {
 	}
 
 	public String toString() {
+		return toString(true);
+	}
+
+	public String toString(boolean includeDefaults) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
 		boolean any = false;
@@ -152,7 +212,8 @@ public class Components {
 				sb.append(components[i]);
 				sb.append(", ");
 				any = true;
-			} else {
+			} else if (includeDefaults) {
+
 				Component def = getDefaultComponent(i);
 
 				if (def != null) {

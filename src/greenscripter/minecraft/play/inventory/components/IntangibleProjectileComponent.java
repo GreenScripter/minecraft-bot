@@ -28,7 +28,7 @@ public class IntangibleProjectileComponent extends Component {
 
 	public IntangibleProjectileComponent copy() {
 		IntangibleProjectileComponent c = new IntangibleProjectileComponent();
-		c.nbt = nbt.copy();
+		if (c.nbt != null) c.nbt = nbt.copy();
 		return c;
 	}
 

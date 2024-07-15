@@ -131,6 +131,10 @@ public class BlockPredicate {
 		public BlockSet copy() {
 			BlockSet c = new BlockSet();
 			c.tagName = tagName;
+			if (blockIds != null) {
+				c.blockIds = new int[blockIds.length];
+				System.arraycopy(blockIds, 0, c.blockIds, 0, blockIds.length);
+			}
 			return c;
 		}
 	}

@@ -11,7 +11,7 @@ public class NoteBlockSoundComponent extends Component {
 
 	public static final int componentId = ComponentData.get("minecraft:note_block_sound");
 
-	public String sound;
+	public String sound = "unset";
 
 	public int id() {
 		return componentId;

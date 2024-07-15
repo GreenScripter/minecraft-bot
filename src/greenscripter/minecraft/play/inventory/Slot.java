@@ -12,12 +12,12 @@ public class Slot {
 	private Components components = new Components();
 
 	public String toString() {
-		return "Slot [present=" + present + ", itemId=" + itemId + (present ? " " + getItemId() : "") + ", itemCount=" + itemCount + ", components=" + components + "]";
+		return "Slot [present=" + present + ", itemId=" + itemId + (present ? " " + getItemId() : "") + ", itemCount=" + itemCount + ", components=" + getComponents() + "]";
 	}
 
 	public String toStringShort() {
 		if (present) {
-			return itemCount + " " + getItemId() + (components != null ? " " + components : "");
+			return itemCount + " " + getItemId() + (components != null ? " " + getComponents().toString(false) : "");
 		} else {
 			return "empty";
 		}
@@ -60,6 +60,7 @@ public class Slot {
 	}
 
 	public Components getComponents() {
+		if (components == null) return null;
 		components.itemId = itemId;
 		return components;
 	}

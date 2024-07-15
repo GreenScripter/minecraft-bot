@@ -15,9 +15,9 @@ public class WrittenBookContentComponent extends Component {
 
 	public static final int componentId = ComponentData.get("minecraft:written_book_content");
 
-	public String rawTitle;
-	public String filteredTitle;
-	public String author;
+	public String rawTitle = "unset";
+	public String filteredTitle = "unset";
+	public String author = "unset";
 	public int generation;
 	public List<Page> pages = new ArrayList<>();
 	public boolean resolved;

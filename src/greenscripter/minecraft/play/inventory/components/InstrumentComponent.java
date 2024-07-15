@@ -11,7 +11,7 @@ public class InstrumentComponent extends Component {
 
 	public static final int componentId = ComponentData.get("minecraft:instrument");
 
-	public int typeIdPlusOne;
+	public int typeIdPlusOne = 1;
 	public SoundEvent soundEvent;
 	public float duration;
 	public float range;

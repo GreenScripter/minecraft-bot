@@ -9,7 +9,7 @@ import greenscripter.minecraft.utils.MCOutputStream;
 
 public class MapPostProcessingComponent extends Component {
 
-	public static final int componentId = ComponentData.get("minecraft:damage");
+	public static final int componentId = ComponentData.get("minecraft:map_post_processing");
 
 	public int type;
 

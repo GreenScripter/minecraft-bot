@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import java.io.IOException;
@@ -167,6 +168,7 @@ public class ComponentData {
 		System.out.println("Took " + (System.currentTimeMillis() - start) + " ms to load all component types.");
 
 		ItemId.get("minecraft:dirt"); // Make sure item ids are already loaded for timing purposes.
+		BlockStates.getState(0);
 
 		start = System.currentTimeMillis();
 		try {
@@ -185,6 +187,7 @@ public class ComponentData {
 		System.out.println("Took " + (System.currentTimeMillis() - start) + " ms to load default components ids.");
 	}
 
+	@SuppressWarnings("unused")
 	private static void parseDefaultComponents(Components cs, JsonObject element) {
 		Map<String, JsonElement> entries = element.get("components").getAsJsonObject().asMap();
 
@@ -200,6 +203,8 @@ public class ComponentData {
 				sc.maxDamage = e.getValue().getAsInt();
 			} else if (c instanceof MapPostProcessingComponent sc) {
 				sc.type = e.getValue().getAsInt();
+			} else if (c instanceof DamageComponent sc) {
+				sc.damage = e.getValue().getAsInt();
 			} else if (c instanceof EnchantmentGlintOverrideComponent sc) {
 				sc.hasGlint = e.getValue().getAsBoolean();
 			} else if (c instanceof OminousBottleAmplifierComponent sc) {
@@ -316,6 +321,7 @@ public class ComponentData {
 					}
 					if (o.has("id")) {
 						a.name = o.get("id").getAsString();
+						a.uuid = UUID.nameUUIDFromBytes(a.name.getBytes());
 						o.remove("id");
 					}
 					sc.attributes.add(a);
@@ -407,8 +413,7 @@ public class ComponentData {
 
 							}
 							o.remove("blocks");
-						}
-						if (blocks.isJsonArray()) {
+						} else if (blocks.isJsonArray()) {
 							List<BlockState> states = new ArrayList<>();
 							for (var el : blocks.getAsJsonArray()) {
 								states.addAll(BlockStates.getBlockStates(el.getAsString()));
@@ -418,6 +423,8 @@ public class ComponentData {
 								ru.blocks.blockIds[i] = states.get(i).id();
 							}
 							o.remove("blocks");
+						} else {
+							System.err.println("Error loading default unable to understand blockset rule, has " + blocks + " extra data, expected {}");
 						}
 					}
 

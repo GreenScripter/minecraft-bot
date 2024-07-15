@@ -11,7 +11,7 @@ public class FireworkExplosionComponent extends Component {
 
 	public static final int componentId = ComponentData.get("minecraft:firework_explosion");
 
-	public FireworkExplosion explosion;
+	public FireworkExplosion explosion = new FireworkExplosion();
 
 	public int id() {
 		return componentId;

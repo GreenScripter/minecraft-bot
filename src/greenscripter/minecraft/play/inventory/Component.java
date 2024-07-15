@@ -47,7 +47,7 @@ public abstract class Component {
 	private static final Gson gson = new Gson();
 
 	public String toString() {
-		return gson.toJson(this);
+		return getClass().getSimpleName() + " " + gson.toJson(this);
 	}
 
 	private static class CheckingOutputStream extends OutputStream {
