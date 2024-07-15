@@ -14,6 +14,7 @@ public class PotionContentsComponent extends Component {
 
 	public static final int componentId = ComponentData.get("minecraft:potion_contents");
 
+	public boolean hasPotionId;
 	public int potionId;
 	public boolean hasCustomColor;
 	public int customColor;
@@ -25,7 +26,8 @@ public class PotionContentsComponent extends Component {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		out.writeVarInt(potionId);
+		out.writeBoolean(hasPotionId);
+		if (hasPotionId) out.writeVarInt(potionId);
 		out.writeBoolean(hasCustomColor);
 		if (hasCustomColor) out.writeInt(customColor);
 		out.writeVarInt(effects.size());
@@ -35,7 +37,8 @@ public class PotionContentsComponent extends Component {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		potionId = in.readVarInt();
+		hasPotionId = in.readBoolean();
+		if (hasPotionId) potionId = in.readVarInt();
 		hasCustomColor = in.readBoolean();
 		if (hasCustomColor) customColor = in.readInt();
 		int length = in.readVarInt();
