@@ -1,5 +1,9 @@
 package greenscripter.minecraft.packet.s2c.play.inventory;
 
+import java.util.Arrays;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import greenscripter.minecraft.gameinfo.PacketIds;
@@ -24,11 +28,19 @@ public class SetContainerContentPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeVarInt(windowId);
+		out.writeVarInt(stateId);
+		out.writeVarInt(slots.length);
+		for (Slot s : slots) {
+			out.writeSlot(s);
+		}
+		out.writeSlot(cursor);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		windowId = in.read();
+//		byte[] data = in.readAllBytes();
+//		in = new MCInputStream(new ByteArrayInputStream(data));
+		windowId = in.readVarInt();
 		stateId = in.readVarInt();
 		int length = in.readVarInt();
 		slots = new Slot[length];
@@ -39,6 +51,21 @@ public class SetContainerContentPacket extends Packet {
 
 		}
 		cursor = in.readSlot();
+
+//		ByteArrayOutputStream out = new ByteArrayOutputStream();
+//		toBytes(new MCOutputStream(out));
+//		if (!Arrays.equals(data, out.toByteArray())) {
+//			System.out.println("Unequal serialization: ");
+//			System.out.println("Original " + data.length + " result = " + out.toByteArray().length);
+//			System.out.println(Arrays.toString(data));
+//			System.out.println(Arrays.toString(out.toByteArray()));
+//			for (Slot s : slots) {
+//				System.err.println(s.toStringShort());
+//			}
+//			System.err.println("Cursor: ");
+//			System.err.println(cursor.toStringShort());
+//
+//		}
 	}
 
 }

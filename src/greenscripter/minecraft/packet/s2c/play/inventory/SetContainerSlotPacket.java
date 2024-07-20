@@ -32,6 +32,7 @@ public class SetContainerSlotPacket extends Packet {
 		stateId = in.readVarInt();
 		slotId = in.readShort();
 		data = in.readSlot();
+//		System.out.println(data.toStringShort());
 	}
 
 }

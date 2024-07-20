@@ -100,7 +100,7 @@ public class MCInputStream extends DataInputStream {
 		}
 
 		packetCounter++;
-
+//		System.out.println("Packet length " + packet.length);
 		var bin = new ByteIn(packet);
 		var in = new MCInputStream(bin);
 		int id = in.readVarInt();

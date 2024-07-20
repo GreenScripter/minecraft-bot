@@ -47,7 +47,7 @@ public class KillAuraHandler extends PlayHandler {
 
 		if (target != null) {
 			player.lastSwing = System.currentTimeMillis();
-
+			System.out.println("Attacked " + target.entityId + " " + target.type);
 			sc.sendPacket(new InteractEntityPacket(target.entityId, InteractEntityPacket.TYPE_ATTACK));
 			if (swingHand) sc.sendPacket(new SwingArmPacket(SwingArmPacket.MAIN_HAND));
 		}
