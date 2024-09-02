@@ -23,7 +23,7 @@ import greenscripter.minecraft.world.entity.Entity;
 public class KillAuraHandler extends PlayHandler {
 
 	Set<Integer> swarm = new HashSet<>();
-	Predicate<Entity> target = e -> true;
+	public Predicate<Entity> target = e -> true;
 	public boolean swingHand = false;
 	{
 		if (!PlayData.playData.containsKey(KillAuraData.class)) {
@@ -47,7 +47,7 @@ public class KillAuraHandler extends PlayHandler {
 
 		if (target != null) {
 			player.lastSwing = System.currentTimeMillis();
-			System.out.println("Attacked " + target.entityId + " " + target.type);
+			//			System.out.println("Attacked " + target.entityId + " " + target.type);
 			sc.sendPacket(new InteractEntityPacket(target.entityId, InteractEntityPacket.TYPE_ATTACK));
 			if (swingHand) sc.sendPacket(new SwingArmPacket(SwingArmPacket.MAIN_HAND));
 		}
