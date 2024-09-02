@@ -62,7 +62,8 @@ public class ChunkDataPacket extends Packet {
 			//			System.out.println(b.type + " " + b.data);
 			blockEntities.add(b);
 		}
-
+		
+		// Add code to read light data.
 	}
 
 	public static class BlockEntity {

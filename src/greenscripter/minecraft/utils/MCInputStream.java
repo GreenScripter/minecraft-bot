@@ -16,6 +16,7 @@ import greenscripter.minecraft.play.inventory.Component;
 import greenscripter.minecraft.play.inventory.Components;
 import greenscripter.minecraft.play.inventory.Slot;
 
+@SuppressWarnings("resource")
 public class MCInputStream extends DataInputStream {
 
 	public boolean compression = false;
@@ -84,7 +85,6 @@ public class MCInputStream extends DataInputStream {
 		if (uncompressedLength != 0) {
 			packet = new byte[uncompressedLength];
 			LimitedInputStream lis = new LimitedInputStream(this, length);
-			@SuppressWarnings("resource")
 			InflaterInputStream iis = new InflaterInputStream(lis);
 
 			int read = -1;

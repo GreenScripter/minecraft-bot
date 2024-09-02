@@ -18,6 +18,7 @@ public class Pinger {
 		System.out.println(ping);
 	}
 
+	@SuppressWarnings("resource")
 	public static PingResponse ping(String host, int port) throws IOException {
 		Socket s = new Socket(host, port);
 

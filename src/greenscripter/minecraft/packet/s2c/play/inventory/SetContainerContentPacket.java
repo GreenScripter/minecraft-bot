@@ -1,9 +1,5 @@
 package greenscripter.minecraft.packet.s2c.play.inventory;
 
-import java.util.Arrays;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import greenscripter.minecraft.gameinfo.PacketIds;

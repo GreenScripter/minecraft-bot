@@ -20,6 +20,7 @@ public class ChunkDataDecoder {
 			//			}
 
 		}
+		in.close();
 		//		System.out.println(System.nanoTime()-start);
 		//		if (anyBig) {
 		//			var out = new FileOutputStream("chunkSpam.txt");
@@ -101,108 +102,6 @@ public class ChunkDataDecoder {
 		public void readDirectPalette(PalettedContainer c) {
 			c.type = PalettedContainer.Type.DIRECT;
 			//no-op
-		}
-
-	}
-
-	public static class ChunkSection {
-
-		short nonAir;
-		PalettedContainer blocks;
-		PalettedContainer biomes;
-
-		public String toString() {
-			return "ChunkSection blocks: " + nonAir + " block palette " + blocks + " biome palette " + biomes;
-		}
-	}
-
-	public static class PalettedContainer {
-
-		byte bitsPerEntry;
-		Type type;
-		int singleType;//Type if single value
-		int[] palette;//Types if INDIRECT
-		long[] data;
-
-		public void readBlocksIntoChunk(Chunk c, int yOffset) {
-			LongBitStream in = new LongBitStream(data);
-			switch (type) {
-				case DIRECT -> {
-					for (int y = yOffset; y < 16 + yOffset; y++) {
-						for (int z = 0; z < 16; z++) {
-							for (int x = 0; x < 16; x++) {
-								c.blocks[y][z][x] = in.readBits(bitsPerEntry);
-							}
-						}
-					}
-				}
-				case INDIRECT -> {
-					for (int y = yOffset; y < 16 + yOffset; y++) {
-						for (int z = 0; z < 16; z++) {
-							for (int x = 0; x < 16; x++) {
-								c.blocks[y][z][x] = palette[in.readBits(bitsPerEntry)];
-							}
-						}
-					}
-				}
-				case SINGLE_VALUE -> {
-					for (int y = yOffset; y < 16 + yOffset; y++) {
-						for (int z = 0; z < 16; z++) {
-							for (int x = 0; x < 16; x++) {
-								c.blocks[y][z][x] = singleType;
-							}
-						}
-					}
-				}
-				default -> {
-					throw new RuntimeException("Invalid PalettedContainer type " + type);
-				}
-
-			}
-		}
-
-		public static enum Type {
-			SINGLE_VALUE, INDIRECT, DIRECT
-		}
-
-		public String toString() {
-			return "PalettedContainer bits: " + bitsPerEntry + " type: " + type + " single: " + singleType + " palette: " + palette + " datasize: " + data.length;
-		}
-	}
-
-	public static class LongBitStream {
-
-		long[] data;
-		int longIndex = 0;
-		long atLong = 0;
-		int bitsPeeled = 0;
-		static long[] masks = new long[65];
-		static {
-			long v = 0;
-			for (int i = 0; i < 65; i++) {
-				masks[i] = v;
-				v = v << 1 | 1;
-			}
-		}
-
-		public LongBitStream(long[] data) {
-			this.data = data;
-			if (data.length > 0) {
-				atLong = data[0];
-			}
-		}
-
-		public int readBits(byte bitCount) {
-			int result = 0;
-			if (bitsPeeled + bitCount > 64) {
-				bitsPeeled = 0;
-				longIndex++;
-				atLong = data[longIndex];
-			}
-			result = (int) (atLong & masks[bitCount]);
-			atLong = atLong >> bitCount;
-			bitsPeeled += bitCount;
-			return result;
 		}
 
 	}
