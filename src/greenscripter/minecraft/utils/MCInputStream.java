@@ -1,5 +1,6 @@
 package greenscripter.minecraft.utils;
 
+import java.util.BitSet;
 import java.util.UUID;
 import java.util.zip.InflaterInputStream;
 
@@ -100,7 +101,7 @@ public class MCInputStream extends DataInputStream {
 		}
 
 		packetCounter++;
-//		System.out.println("Packet length " + packet.length);
+		//		System.out.println("Packet length " + packet.length);
 		var bin = new ByteIn(packet);
 		var in = new MCInputStream(bin);
 		int id = in.readVarInt();
@@ -201,6 +202,17 @@ public class MCInputStream extends DataInputStream {
 
 	public Component readComponent() throws IOException {
 		return Components.readComponent(this);
+	}
+
+	public BitSet readBitSet() throws IOException {
+		int length = readVarInt();
+		if (length > 12000000) throw new IOException("BitSet too large");
+
+		long[] longs = new long[length];
+		for (int i = 0; i < length; i++) {
+			longs[i] = readLong();
+		}
+		return BitSet.valueOf(longs);
 	}
 
 	public InputStream wrapped() {

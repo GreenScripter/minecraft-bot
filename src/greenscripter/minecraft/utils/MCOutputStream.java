@@ -1,5 +1,6 @@
 package greenscripter.minecraft.utils;
 
+import java.util.BitSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -162,6 +163,15 @@ public class MCOutputStream extends DataOutputStream {
 
 	public void writeComponent(Component c) throws IOException {
 		Components.writeComponent(this, c);
+	}
+
+	public void writeBitSet(BitSet set) throws IOException {
+		long[] longs = set.toLongArray();
+
+		writeVarInt(longs.length);
+		for (int i = 0; i < longs.length; i++) {
+			writeLong(longs[i]);
+		}
 	}
 
 	public OutputStream wrapped() {
