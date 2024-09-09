@@ -238,7 +238,7 @@ public class ServerConnection {
 	}
 
 	public static enum ConnectionState {
-		HANDSHAKE, LOGIN, CONFIGURATION, PLAY, DISCONNECTED;
+		HANDSHAKE, QUERY, LOGIN, CONFIGURATION, PLAY, DISCONNECTED;
 	}
 
 	public String toString() {
