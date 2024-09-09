@@ -14,12 +14,24 @@ public class NBTTagList<T extends NBTComponent> extends NBTComponent {
 	public byte listType;
 	public List<T> value = new ArrayList<>();
 
+	public NBTTagList() {
+
+	}
+
+	public NBTTagList(byte listType) {
+		this.listType = listType;
+	}
+
 	public byte getType() {
 		return TAG_List;
 	}
 
 	public T get(int i) {
 		return value.get(i);
+	}
+	
+	public void add(T t) {
+		value.add(t);
 	}
 
 	public int size() {

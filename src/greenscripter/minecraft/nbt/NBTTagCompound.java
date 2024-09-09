@@ -13,12 +13,24 @@ public class NBTTagCompound extends NBTComponent {
 
 	public Map<String, NBTComponent> components = new HashMap<>();
 
+	public NBTTagCompound() {
+
+	}
+
+	public NBTTagCompound(String name, NBTComponent wrap) {
+		put(name, wrap);
+	}
+
 	public byte getType() {
 		return TAG_Compound;
 	}
 
 	public NBTComponent get(String s) {
 		return components.get(s);
+	}
+
+	public void put(String name, NBTComponent nbt) {
+		components.put(name, nbt);
 	}
 
 	public NBTComponent read(MCInputStream in) throws IOException {

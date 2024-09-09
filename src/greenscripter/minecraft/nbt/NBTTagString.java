@@ -11,6 +11,14 @@ public class NBTTagString extends NBTComponent {
 
 	public String value;
 
+	public NBTTagString() {
+
+	}
+
+	public NBTTagString(String value) {
+		this.value = value;
+	}
+
 	public byte getType() {
 		return TAG_String;
 	}
