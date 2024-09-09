@@ -21,6 +21,21 @@ public class ZLib {
 		}
 		return baos.toByteArray();
 	}
+	
+	@SuppressWarnings("resource")
+	public static byte[] compress(int varint, byte[] b) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			DeflaterOutputStream dos = new DeflaterOutputStream(baos);
+			new MCOutputStream(dos).writeVarInt(varint);
+			dos.write(b);
+			dos.flush();
+			dos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return baos.toByteArray();
+	}
 
 	public static byte[] decompress(byte[] b) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

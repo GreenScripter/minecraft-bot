@@ -18,6 +18,7 @@ import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.packet.s2c.play.DisconnectPacket;
 import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
 import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
+import greenscripter.minecraft.packet.s2c.play.blocks.ChunkDataPacket;
 import greenscripter.minecraft.packet.s2c.status.StatusResponsePacket;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
@@ -107,6 +108,11 @@ public class SimpleProxy {
 							}
 						}
 
+						//						if (connectionState == ConnectionState.PLAY && p.id == ChunkDataPacket.packetId) {
+						//							clientOut.writePacket(p.convert(new ChunkDataPacket()));
+						//							continue;
+						//						}
+
 						// Enable compression.
 						if (connectionState == ConnectionState.LOGIN && p.id == SetCompressionPacket.packetId) {
 							SetCompressionPacket compression = p.convert(new SetCompressionPacket());
@@ -116,6 +122,8 @@ public class SimpleProxy {
 								serverIn.compression = true;
 								clientOut.compressionThreshold = compression.value;
 								serverOut.compressionThreshold = compression.value;
+								clientOut.actuallyCompress = true;
+								serverOut.actuallyCompress = true;
 							}
 							continue;
 						}

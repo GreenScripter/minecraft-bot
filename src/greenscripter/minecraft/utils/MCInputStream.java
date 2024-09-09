@@ -58,7 +58,7 @@ public class MCInputStream extends DataInputStream {
 
 	public long packetCounter = 0;
 
-	public byte[] readPacket() throws IOException {
+	public byte[] readPacketBytes(boolean decompress) throws IOException {
 		int length = readVarInt();
 		int uncompressedLength = 0;
 		if (compression) {
@@ -68,7 +68,7 @@ public class MCInputStream extends DataInputStream {
 		//		System.out.println(compression + " compression " + length + " uncompressed length " + uncompressedLength);
 		byte[] packet = new byte[length];
 		this.readFully(packet);
-		if (uncompressedLength != 0) {
+		if (decompress && uncompressedLength != 0) {
 			packet = ZLib.decompress(packet);
 		}
 		packetCounter++;
@@ -142,7 +142,7 @@ public class MCInputStream extends DataInputStream {
 	}
 
 	public <T extends Packet> T readPacket(T t) throws IOException {
-		byte[] data = readPacket();
+		byte[] data = readPacketBytes(true);
 		var in = new MCInputStream(new ByteArrayInputStream(data));
 		int id = in.readVarInt();
 		if (id != t.id()) {

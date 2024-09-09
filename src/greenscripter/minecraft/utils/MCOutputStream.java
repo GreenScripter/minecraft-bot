@@ -19,6 +19,7 @@ import greenscripter.minecraft.play.inventory.Slot;
 public class MCOutputStream extends DataOutputStream {
 
 	public int compressionThreshold = -1;
+	public boolean actuallyCompress = false;
 
 	public MCOutputStream(OutputStream out) {
 		super(out);
@@ -91,17 +92,27 @@ public class MCOutputStream extends DataOutputStream {
 	}
 
 	public synchronized void writePacket(int id, byte[] data) throws IOException {
-		int extra = 0;
-		if (compressionThreshold >= 0) {
-			extra += varIntSize(0);
+		if (actuallyCompress && compressionThreshold >= 0 && data.length >= compressionThreshold) {
+			byte[] compressed = ZLib.compress(id, data);
+			int originLength = varIntSize(id) + data.length;
+			writeVarInt(compressed.length + varIntSize(originLength));
+			writeVarInt(originLength);
+			write(compressed);
+			flush();
+
+		} else {
+			int extra = 0;
+			if (compressionThreshold >= 0) {
+				extra += varIntSize(0);
+			}
+			writeVarInt(extra + varIntSize(id) + data.length);
+			if (compressionThreshold >= 0) {
+				writeVarInt(0);
+			}
+			writeVarInt(id);
+			write(data);
+			flush();
 		}
-		writeVarInt(extra + varIntSize(id) + data.length);
-		if (compressionThreshold >= 0) {
-			writeVarInt(0);
-		}
-		writeVarInt(id);
-		this.write(data);
-		this.flush();
 	}
 
 	public void writePacket(Packet packet) throws IOException {
