@@ -1,6 +1,7 @@
 package greenscripter.minecraft.packet.s2c.play.blocks;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import java.io.IOException;
@@ -25,12 +26,56 @@ public class ChunkDataPacket extends Packet {
 
 	//lighting not implemented
 
+	//lighting writing constants
+	static byte[] lightSection;
+	static BitSet ones;
+	static BitSet zeros;
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeInt(chunkX);
+		out.writeInt(chunkZ);
+		out.writeNBT(heightmap);
+		out.writeVarInt(data.length);
+		out.write(data);
+
+		out.writeVarInt(blockEntities.size());
+		for (BlockEntity b : blockEntities) {
+			out.writeByte(b.xinchunk << 4 | b.zinchunk);
+			out.writeShort(b.y);
+			out.writeVarInt(b.type);
+			out.writeNBT(b.data);
+		}
+
+		if (ones == null) {
+			ones = new BitSet(26);
+			ones.set(0, 26, true);
+		}
+
+		if (zeros == null) zeros = new BitSet();
+
+		out.writeBitSet(zeros);
+		out.writeBitSet(ones);
+		out.writeBitSet(zeros);
+		out.writeBitSet(zeros);
+
+		out.writeVarInt(0);
+		out.writeVarInt(26);
+
+		if (lightSection == null) {
+			lightSection = new byte[2048];
+			for (int i = 0; i < lightSection.length; i++) {
+				lightSection[i] = (byte) 0xFF;
+			}
+		}
+
+		for (int i = 0; i < 26; i++) {
+			out.writeVarInt(lightSection.length);
+			out.write(lightSection);
+		}
 	}
 
 	public static int readXCoordinate(UnknownPacket up) throws IOException {
@@ -62,8 +107,27 @@ public class ChunkDataPacket extends Packet {
 			//			System.out.println(b.type + " " + b.data);
 			blockEntities.add(b);
 		}
-		
-		// Add code to read light data.
+
+		//		// Add code to read light data.
+		//
+		//		BitSet b1 = in.readBitSet();
+		//		BitSet b2 = in.readBitSet();
+		//		BitSet b3 = in.readBitSet();
+		//		BitSet b4 = in.readBitSet();
+		//
+		//		int length = in.readVarInt();
+		//
+		//		for (int i = 0; i < length; i++) {
+		//			int sublength = in.readVarInt();
+		//			in.readNBytes(sublength);
+		//		}
+		//
+		//		length = in.readVarInt();
+		//
+		//		for (int i = 0; i < length; i++) {
+		//			int sublength = in.readVarInt();
+		//			in.readNBytes(sublength);
+		//		}
 	}
 
 	public static class BlockEntity {
