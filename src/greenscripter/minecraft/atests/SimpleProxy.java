@@ -81,19 +81,19 @@ public class SimpleProxy {
 						// Ignore disconnect packets.
 						if (connectionState == ConnectionState.PLAY && p.id == DisconnectPacket.packetId) {
 							NBTComponent kickMessage = p.convert(new DisconnectPacket()).reason;
-							
+
 							NBTTagCompound chatMessage = new NBTTagCompound();
 							chatMessage.put("text", new NBTTagString("You were kicked from the server: "));
 							chatMessage.put("color", new NBTTagString("#FF0000"));
-							
+
 							NBTTagList<NBTTagCompound> extra = new NBTTagList<>(NBTComponent.TAG_Compound);
-							chatMessage.components.put("extra", extra);
+							chatMessage.put("extra", extra);
 							if (kickMessage.isString()) {
-								extra.value.add(new NBTTagCompound("text", kickMessage));
+								extra.add(new NBTTagCompound("text", kickMessage));
 							} else {
-								extra.value.add(kickMessage.asCompound());
+								extra.add(kickMessage.asCompound());
 							}
-							
+
 							SystemChatPacket messagePacket = new SystemChatPacket(chatMessage);
 							clientOut.writePacket(messagePacket);
 							continue;
