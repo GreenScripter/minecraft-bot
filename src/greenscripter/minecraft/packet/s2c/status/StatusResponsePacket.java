@@ -15,6 +15,10 @@ public class StatusResponsePacket extends Packet {
 
 	public StatusResponsePacket() {}
 
+	public StatusResponsePacket(String value) {
+		this.value = value;
+	}
+
 	public int id() {
 		return packetId;
 	}

@@ -15,6 +15,10 @@ public class PingResponsePacket extends Packet {
 
 	public PingResponsePacket() {}
 
+	public PingResponsePacket(long value) {
+		this.value = value;
+	}
+
 	public int id() {
 		return packetId;
 	}

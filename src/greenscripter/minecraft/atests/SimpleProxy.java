@@ -18,6 +18,7 @@ import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.packet.s2c.play.DisconnectPacket;
 import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
 import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
+import greenscripter.minecraft.packet.s2c.status.StatusResponsePacket;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
@@ -119,6 +120,14 @@ public class SimpleProxy {
 							continue;
 						}
 
+						if (connectionState == ConnectionState.STATUS && p.id == StatusResponsePacket.packetId) {
+							StatusResponsePacket status = p.convert(new StatusResponsePacket());
+							status.value = status.value.replace("\"text\":\"", "\"text\":\"§2Proxy: §r");
+							clientOut.writePacket(status);
+
+							continue;
+						}
+
 						// Client is disconnected so don't forward.
 						if (client.isClosed()) {
 							continue;
@@ -154,11 +163,11 @@ public class SimpleProxy {
 									}
 									if (handshake.nextState == 1) {
 										System.out.println("Querying");
-										connectionState = ConnectionState.QUERY;
+										connectionState = ConnectionState.STATUS;
 									}
 								}
 								break;
-							case QUERY:
+							case STATUS:
 								break;
 							case LOGIN:
 								if (p.id == LoginAcknowledgePacket.packetId) {
