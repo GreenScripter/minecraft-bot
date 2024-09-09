@@ -84,7 +84,7 @@ public class ServerConnection {
 		this.targetUuid = uuid;
 		this.hostname = hostname;
 		this.port = port;
-		playHandler.forEach(this::addPlayHandler);
+		if (playHandler != null) playHandler.forEach(this::addPlayHandler);
 	}
 
 	public synchronized void connect() throws IOException {
