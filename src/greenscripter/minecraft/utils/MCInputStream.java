@@ -33,7 +33,14 @@ public class MCInputStream extends DataInputStream {
 		do {
 			if (bitOffset == 35) throw new RuntimeException("VarInt is too big");
 
-			currentByte = (byte) this.read();
+			int read = this.read();
+
+			if (read == -1) {
+				throw new IOException("No bytes to read VarInt");
+			}
+
+			currentByte = (byte) read;
+
 			value |= (currentByte & 0b01111111) << bitOffset;
 
 			bitOffset += 7;
