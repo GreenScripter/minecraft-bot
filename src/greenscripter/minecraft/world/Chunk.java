@@ -19,9 +19,11 @@ public class Chunk {
 	public Map<Position, BlockEntity> blockEntities = new HashMap<>();
 
 	public int[][][] blocks;//stored in y,z,x order to match chunk data from the server.
+	public int[][][] biomes;
 
 	public Chunk(int chunkX, int chunkZ, int minY, int height, World world) {
 		blocks = new int[height][16][16];
+		biomes = new int[height / 4][4][4];
 		this.min_y = minY;
 		this.height = height;
 		this.chunkX = chunkX;

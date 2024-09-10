@@ -18,7 +18,6 @@ import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.packet.s2c.play.DisconnectPacket;
 import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
 import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
-import greenscripter.minecraft.packet.s2c.play.blocks.ChunkDataPacket;
 import greenscripter.minecraft.packet.s2c.status.StatusResponsePacket;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;

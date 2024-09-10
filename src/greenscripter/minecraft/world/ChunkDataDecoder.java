@@ -15,6 +15,7 @@ public class ChunkDataDecoder {
 		for (int i = 0; i < c.height / 16; i++) {
 			ChunkSection cs = in.readChunkSection();
 			cs.blocks.readBlocksIntoChunk(c, i << 4);
+			cs.biomes.readBiomesIntoChunk(c, i << 2);
 			//			if (cs.blocks.type == Type.DIRECT) {
 			//				anyBig = true;
 			//			}

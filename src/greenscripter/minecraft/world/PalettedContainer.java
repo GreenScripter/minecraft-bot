@@ -44,6 +44,43 @@ public class PalettedContainer {
 
 		}
 	}
+	
+	public void readBiomesIntoChunk(Chunk c, int yOffset) {
+		LongBitInStream in = new LongBitInStream(data);
+		switch (type) {
+			case DIRECT -> {
+				for (int y = yOffset; y < 4 + yOffset; y++) {
+					for (int z = 0; z < 4; z++) {
+						for (int x = 0; x < 4; x++) {
+							c.biomes[y][z][x] = in.readBits(bitsPerEntry);
+						}
+					}
+				}
+			}
+			case INDIRECT -> {
+				for (int y = yOffset; y < 4 + yOffset; y++) {
+					for (int z = 0; z < 4; z++) {
+						for (int x = 0; x < 4; x++) {
+							c.biomes[y][z][x] = palette[in.readBits(bitsPerEntry)];
+						}
+					}
+				}
+			}
+			case SINGLE_VALUE -> {
+				for (int y = yOffset; y < 4 + yOffset; y++) {
+					for (int z = 0; z < 4; z++) {
+						for (int x = 0; x < 4; x++) {
+							c.biomes[y][z][x] = singleType;
+						}
+					}
+				}
+			}
+			default -> {
+				throw new RuntimeException("Invalid PalettedContainer type " + type);
+			}
+
+		}
+	}
 
 	public static enum Type {
 		SINGLE_VALUE, INDIRECT, DIRECT
