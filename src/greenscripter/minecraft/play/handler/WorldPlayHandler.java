@@ -65,7 +65,7 @@ public class WorldPlayHandler extends PlayHandler {
 				if (worldData.world == null) {
 					RegistryData registryData = sc.getData(RegistryData.class);
 					RegistryEntry ent = registryData.getRegistry("minecraft:dimension_type").get(respawn.dimensionType);
-					
+
 					World world = new World();
 					world.id = respawn.dimensionName;
 					world.dimensionType = ent.entryId;
@@ -94,7 +94,6 @@ public class WorldPlayHandler extends PlayHandler {
 					System.out.println("Loaded world " + world.id);
 					world.dimensionType = ent.entryId;
 					world.worlds = worlds;
-
 
 					world.height = ent.data.asCompound().get("height").asInt().value;
 					world.min_y = ent.data.asCompound().get("min_y").asInt().value;

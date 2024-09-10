@@ -34,8 +34,8 @@ public class SetContainerContentPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-//		byte[] data = in.readAllBytes();
-//		in = new MCInputStream(new ByteArrayInputStream(data));
+		//		byte[] data = in.readAllBytes();
+		//		in = new MCInputStream(new ByteArrayInputStream(data));
 		windowId = in.readVarInt();
 		stateId = in.readVarInt();
 		int length = in.readVarInt();
@@ -48,20 +48,20 @@ public class SetContainerContentPacket extends Packet {
 		}
 		cursor = in.readSlot();
 
-//		ByteArrayOutputStream out = new ByteArrayOutputStream();
-//		toBytes(new MCOutputStream(out));
-//		if (!Arrays.equals(data, out.toByteArray())) {
-//			System.out.println("Unequal serialization: ");
-//			System.out.println("Original " + data.length + " result = " + out.toByteArray().length);
-//			System.out.println(Arrays.toString(data));
-//			System.out.println(Arrays.toString(out.toByteArray()));
-//			for (Slot s : slots) {
-//				System.err.println(s.toStringShort());
-//			}
-//			System.err.println("Cursor: ");
-//			System.err.println(cursor.toStringShort());
-//
-//		}
+		//		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		//		toBytes(new MCOutputStream(out));
+		//		if (!Arrays.equals(data, out.toByteArray())) {
+		//			System.out.println("Unequal serialization: ");
+		//			System.out.println("Original " + data.length + " result = " + out.toByteArray().length);
+		//			System.out.println(Arrays.toString(data));
+		//			System.out.println(Arrays.toString(out.toByteArray()));
+		//			for (Slot s : slots) {
+		//				System.err.println(s.toStringShort());
+		//			}
+		//			System.err.println("Cursor: ");
+		//			System.err.println(cursor.toStringShort());
+		//
+		//		}
 	}
 
 }

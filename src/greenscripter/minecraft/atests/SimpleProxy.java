@@ -106,9 +106,18 @@ public class SimpleProxy {
 								continue;
 							}
 						}
-
+						//						if (connectionState == ConnectionState.PLAY && p.id == PacketIds.getS2CPlayId("minecraft:light_update")) {
+						//							continue;
+						//						}
 						//						if (connectionState == ConnectionState.PLAY && p.id == ChunkDataPacket.packetId) {
-						//							clientOut.writePacket(p.convert(new ChunkDataPacket()));
+						//							ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
+						//							chunk.heightmap = new NBTTagCompound();
+						//							Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, -64, 384, null);
+						//
+						//							ChunkDataDecoder.decode(c, chunk.data);
+						//							chunk.data = ChunkDataEncoder.encode(c);
+						//
+						//							clientOut.writePacket(chunk);
 						//							continue;
 						//						}
 

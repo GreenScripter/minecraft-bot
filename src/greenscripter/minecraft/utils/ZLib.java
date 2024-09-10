@@ -21,7 +21,7 @@ public class ZLib {
 		}
 		return baos.toByteArray();
 	}
-	
+
 	@SuppressWarnings("resource")
 	public static byte[] compress(int varint, byte[] b) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

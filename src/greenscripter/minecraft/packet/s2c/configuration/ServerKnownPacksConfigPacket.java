@@ -27,11 +27,11 @@ public class ServerKnownPacksConfigPacket extends Packet {
 
 	public void fromBytes(MCInputStream in) throws IOException {
 		int count = in.readVarInt();
-		
+
 		namespaces = new String[count];
 		ids = new String[count];
 		versions = new String[count];
-		
+
 		for (int i = 0; i < count; i++) {
 			namespaces[i] = in.readString();
 			ids[i] = in.readString();

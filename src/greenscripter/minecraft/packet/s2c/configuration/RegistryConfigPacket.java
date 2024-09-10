@@ -39,7 +39,7 @@ public class RegistryConfigPacket extends Packet {
 			}
 			registry.registry[i] = e;
 			registry.reversed.put(e.entryId, e);
-		}		
+		}
 	}
 
 }

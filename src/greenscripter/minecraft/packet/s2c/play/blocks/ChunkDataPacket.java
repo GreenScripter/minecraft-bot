@@ -62,7 +62,6 @@ public class ChunkDataPacket extends Packet {
 		out.writeBitSet(zeros);
 		out.writeBitSet(zeros);
 
-		out.writeVarInt(0);
 		out.writeVarInt(26);
 
 		if (lightSection == null) {
@@ -71,6 +70,13 @@ public class ChunkDataPacket extends Packet {
 				lightSection[i] = (byte) 0xFF;
 			}
 		}
+
+		for (int i = 0; i < 26; i++) {
+			out.writeVarInt(lightSection.length);
+			out.write(lightSection);
+		}
+
+		out.writeVarInt(26);
 
 		for (int i = 0; i < 26; i++) {
 			out.writeVarInt(lightSection.length);

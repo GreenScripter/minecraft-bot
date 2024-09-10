@@ -29,7 +29,7 @@ public class NBTTagList<T extends NBTComponent> extends NBTComponent {
 	public T get(int i) {
 		return value.get(i);
 	}
-	
+
 	public void add(T t) {
 		value.add(t);
 	}

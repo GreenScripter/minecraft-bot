@@ -11,11 +11,11 @@ public class DynamicRegistry {
 	public String name;
 	public RegistryEntry[] registry = {};
 	public Map<String, RegistryEntry> reversed = new HashMap<>();
-	
+
 	public RegistryEntry get(int id) {
 		return registry[id];
 	}
-	
+
 	public RegistryEntry get(String id) {
 		return reversed.get(id);
 	}
