@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
@@ -24,8 +25,8 @@ public class ResourceExtractor {
 	}
 
 	public static String getJSON(String path) throws URISyntaxException, IOException {
-		URI uri = ResourceExtractor.class.getClassLoader().getResource(path).toURI();
-		return Files.readString(Paths.get(uri));
+		InputStream in = ResourceExtractor.class.getClassLoader().getResource(path).openStream();
+		return new String(in.readAllBytes());
 	}
 
 	public static Map<String, String> getJSONs(String path) throws URISyntaxException, IOException {
