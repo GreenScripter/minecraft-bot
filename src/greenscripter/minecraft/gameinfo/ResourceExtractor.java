@@ -33,7 +33,13 @@ public class ResourceExtractor {
 		URI uri = ResourceExtractor.class.getClassLoader().getResource(path).toURI();
 		Path myPath;
 		if (uri.getScheme().equals("jar")) {
-			FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object> emptyMap());
+			FileSystem fileSystem = null;
+			try {
+				fileSystem = FileSystems.getFileSystem(uri);
+			} catch (Exception e) {
+
+			}
+			if (fileSystem == null) fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object> emptyMap());
 			myPath = fileSystem.getPath(path);
 		} else {
 			myPath = Paths.get(uri);
