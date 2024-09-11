@@ -7,15 +7,6 @@ public class LongBitOutStream {
 	long atLong = 0;
 	int bitsUsed = 0;
 
-	static long[] masks = new long[65];
-	static {
-		long v = 0;
-		for (int i = 0; i < 65; i++) {
-			masks[i] = v;
-			v = v << 1 | 1;
-		}
-	}
-
 	public LongBitOutStream() {
 		this.data = new long[512];
 	}
@@ -32,7 +23,7 @@ public class LongBitOutStream {
 			bitsUsed = 0;
 			longIndex++;
 		}
-		long write = (value & masks[bitCount]);
+		long write = value;
 		write <<= bitsUsed;
 		atLong |= write;
 		bitsUsed += bitCount;

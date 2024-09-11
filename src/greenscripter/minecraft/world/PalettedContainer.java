@@ -8,7 +8,7 @@ import greenscripter.minecraft.gameinfo.BlockStates;
 
 public class PalettedContainer {
 
-	private static boolean[] airFilter = BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:air");
+	//	private static boolean[] airFilter = BlockStates.addTagToBlockSet(BlockStates.getBlockSet(), "minecraft:air");
 
 	byte bitsPerEntry;
 	PalettedContainer.Type type;
@@ -91,19 +91,25 @@ public class PalettedContainer {
 	}
 
 	public void initializeBlocksFromChunk(Chunk c, int yOffset, ChunkSection parent) {
-		parent.nonAir = 0;
+		parent.nonAir = 4096;
 		boolean[] blockset = BlockStates.getBlockSet();
 		List<Integer> paletteTypes = new ArrayList<>();
+
 		for (int y = yOffset; y < 16 + yOffset; y++) {
 			for (int z = 0; z < 16; z++) {
 				for (int x = 0; x < 16; x++) {
-					if (!blockset[c.blocks[y][z][x]]) {
-						paletteTypes.add(c.blocks[y][z][x]);
-						blockset[c.blocks[y][z][x]] = true;
+					int block = c.blocks[y][z][x];
+
+					if (!blockset[block]) {
+						paletteTypes.add(block);
+						blockset[block] = true;
 					}
-					if (!airFilter[c.blocks[y][z][x]]) {
-						parent.nonAir++;
-					}
+
+					// Counting up the non-air blocks incurred a performance penalty, 
+					// and the client doesn't seem to even care.
+					//					if (!airFilter[block]) {
+					//						parent.nonAir++;
+					//					}
 				}
 			}
 		}
@@ -116,6 +122,7 @@ public class PalettedContainer {
 		} else if (32 - Integer.numberOfLeadingZeros(paletteTypes.size() - 1) <= 8) {
 			bitsPerEntry = (byte) (32 - Integer.numberOfLeadingZeros(paletteTypes.size() - 1));
 			if (bitsPerEntry < 4) bitsPerEntry = 4;
+			//			if (bitsPerEntry > 4) bitsPerEntry = 8;
 			type = Type.INDIRECT;
 			palette = new int[paletteTypes.size()];
 			int index = 0;

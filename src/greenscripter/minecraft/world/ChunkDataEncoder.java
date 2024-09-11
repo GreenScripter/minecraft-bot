@@ -17,6 +17,7 @@ public class ChunkDataEncoder {
 			cs.biomes.initializeBiomesFromChunk(c, i << 2);
 			cs.blocks = new PalettedContainer();
 			cs.blocks.initializeBlocksFromChunk(c, i << 4, cs);
+
 			out.writeChunkSection(cs);
 		}
 		out.close();
