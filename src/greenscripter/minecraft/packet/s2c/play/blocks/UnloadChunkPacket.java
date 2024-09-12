@@ -14,12 +14,20 @@ public class UnloadChunkPacket extends Packet {
 	public int x;
 	public int z;
 
+	public UnloadChunkPacket() {}
+
+	public UnloadChunkPacket(int chunkX, int chunkZ) {
+		x = chunkX;
+		z = chunkZ;
+	}
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeInt(z);
+		out.writeInt(x);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

@@ -30,7 +30,20 @@ public class RespawnPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeVarInt(dimensionType);
+		out.writeString(dimensionName);
+		out.writeLong(seedHash);
+		out.writeByte(gamemode);
+		out.writeByte(previousGamemode);
+		out.writeBoolean(isDebug);
+		out.writeBoolean(isFlat);
+		out.writeBoolean(hasDeathLocation);
+		if (hasDeathLocation) {
+			out.writeString(deathDimension);
+			out.writePosition(deathLocation);
+		}
+		out.writeVarInt(portalCooldown);
+		out.writeByte(dataKept);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

@@ -73,6 +73,7 @@ public class SimpleProxy {
 				try {
 					while (true) {
 						UnknownPacket p = serverIn.readGeneralPacket();
+						//						String name = PacketIds.getS2CPacketName(connectionState.name, p.id);
 
 						// Track keep alive packets.
 						if (connectionState == ConnectionState.PLAY && p.id == KeepAlivePacket.packetId) {

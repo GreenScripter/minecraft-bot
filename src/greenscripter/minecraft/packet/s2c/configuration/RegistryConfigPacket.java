@@ -17,12 +17,26 @@ public class RegistryConfigPacket extends Packet {
 
 	public RegistryConfigPacket() {}
 
+	public RegistryConfigPacket(DynamicRegistry registry) {
+		this.registry = registry;
+	}
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeString(registry.name);
+		out.writeVarInt(registry.registry.length);
+		for (int i = 0; i < registry.registry.length; i++) {
+			RegistryEntry e = registry.registry[i];
+
+			out.writeString(e.entryId);
+			out.writeBoolean(e.hasData);
+			if (e.hasData) {
+				out.writeNBT(e.data);
+			}
+		}
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

@@ -204,13 +204,15 @@ public class AsyncSwarmController {
 				for (ServerConnection sc : copy) {
 					ticking = sc;
 					try {
-						sc.step();
-
-						while (!sc.waiting()) {
+						synchronized (sc) {
 							sc.step();
-						}
 
-						sc.tick();
+							while (!sc.waiting()) {
+								sc.step();
+							}
+
+							sc.tick();
+						}
 
 					} catch (Exception e) {
 						e.printStackTrace();

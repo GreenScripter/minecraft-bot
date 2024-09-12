@@ -55,7 +55,18 @@ public class ClickContainerPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		throw new UnsupportedOperationException();
+		windowId = in.readByte();
+		stateId = in.readVarInt();
+		slot = in.readShort();
+		button = in.readByte();
+		mode = in.readVarInt();
+		int length = in.readVarInt();
+		for (int i = 0; i < length; i++) {
+			SlotChange sc = new SlotChange();
+			sc.index = in.readShort();
+			sc.slot = in.readSlot();
+		}
+		carriedItem = in.readSlot();
 	}
 
 	public static class SlotChange {

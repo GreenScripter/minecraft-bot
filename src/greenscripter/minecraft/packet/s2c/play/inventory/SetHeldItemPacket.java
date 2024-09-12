@@ -15,12 +15,16 @@ public class SetHeldItemPacket extends Packet {
 
 	public SetHeldItemPacket() {}
 
+	public SetHeldItemPacket(byte slot) {
+		this.slot = slot;
+	}
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeByte(slot);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

@@ -24,7 +24,13 @@ public class LoginSuccessPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeUUID(uuid);
+		out.writeString(name);
+		out.writeVarInt(properties);
+		if (properties != 0) {
+			throw new UnsupportedOperationException();
+		}
+		out.writeBoolean(false);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

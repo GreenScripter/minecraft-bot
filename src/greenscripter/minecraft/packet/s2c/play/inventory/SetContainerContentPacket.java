@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
+import greenscripter.minecraft.play.inventory.OpenedScreen;
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
@@ -18,6 +19,13 @@ public class SetContainerContentPacket extends Packet {
 	public Slot cursor;
 
 	public SetContainerContentPacket() {}
+
+	public SetContainerContentPacket(OpenedScreen screen) {
+		windowId = screen.windowId;
+		stateId = screen.stateId;
+		cursor = screen.cursor;
+		slots = screen.slots;
+	}
 
 	public int id() {
 		return packetId;

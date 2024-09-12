@@ -28,7 +28,7 @@ public class HotbarSlotPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		throw new UnsupportedOperationException();
+		slot = in.readShort();
 	}
 
 }

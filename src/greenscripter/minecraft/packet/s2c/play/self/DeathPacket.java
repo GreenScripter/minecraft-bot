@@ -15,12 +15,20 @@ public class DeathPacket extends Packet {
 	public int entityId;
 	public NBTComponent message;
 
+	public DeathPacket() {}
+
+	public DeathPacket(int entityId, NBTComponent message) {
+		this.entityId = entityId;
+		this.message = message;
+	}
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeVarInt(entityId);
+		out.writeNBT(message);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

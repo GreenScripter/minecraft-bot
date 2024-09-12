@@ -2,6 +2,7 @@ package greenscripter.minecraft.packet.s2c.play.blocks;
 
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.List;
 
 import java.io.IOException;
@@ -134,6 +135,18 @@ public class ChunkDataPacket extends Packet {
 		//			int sublength = in.readVarInt();
 		//			in.readNBytes(sublength);
 		//		}
+	}
+
+	public void useBlockEntities(Collection<greenscripter.minecraft.world.BlockEntity> use) {
+		blockEntities.clear();
+		for (var en : use) {
+			BlockEntity b = new BlockEntity();
+			b.type = en.type;
+
+			b.xinchunk = (byte) (en.pos.x - chunkX * 16);
+			b.zinchunk = (byte) (en.pos.z - chunkZ * 16);
+			b.y = (short) en.pos.y;
+		}
 	}
 
 	public static class BlockEntity {

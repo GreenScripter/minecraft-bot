@@ -65,7 +65,7 @@ public class ServerConnection {
 
 	public boolean blocking = false;
 
-	private List<PlayHandler> handlers = new ArrayList<>();
+	private List<PlayHandler> handlers = new CopyOnWriteArrayList<>();
 
 	private Map<Class<? extends PlayData>, PlayData> playData = new HashMap<>();
 
@@ -104,7 +104,7 @@ public class ServerConnection {
 	public synchronized ServerConnection addPlayHandler(PlayHandler p) {
 		handlers.add(p);
 		for (int i : p.handlesPackets()) {
-			if (packetTypes[i] == null) packetTypes[i] = new ArrayList<>();
+			if (packetTypes[i] == null) packetTypes[i] = new CopyOnWriteArrayList<>();
 			packetTypes[i].add(p);
 		}
 		if (p.handlesTick()) {
@@ -238,7 +238,14 @@ public class ServerConnection {
 	}
 
 	public static enum ConnectionState {
-		HANDSHAKE, STATUS, LOGIN, CONFIGURATION, PLAY, DISCONNECTED;
+
+		HANDSHAKE("handshake"), STATUS("status"), LOGIN("login"), CONFIGURATION("configuration"), PLAY("play"), DISCONNECTED(null);
+
+		public final String name;
+
+		ConnectionState(String name) {
+			this.name = name;
+		}
 	}
 
 	public String toString() {

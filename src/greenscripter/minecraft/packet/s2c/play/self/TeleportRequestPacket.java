@@ -24,7 +24,13 @@ public class TeleportRequestPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeDouble(x);
+		out.writeDouble(y);
+		out.writeDouble(z);
+		out.writeFloat(yaw);
+		out.writeFloat(pitch);
+		out.writeByte(flags);
+		out.writeVarInt(teleportID);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

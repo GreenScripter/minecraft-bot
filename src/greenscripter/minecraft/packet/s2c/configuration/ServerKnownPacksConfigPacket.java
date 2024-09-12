@@ -11,9 +11,9 @@ public class ServerKnownPacksConfigPacket extends Packet {
 
 	public static final int packetId = PacketIds.getS2CPacketId("configuration", "minecraft:select_known_packs");
 
-	public String[] namespaces;
-	public String[] ids;
-	public String[] versions;
+	public String[] namespaces = { "minecraft" };
+	public String[] ids = { "core" };
+	public String[] versions = { "1.21" };
 
 	public ServerKnownPacksConfigPacket() {}
 
@@ -22,7 +22,12 @@ public class ServerKnownPacksConfigPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeVarInt(namespaces.length);
+		for (int i = 0; i < namespaces.length; i++) {
+			out.writeString(namespaces[i]);
+			out.writeString(ids[i]);
+			out.writeString(versions[i]);
+		}
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
@@ -36,6 +41,7 @@ public class ServerKnownPacksConfigPacket extends Packet {
 			namespaces[i] = in.readString();
 			ids[i] = in.readString();
 			versions[i] = in.readString();
+			System.out.println("Known pack: " + namespaces[i] + " id " + ids[i] + " version " + versions[i]);
 		}
 	}
 

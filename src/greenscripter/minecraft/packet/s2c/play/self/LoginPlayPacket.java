@@ -42,7 +42,34 @@ public class LoginPlayPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeInt(entityId);
+		out.writeBoolean(isHardcore);
+		out.writeVarInt(dimensionNames.size());
+		for (String s : dimensionNames) {
+			out.writeString(s);
+		}
+		out.writeVarInt(maxPlayers);
+		out.writeVarInt(viewDistance);
+		out.writeVarInt(simDistance);
+		out.writeBoolean(reducedDebug);
+		out.writeBoolean(enableRespawnScreen);
+		out.writeBoolean(limitedCrafting);
+
+		out.writeVarInt(dimensionType);
+		out.writeString(dimensionName);
+		out.writeLong(seedHash);
+		out.writeByte(gamemode);
+		out.writeByte(previousGamemode);
+		out.writeBoolean(isDebug);
+		out.writeBoolean(isFlat);
+		out.writeBoolean(hasDeathLocation);
+		if (hasDeathLocation) {
+			out.writeString(deathDimension);
+			out.writePosition(deathLocation);
+		}
+		out.writeVarInt(portalCooldown);
+		out.writeBoolean(enforcesSecureChat);
+
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
