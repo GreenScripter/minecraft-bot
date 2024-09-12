@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -37,6 +38,8 @@ import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.packet.s2c.play.GameEventPacket;
 import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
+import greenscripter.minecraft.packet.s2c.play.PlayerInfoRemovePacket;
+import greenscripter.minecraft.packet.s2c.play.PlayerInfoUpdatePacket;
 import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchFinishPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchStartPacket;
@@ -243,6 +246,17 @@ public class ViewerConnection extends PlayHandler {
 			//					}
 			//				}
 			//			}
+			ViewerTrackPlayData trackedOld = previousLink.getData(ViewerTrackPlayData.class);
+			UUID[] remove;
+			synchronized (trackedOld.playerList) {
+				remove = new UUID[trackedOld.playerList.size()];
+				int i = 0;
+				for (var key : trackedOld.playerList.keySet()) {
+					remove[i] = key;
+					i++;
+				}
+			}
+			clientOut.writePacket(new PlayerInfoRemovePacket(remove));
 		}
 		previousLink = linked;
 		previousPlayerId = player.entityId;
@@ -264,6 +278,10 @@ public class ViewerConnection extends PlayHandler {
 			respawn.previousGamemode = tracked.loginPacket.previousGamemode;
 			clientOut.writePacket(respawn);
 
+		}
+
+		synchronized (tracked.playerList) {
+			clientOut.writePacket(new PlayerInfoUpdatePacket(PlayerInfoUpdatePacket.ALL, tracked.playerList));
 		}
 
 		spawned = true;
