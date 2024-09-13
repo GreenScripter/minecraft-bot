@@ -3,6 +3,7 @@ package greenscripter.minecraft.atests;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 
 import java.io.File;
 import java.net.ServerSocket;
@@ -65,16 +66,30 @@ public class BotProxy {
 			return false;
 		};
 
+		Consumer<ViewerConnection> login = vc -> {
+			for (ServerConnection move : controller.getAlive()) {
+				if (move.name.equalsIgnoreCase(vc.requestedName)) {
+					vc.linked = move;
+					move.addPlayHandler(vc);
+					return;
+				}
+			}
+			for (ServerConnection move : controller.getAlive()) {
+				vc.linked = move;
+				move.addPlayHandler(vc);
+				return;
+			}
+		};
+
 		new Thread(() -> {
 			try (ServerSocket ss = new ServerSocket(25565)) {
 				while (true) {
 					Socket s = ss.accept();
-					ServerConnection sc = controller.getAlive().get(0);
 					try {
-						ViewerConnection vc = new ViewerConnection(sc, s);
+						ViewerConnection vc = new ViewerConnection(null, s);
 						vc.commandHandlers.add(povCommand);
-
-						sc.addPlayHandler(vc);
+						vc.loggedInCallback = login;
+						vc.start();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

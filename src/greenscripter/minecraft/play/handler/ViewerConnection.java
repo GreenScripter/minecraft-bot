@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -14,6 +15,7 @@ import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.ServerConnection.ConnectionState;
 import greenscripter.minecraft.gameinfo.Registries;
 import greenscripter.minecraft.nbt.NBTTagCompound;
+import greenscripter.minecraft.nbt.NBTTagString;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.configuration.AckFinishConfigPacket;
@@ -32,6 +34,7 @@ import greenscripter.minecraft.packet.c2s.play.TeleportConfirmPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.ClickContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.CloseContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.HotbarSlotPacket;
+import greenscripter.minecraft.packet.s2c.configuration.DisconnectConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.FinishConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.ServerKnownPacksConfigPacket;
@@ -73,13 +76,16 @@ public class ViewerConnection extends PlayHandler {
 	Socket client;
 	MCInputStream clientIn;
 	MCOutputStream clientOut;
+	public String requestedName;
 
-	ServerConnection linked;
+	public ServerConnection linked;
 
 	List<Integer> handlesPackets;
 	ConnectionState connectionState = ConnectionState.HANDSHAKE;
 
 	Set<Integer> awaitingTps = new HashSet<>();
+
+	public Consumer<ViewerConnection> loggedInCallback;
 
 	public List<BiPredicate<ViewerConnection, String>> commandHandlers = new ArrayList<>();
 
@@ -90,8 +96,16 @@ public class ViewerConnection extends PlayHandler {
 		}
 		this.linked = linkTo;
 
+		this.client = client;
 		clientIn = new MCInputStream(client.getInputStream());
 		clientOut = new MCOutputStream(client.getOutputStream());
+	}
+
+	boolean started = false;
+
+	public void start() {
+		if (started) return;
+		started = true;
 
 		new Thread(() -> {
 			try {
@@ -117,7 +131,15 @@ public class ViewerConnection extends PlayHandler {
 							break;
 						case LOGIN:
 							if (p.id == LoginStartPacket.packetId) {
-								//								LoginStartPacket loginStart = p.convert(new LoginStartPacket());
+								LoginStartPacket loginStart = p.convert(new LoginStartPacket());
+								requestedName = loginStart.name.replaceAll("[^0-9a-zA-Z]", "");
+								while (requestedName.length() < 3) {
+									requestedName += "_";
+								}
+								if (requestedName.length() > 16) {
+									requestedName = requestedName.substring(0, 16);
+								}
+
 								SetCompressionPacket compress = new SetCompressionPacket();
 								compress.value = 256;
 								clientOut.writePacket(compress);
@@ -127,15 +149,23 @@ public class ViewerConnection extends PlayHandler {
 								clientOut.actuallyCompress = true;
 
 								LoginSuccessPacket login = new LoginSuccessPacket();
-								login.name = linked.name;
-								login.uuid = linked.uuid;
+								login.name = requestedName;
+								login.uuid = UUID.randomUUID();
 								login.properties = 0;
 								clientOut.writePacket(login);
 								System.out.println("Logged in " + login.name);
+
+								if (loggedInCallback != null) {
+									loggedInCallback.accept(this);
+								}
 							}
 							if (p.id == LoginAcknowledgePacket.packetId) {
 								connectionState = ConnectionState.CONFIGURATION;
 								clientOut.writePacket(new ServerKnownPacksConfigPacket());
+								if (linked == null) {
+									writePacket(new DisconnectConfigPacket(new NBTTagString("No bot to control.")));
+									kick();
+								}
 							}
 							break;
 						case CONFIGURATION:
@@ -172,7 +202,9 @@ public class ViewerConnection extends PlayHandler {
 									continue;
 								}
 							}
-
+							if (linked == null) {
+								continue;
+							}
 							if (p.id == PlayerMovePacket.packetId) {
 								PlayerMovePacket move = p.convert(new PlayerMovePacket());
 

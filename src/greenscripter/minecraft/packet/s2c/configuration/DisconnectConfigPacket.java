@@ -1,4 +1,4 @@
-package greenscripter.minecraft.packet.s2c.play;
+package greenscripter.minecraft.packet.s2c.configuration;
 
 import java.io.IOException;
 
@@ -8,15 +8,15 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class DisconnectPacket extends Packet {
+public class DisconnectConfigPacket extends Packet {
 
-	public static final int packetId = PacketIds.getS2CPlayId("minecraft:disconnect");
+	public static final int packetId = PacketIds.getS2CPacketId("configuration", "minecraft:disconnect");
 
 	public NBTComponent reason;
 
-	public DisconnectPacket() {}
+	public DisconnectConfigPacket() {}
 
-	public DisconnectPacket(NBTComponent reason) {
+	public DisconnectConfigPacket(NBTComponent reason) {
 		this.reason = reason;
 	}
 
