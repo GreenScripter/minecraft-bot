@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import java.io.File;
 import java.net.ServerSocket;
@@ -16,8 +17,10 @@ import greenscripter.minecraft.AccountList;
 import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.nbt.NBTTagString;
+import greenscripter.minecraft.packet.c2s.handshake.HandshakePacket;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
 import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
+import greenscripter.minecraft.packet.s2c.status.PingData;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.ViewerConnection;
 import greenscripter.minecraft.play.handler.ViewerTrackPlayHandler;
@@ -81,6 +84,21 @@ public class BotProxy {
 			}
 		};
 
+		Supplier<String> pingResponse = () -> {
+			PingData ping = new PingData();
+			ping.version = new PingData.Version("Bot Swarm", new HandshakePacket().version);
+			ping.players = new PingData.Players(controller.getAlive().size() + controller.getDead().size(), controller.getAlive().size());
+			ping.players.sample = new PingData.Sample[Math.min(controller.getAlive().size(), 30)];
+			int i = 0;
+			for (ServerConnection sc : controller.getAlive()) {
+				if (i >= ping.players.sample.length) break;
+				ping.players.sample[i] = new PingData.Sample(sc.name, sc.uuid.toString());
+				i++;
+			}
+			ping.description = new PingData.Description("§9Bot Swarm Command and Control");
+			return new Gson().toJson(ping);
+		};
+
 		new Thread(() -> {
 			try (ServerSocket ss = new ServerSocket(25565)) {
 				while (true) {
@@ -89,6 +107,7 @@ public class BotProxy {
 						ViewerConnection vc = new ViewerConnection(null, s);
 						vc.commandHandlers.add(povCommand);
 						vc.loggedInCallback = login;
+						vc.pingResponse = pingResponse;
 						vc.start();
 					} catch (Exception e) {
 						e.printStackTrace();

@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -34,6 +35,8 @@ import greenscripter.minecraft.packet.c2s.play.TeleportConfirmPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.ClickContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.CloseContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.HotbarSlotPacket;
+import greenscripter.minecraft.packet.c2s.status.PingRequestPacket;
+import greenscripter.minecraft.packet.c2s.status.StatusRequestPacket;
 import greenscripter.minecraft.packet.s2c.configuration.DisconnectConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.FinishConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
@@ -57,6 +60,8 @@ import greenscripter.minecraft.packet.s2c.play.inventory.SetHeldItemPacket;
 import greenscripter.minecraft.packet.s2c.play.self.RespawnPacket;
 import greenscripter.minecraft.packet.s2c.play.self.SetHealthPacket;
 import greenscripter.minecraft.packet.s2c.play.self.TeleportRequestPacket;
+import greenscripter.minecraft.packet.s2c.status.PingResponsePacket;
+import greenscripter.minecraft.packet.s2c.status.StatusResponsePacket;
 import greenscripter.minecraft.play.data.InventoryData;
 import greenscripter.minecraft.play.data.PlayerData;
 import greenscripter.minecraft.play.data.PositionData;
@@ -86,6 +91,8 @@ public class ViewerConnection extends PlayHandler {
 	Set<Integer> awaitingTps = new HashSet<>();
 
 	public Consumer<ViewerConnection> loggedInCallback;
+
+	public Supplier<String> pingResponse;
 
 	public List<BiPredicate<ViewerConnection, String>> commandHandlers = new ArrayList<>();
 
@@ -123,11 +130,22 @@ public class ViewerConnection extends PlayHandler {
 								if (handshake.nextState == 1) {
 									System.out.println("Querying");
 									connectionState = ConnectionState.STATUS;
+									client.setSoTimeout(10000);
 								}
 							}
 							break;
 						case STATUS:
-							client.close();
+							if (p.id == StatusRequestPacket.packetId) {
+								StatusResponsePacket resp = new StatusResponsePacket();
+								resp.value = pingResponse == null ? "{}" : pingResponse.get();
+								clientOut.writePacket(resp);
+							}
+							if (p.id == PingRequestPacket.packetId) {
+								PingRequestPacket req = p.convert(new PingRequestPacket());
+								clientOut.writePacket(new PingResponsePacket(req.value));
+								client.close();
+								return;
+							}
 							break;
 						case LOGIN:
 							if (p.id == LoginStartPacket.packetId) {
@@ -289,6 +307,10 @@ public class ViewerConnection extends PlayHandler {
 			} catch (IOException e) {
 				e.printStackTrace();
 				linked.removePlayHandler(this);
+				try {
+					client.close();
+				} catch (IOException e1) {
+				}
 			}
 
 		}).start();
