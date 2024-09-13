@@ -26,14 +26,14 @@ public class Entity {
 	public int data;
 	public boolean onGround;
 	public EntityMetadata[] metadata = new EntityMetadata[40];
-	public Slot[] slots = new Slot[6];
+	public Slot[] slots = new Slot[7];
 
 	public Entity() {
 		metadata[0] = new EMByte();
 		metadata[0].asByte().value = 0;
 
-		metadata[1] = new EMOTextComponent();
-		metadata[1].asOTextComponent().value = null;
+		metadata[2] = new EMOTextComponent();
+		metadata[2].asOTextComponent().value = null;
 	}
 
 	public boolean onFire() {
@@ -65,7 +65,7 @@ public class Entity {
 	}
 
 	public NBTComponent getName() {
-		return metadata[1].asOTextComponent().value;
+		return metadata[2].asOTextComponent().value;
 	}
 
 	public Slot getSlotIfItem() {

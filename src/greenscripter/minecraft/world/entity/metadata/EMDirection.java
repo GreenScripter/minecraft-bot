@@ -3,6 +3,7 @@ package greenscripter.minecraft.world.entity.metadata;
 import java.io.IOException;
 
 import greenscripter.minecraft.utils.MCInputStream;
+import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.world.entity.EntityMetadata;
 
 public class EMDirection extends EntityMetadata {
@@ -17,4 +18,7 @@ public class EMDirection extends EntityMetadata {
 		value = in.readVarInt();
 	}
 
+	public void write(MCOutputStream out) throws IOException {
+		out.writeVarInt(value);
+	}
 }

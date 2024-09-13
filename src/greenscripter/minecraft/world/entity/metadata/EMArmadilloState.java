@@ -6,12 +6,12 @@ import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.world.entity.EntityMetadata;
 
-public class EMCatVariant extends EntityMetadata {
+public class EMArmadilloState extends EntityMetadata {
 
 	public int value;
 
 	public int id() {
-		return 22;
+		return 28;
 	}
 
 	public void read(MCInputStream in) throws IOException {
@@ -21,4 +21,5 @@ public class EMCatVariant extends EntityMetadata {
 	public void write(MCOutputStream out) throws IOException {
 		out.writeVarInt(value);
 	}
+
 }

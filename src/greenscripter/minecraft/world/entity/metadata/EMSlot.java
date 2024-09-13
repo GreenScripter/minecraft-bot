@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
+import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.world.entity.EntityMetadata;
 
 public class EMSlot extends EntityMetadata {
@@ -18,4 +19,7 @@ public class EMSlot extends EntityMetadata {
 		value = in.readSlot();
 	}
 
+	public void write(MCOutputStream out) throws IOException {
+		out.writeSlot(value);
+	}
 }

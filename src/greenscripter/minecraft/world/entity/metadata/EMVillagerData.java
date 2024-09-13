@@ -3,6 +3,7 @@ package greenscripter.minecraft.world.entity.metadata;
 import java.io.IOException;
 
 import greenscripter.minecraft.utils.MCInputStream;
+import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.world.entity.EntityMetadata;
 
 public class EMVillagerData extends EntityMetadata {
@@ -12,7 +13,7 @@ public class EMVillagerData extends EntityMetadata {
 	public int villagerLevel;
 
 	public int id() {
-		return 18;
+		return 19;
 	}
 
 	public void read(MCInputStream in) throws IOException {
@@ -21,4 +22,9 @@ public class EMVillagerData extends EntityMetadata {
 		villagerLevel = in.readVarInt();
 	}
 
+	public void write(MCOutputStream out) throws IOException {
+		out.writeVarInt(villagerType);
+		out.writeVarInt(villagerProfession);
+		out.writeVarInt(villagerLevel);
+	}
 }

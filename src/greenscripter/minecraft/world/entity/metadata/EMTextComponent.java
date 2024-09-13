@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import greenscripter.minecraft.nbt.NBTComponent;
 import greenscripter.minecraft.utils.MCInputStream;
+import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.world.entity.EntityMetadata;
 
 public class EMTextComponent extends EntityMetadata {
@@ -18,4 +19,7 @@ public class EMTextComponent extends EntityMetadata {
 		value = in.readNBT();
 	}
 
+	public void write(MCOutputStream out) throws IOException {
+		out.writeNBT(value);
+	}
 }
