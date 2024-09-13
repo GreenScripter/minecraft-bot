@@ -384,6 +384,7 @@ public class ViewerConnection extends PlayHandler {
 			clientOut.writePacket(respawn);
 
 		}
+		clientOut.writePacket(tracked.commands);
 
 		synchronized (tracked.playerList) {
 			clientOut.writePacket(new PlayerInfoUpdatePacket(PlayerInfoUpdatePacket.ALL, tracked.playerList));

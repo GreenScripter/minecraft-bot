@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.ServerConnection;
+import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.s2c.play.PlayerInfoRemovePacket;
 import greenscripter.minecraft.packet.s2c.play.PlayerInfoUpdatePacket;
@@ -23,6 +24,8 @@ public class ViewerTrackPlayHandler extends PlayHandler {
 			PlayData.playData.put(ViewerTrackPlayData.class, ViewerTrackPlayData::new);
 		}
 	}
+
+	int commandsId = PacketIds.getS2CPlayId("minecraft:commands");
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		ViewerTrackPlayData data = sc.getData(ViewerTrackPlayData.class);
@@ -69,15 +72,19 @@ public class ViewerTrackPlayHandler extends PlayHandler {
 				}
 			}
 		}
+		if (p.id == commandsId) {
+			data.commands = p;
+		}
 	}
 
 	public List<Integer> handlesPackets() {
-		return List.of(LoginPlayPacket.packetId, RespawnPacket.packetId, PlayerInfoUpdatePacket.packetId, PlayerInfoRemovePacket.packetId);
+		return List.of(LoginPlayPacket.packetId, RespawnPacket.packetId, PlayerInfoUpdatePacket.packetId, PlayerInfoRemovePacket.packetId, commandsId);
 	}
 
 	static class ViewerTrackPlayData implements PlayData {
 
 		LoginPlayPacket loginPacket;
+		UnknownPacket commands;
 		AsyncSwarmController controller;
 		Map<UUID, PlayerInfoUpdatePacket.Action> playerList = new HashMap<>();
 
