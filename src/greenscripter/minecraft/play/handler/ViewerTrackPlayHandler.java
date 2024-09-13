@@ -18,8 +18,6 @@ import greenscripter.minecraft.play.data.PlayData;
 
 public class ViewerTrackPlayHandler extends PlayHandler {
 
-	public AsyncSwarmController controller;
-
 	public ViewerTrackPlayHandler() {
 		if (!PlayData.playData.containsKey(ViewerTrackPlayData.class)) {
 			PlayData.playData.put(ViewerTrackPlayData.class, ViewerTrackPlayData::new);
@@ -28,7 +26,6 @@ public class ViewerTrackPlayHandler extends PlayHandler {
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		ViewerTrackPlayData data = sc.getData(ViewerTrackPlayData.class);
-		data.controller = controller;
 		if (p.id == LoginPlayPacket.packetId) {
 			LoginPlayPacket loginPacket = p.convert(new LoginPlayPacket());
 			data.loginPacket = loginPacket;

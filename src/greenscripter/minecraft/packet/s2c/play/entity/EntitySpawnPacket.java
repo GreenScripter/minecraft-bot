@@ -8,6 +8,7 @@ import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
+import greenscripter.minecraft.world.entity.Entity;
 
 public class EntitySpawnPacket extends Packet {
 
@@ -29,12 +30,37 @@ public class EntitySpawnPacket extends Packet {
 
 	public EntitySpawnPacket() {}
 
+	public EntitySpawnPacket(Entity e) {
+		entityID = e.entityId;
+		uuid = e.uuid;
+		type = e.type;
+		x = e.pos.x;
+		y = e.pos.y;
+		z = e.pos.z;
+		pitch = (byte) (e.pitch * 256f / 360f);
+		yaw = (byte) (e.yaw * 256f / 360f);
+		headYaw = (byte) (e.headYaw * 256f / 360f);
+		data = e.data;
+	}
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeVarInt(entityID);
+		out.writeUUID(uuid);
+		out.writeVarInt(type);
+		out.writeDouble(x);
+		out.writeDouble(y);
+		out.writeDouble(z);
+		out.writeByte(pitch);
+		out.writeByte(yaw);
+		out.writeByte(headYaw);
+		out.writeVarInt(data);
+		out.writeShort(velocityX);
+		out.writeShort(velocityY);
+		out.writeShort(velocityZ);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

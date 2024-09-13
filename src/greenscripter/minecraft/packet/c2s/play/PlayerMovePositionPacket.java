@@ -30,7 +30,10 @@ public class PlayerMovePositionPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		throw new UnsupportedOperationException();
+		x = in.readDouble();
+		y = in.readDouble();
+		z = in.readDouble();
+		onGround = in.readBoolean();
 	}
 
 }

@@ -6,6 +6,7 @@ import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
+import greenscripter.minecraft.world.entity.Entity;
 import greenscripter.minecraft.world.entity.EntityMetadata;
 
 public class EntityMetaDataPacket extends Packet {
@@ -17,12 +18,18 @@ public class EntityMetaDataPacket extends Packet {
 
 	public EntityMetaDataPacket() {}
 
+	public EntityMetaDataPacket(Entity e) {
+		entityID = e.entityId;
+		this.meta = e.metadata;
+	}
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeVarInt(entityID);
+		EntityMetadata.writeMetadata(meta, out);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

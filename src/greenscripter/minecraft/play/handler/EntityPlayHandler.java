@@ -35,7 +35,6 @@ public class EntityPlayHandler extends PlayHandler {
 	int addEffectId = new EntityEffectPacket().id();
 	int equipmentId = new EntityEquipmentPacket().id();
 	int headRotationId = new EntityHeadRotationPacket().id();
-	int metaDataId = new EntityMetaDataPacket().id();
 	int positionId = new EntityPositionPacket().id();
 	int positionRotationId = new EntityPositionRotationPacket().id();
 	int rotationId = new EntityRotationPacket().id();
@@ -50,164 +49,166 @@ public class EntityPlayHandler extends PlayHandler {
 	public void handlePacket(UnknownPacket up, ServerConnection sc) throws IOException {
 		WorldData worldData = sc.getData(WorldData.class);
 		World world = worldData.world;
-		if (up.id == attributesId) {
+		synchronized (world.worlds) {
+			if (up.id == attributesId) {
 
-		} else if (up.id == addEffectId) {
-			EntityEffectPacket p = up.convert(new EntityEffectPacket());
-			PlayerData player = sc.getData(PlayerData.class);
+			} else if (up.id == addEffectId) {
+				EntityEffectPacket p = up.convert(new EntityEffectPacket());
+				PlayerData player = sc.getData(PlayerData.class);
 
-			System.out.println("From " + player.entityId + " add to " + p.entityId + " " + p.effectId + " " + p.duration + " " + p.amplifier);
-		} else if (up.id == equipmentId) {
-			EntityEquipmentPacket p = up.convert(new EntityEquipmentPacket());
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				for (int i = 0; i < p.slots.length; i++) {
-					if (p.slots[i] != null) {
-						//						System.out.println("Slot " + i + " set to " + p.slots[i]);
-						e.slots[i] = p.slots[i];
-					}
-				}
-			}
-
-		} else if (up.id == headRotationId) {
-			EntityHeadRotationPacket p = up.convert(new EntityHeadRotationPacket());
-
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				e.headYaw = p.headYaw * (360f / 256);
-			}
-
-		} else if (up.id == metaDataId) {
-			EntityMetaDataPacket p = up.convert(new EntityMetaDataPacket());
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				if (p.meta == null) {
-					System.err.println("Error setting entity " + e.type + " " + e.uuid + " metadata.");
-				} else {
-					for (int i = 0; i < p.meta.length; i++) {
-						if (p.meta[i] != null) {
-							e.metadata[i] = p.meta[i];
+				System.out.println("From " + player.entityId + " add to " + p.entityId + " " + p.effectId + " " + p.duration + " " + p.amplifier);
+			} else if (up.id == equipmentId) {
+				EntityEquipmentPacket p = up.convert(new EntityEquipmentPacket());
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					for (int i = 0; i < p.slots.length; i++) {
+						if (p.slots[i] != null) {
+							//						System.out.println("Slot " + i + " set to " + p.slots[i]);
+							e.slots[i] = p.slots[i];
 						}
 					}
 				}
-			}
-		} else if (up.id == positionId) {
-			EntityPositionPacket p = up.convert(new EntityPositionPacket());
 
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				e.onGround = p.onGround;
-				if (e.maintainer == sc) {
-					e.pos.x += EntityPositionPacket.getFrom(p.deltaX);
-					e.pos.y += EntityPositionPacket.getFrom(p.deltaY);
-					e.pos.z += EntityPositionPacket.getFrom(p.deltaZ);
+			} else if (up.id == headRotationId) {
+				EntityHeadRotationPacket p = up.convert(new EntityHeadRotationPacket());
+
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					e.headYaw = p.headYaw * (360f / 256);
 				}
-			}
 
-		} else if (up.id == positionRotationId) {
-			EntityPositionRotationPacket p = up.convert(new EntityPositionRotationPacket());
-
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				e.onGround = p.onGround;
-				if (e.maintainer == sc) {
-					e.pos.x += EntityPositionPacket.getFrom(p.deltaX);
-					e.pos.y += EntityPositionPacket.getFrom(p.deltaY);
-					e.pos.z += EntityPositionPacket.getFrom(p.deltaZ);
+			} else if (up.id == EntityMetaDataPacket.packetId) {
+				EntityMetaDataPacket p = up.convert(new EntityMetaDataPacket());
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					if (p.meta == null) {
+						System.err.println("Error setting entity " + e.type + " " + e.uuid + " metadata.");
+					} else {
+						for (int i = 0; i < p.meta.length; i++) {
+							if (p.meta[i] != null) {
+								e.metadata[i] = p.meta[i];
+							}
+						}
+					}
 				}
-				e.pitch = p.pitch * (360f / 256);
-				e.yaw = p.yaw * (360f / 256);
-			}
-		} else if (up.id == rotationId) {
-			EntityRotationPacket p = up.convert(new EntityRotationPacket());
+			} else if (up.id == positionId) {
+				EntityPositionPacket p = up.convert(new EntityPositionPacket());
 
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				e.onGround = p.onGround;
-				e.pitch = p.pitch * (360f / 256);
-				e.yaw = p.yaw * (360f / 256);
-			}
-		} else if (up.id == spawnId) {
-			EntitySpawnPacket p = up.convert(new EntitySpawnPacket());
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				e.headYaw = p.headYaw * (360f / 256);
-				e.pitch = p.pitch * (360f / 256);
-				e.yaw = p.yaw * (360f / 256);
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					e.onGround = p.onGround;
+					if (e.maintainer == sc) {
+						e.pos.x += EntityPositionPacket.getFrom(p.deltaX);
+						e.pos.y += EntityPositionPacket.getFrom(p.deltaY);
+						e.pos.z += EntityPositionPacket.getFrom(p.deltaZ);
+					}
+				}
 
-				e.pos.x = p.x;
-				e.pos.y = p.y;
-				e.pos.z = p.z;
-				e.maintainer = sc;
-				e.players.add(sc);
-			} else {
-				e = new Entity();
-				e.entityId = p.entityID;
-				e.data = p.data;
-				e.type = p.type;
-				//				System.out.println("Spawned entity id " + e.entityId + " " + Registries.registriesFromIds.get("minecraft:entity_type").get(e.type));
+			} else if (up.id == positionRotationId) {
+				EntityPositionRotationPacket p = up.convert(new EntityPositionRotationPacket());
 
-				e.headYaw = p.headYaw * (360f / 256);
-				e.pitch = p.pitch * (360f / 256);
-				e.yaw = p.yaw * (360f / 256);
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					e.onGround = p.onGround;
+					if (e.maintainer == sc) {
+						e.pos.x += EntityPositionPacket.getFrom(p.deltaX);
+						e.pos.y += EntityPositionPacket.getFrom(p.deltaY);
+						e.pos.z += EntityPositionPacket.getFrom(p.deltaZ);
+					}
+					e.pitch = p.pitch * (360f / 256);
+					e.yaw = p.yaw * (360f / 256);
+				}
+			} else if (up.id == rotationId) {
+				EntityRotationPacket p = up.convert(new EntityRotationPacket());
 
-				e.pos.x = p.x;
-				e.pos.y = p.y;
-				e.pos.z = p.z;
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					e.onGround = p.onGround;
+					e.pitch = p.pitch * (360f / 256);
+					e.yaw = p.yaw * (360f / 256);
+				}
+			} else if (up.id == spawnId) {
+				EntitySpawnPacket p = up.convert(new EntitySpawnPacket());
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					e.headYaw = p.headYaw * (360f / 256);
+					e.pitch = p.pitch * (360f / 256);
+					e.yaw = p.yaw * (360f / 256);
 
-				e.uuid = p.uuid;
-				e.maintainer = sc;
-				world.addEntityLoader(e, sc);
+					e.pos.x = p.x;
+					e.pos.y = p.y;
+					e.pos.z = p.z;
+					e.maintainer = sc;
+					e.players.add(sc);
+				} else {
+					e = new Entity();
+					e.entityId = p.entityID;
+					e.data = p.data;
+					e.type = p.type;
+					//				System.out.println("Spawned entity id " + e.entityId + " " + Registries.registriesFromIds.get("minecraft:entity_type").get(e.type));
 
-			}
+					e.headYaw = p.headYaw * (360f / 256);
+					e.pitch = p.pitch * (360f / 256);
+					e.yaw = p.yaw * (360f / 256);
 
-		} else if (up.id == velocityId) {
+					e.pos.x = p.x;
+					e.pos.y = p.y;
+					e.pos.z = p.z;
 
-		} else if (up.id == removeId) {
-			RemoveEntitiesPacket p = up.convert(new RemoveEntitiesPacket());
-			for (int i : p.ids) {
-				world.unloadEntity(world.getEntity(i), sc);
-			}
-		} else if (up.id == removeEffectId) {
+					e.uuid = p.uuid;
+					e.maintainer = sc;
+					world.addEntityLoader(e, sc);
 
-		} else if (up.id == setPassengersId) {
+				}
 
-		} else if (up.id == teleportId) {
-			TeleportEntityPacket p = up.convert(new TeleportEntityPacket());
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				e.onGround = p.onGround;
-				e.pos.x = p.x;
-				e.pos.y = p.y;
-				e.pos.z = p.z;
-				e.pitch = p.pitch * (360f / 256);
-				e.yaw = p.yaw * (360f / 256);
-			}
-		} else if (up.id == spawnXpOrbId) {
-			XPOrbSpawnPacket p = up.convert(new XPOrbSpawnPacket());
-			Entity e = world.getEntity(p.entityID);
-			if (e != null) {
-				e.players.add(sc);
-				e.pos.x = p.x;
-				e.pos.y = p.y;
-				e.pos.z = p.z;
-			} else {
-				e = new Entity();
-				e.entityId = p.entityID;
-				e.data = 0;
+			} else if (up.id == velocityId) {
 
-				e.headYaw = 0;
-				e.pitch = 0;
-				e.yaw = 0;
+			} else if (up.id == removeId) {
+				RemoveEntitiesPacket p = up.convert(new RemoveEntitiesPacket());
+				for (int i : p.ids) {
+					world.unloadEntity(world.getEntity(i), sc);
+				}
+			} else if (up.id == removeEffectId) {
 
-				e.pos.x = p.x;
-				e.pos.y = p.y;
-				e.pos.z = p.z;
+			} else if (up.id == setPassengersId) {
 
-				e.uuid = UUID.randomUUID();
-				e.type = Registries.registries.get("minecraft:entity_type").get("minecraft:experience_orb");
-				world.addEntityLoader(e, sc);
+			} else if (up.id == teleportId) {
+				TeleportEntityPacket p = up.convert(new TeleportEntityPacket());
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					e.onGround = p.onGround;
+					e.pos.x = p.x;
+					e.pos.y = p.y;
+					e.pos.z = p.z;
+					e.pitch = p.pitch * (360f / 256);
+					e.yaw = p.yaw * (360f / 256);
+				}
+			} else if (up.id == spawnXpOrbId) {
+				XPOrbSpawnPacket p = up.convert(new XPOrbSpawnPacket());
+				Entity e = world.getEntity(p.entityID);
+				if (e != null) {
+					e.players.add(sc);
+					e.pos.x = p.x;
+					e.pos.y = p.y;
+					e.pos.z = p.z;
+				} else {
+					e = new Entity();
+					e.entityId = p.entityID;
+					e.data = p.count;
 
+					e.headYaw = 0;
+					e.pitch = 0;
+					e.yaw = 0;
+
+					e.pos.x = p.x;
+					e.pos.y = p.y;
+					e.pos.z = p.z;
+
+					e.uuid = UUID.randomUUID();
+					e.type = Registries.registries.get("minecraft:entity_type").get("minecraft:experience_orb");
+					world.addEntityLoader(e, sc);
+
+				}
 			}
 		}
 
@@ -223,7 +224,7 @@ public class EntityPlayHandler extends PlayHandler {
 	}
 
 	public List<Integer> handlesPackets() {
-		return List.of(attributesId, addEffectId, equipmentId, headRotationId, metaDataId,  //
+		return List.of(attributesId, addEffectId, equipmentId, headRotationId, EntityMetaDataPacket.packetId,  //
 				positionId, positionRotationId, rotationId, spawnId, velocityId, removeId, //
 				removeEffectId, setPassengersId, teleportId, spawnXpOrbId);
 	}

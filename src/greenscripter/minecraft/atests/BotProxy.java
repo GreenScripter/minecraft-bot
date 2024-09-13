@@ -2,6 +2,7 @@ package greenscripter.minecraft.atests;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.BiPredicate;
 
 import java.io.File;
 import java.net.ServerSocket;
@@ -13,10 +14,10 @@ import com.google.gson.Gson;
 import greenscripter.minecraft.AccountList;
 import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.ServerConnection;
+import greenscripter.minecraft.nbt.NBTTagString;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
-import greenscripter.minecraft.play.data.WorldData;
+import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
 import greenscripter.minecraft.play.handler.PlayHandler;
-import greenscripter.minecraft.play.handler.PlayTickHandler;
 import greenscripter.minecraft.play.handler.ViewerConnection;
 import greenscripter.minecraft.play.handler.ViewerTrackPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
@@ -35,18 +36,9 @@ public class BotProxy {
 		handlers.add(viewers);
 
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
-		viewers.controller = controller;
 
 		controller.joinCallback = sc -> {
 			sc.sendPacket(new ClientInfoPacket(10));
-		};
-
-		long start = System.currentTimeMillis();
-		controller.localHandlers = sc -> {
-			return List.of(new PlayTickHandler(sc2 -> {
-				if (System.currentTimeMillis() - start < 5000) return;
-				if (sc2.getData(WorldData.class).world == null) return;
-			}));
 		};
 
 		controller.namesToUUIDs = accounts::getUUID;
@@ -56,13 +48,33 @@ public class BotProxy {
 		controller.start();
 		controller.connect(accounts.size(), 6);
 
+		BiPredicate<ViewerConnection, String> povCommand = (vc, command) -> {
+			if (command.startsWith("pov ")) {
+				String target = command.substring(4);
+				for (ServerConnection move : controller.getAlive()) {
+					if (move.name.equalsIgnoreCase(target)) {
+						vc.moveLink(move);
+						return true;
+					}
+				}
+				SystemChatPacket reply = new SystemChatPacket();
+				reply.content = new NBTTagString("§cUnable to view " + target);
+				vc.writePacket(reply);
+				return true;
+			}
+			return false;
+		};
+
 		new Thread(() -> {
 			try (ServerSocket ss = new ServerSocket(25565)) {
 				while (true) {
 					Socket s = ss.accept();
 					ServerConnection sc = controller.getAlive().get(0);
 					try {
-						sc.addPlayHandler(new ViewerConnection(sc, s));
+						ViewerConnection vc = new ViewerConnection(sc, s);
+						vc.commandHandlers.add(povCommand);
+
+						sc.addPlayHandler(vc);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

@@ -5,14 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 import java.io.IOException;
 import java.net.Socket;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.ServerConnection.ConnectionState;
+import greenscripter.minecraft.gameinfo.Registries;
 import greenscripter.minecraft.nbt.NBTTagCompound;
-import greenscripter.minecraft.nbt.NBTTagString;
 import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.configuration.AckFinishConfigPacket;
@@ -40,10 +41,13 @@ import greenscripter.minecraft.packet.s2c.play.GameEventPacket;
 import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
 import greenscripter.minecraft.packet.s2c.play.PlayerInfoRemovePacket;
 import greenscripter.minecraft.packet.s2c.play.PlayerInfoUpdatePacket;
-import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchFinishPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchStartPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkDataPacket;
+import greenscripter.minecraft.packet.s2c.play.entity.EntityEquipmentPacket;
+import greenscripter.minecraft.packet.s2c.play.entity.EntityMetaDataPacket;
+import greenscripter.minecraft.packet.s2c.play.entity.EntitySpawnPacket;
+import greenscripter.minecraft.packet.s2c.play.entity.XPOrbSpawnPacket;
 import greenscripter.minecraft.packet.s2c.play.inventory.OpenContainerPacket;
 import greenscripter.minecraft.packet.s2c.play.inventory.SetContainerContentPacket;
 import greenscripter.minecraft.packet.s2c.play.inventory.SetHeldItemPacket;
@@ -56,10 +60,13 @@ import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.data.RegistryData;
 import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.play.handler.ViewerTrackPlayHandler.ViewerTrackPlayData;
+import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.world.Chunk;
 import greenscripter.minecraft.world.ChunkDataEncoder;
+import greenscripter.minecraft.world.entity.Entity;
+import greenscripter.minecraft.world.entity.EntityMetadata;
 
 public class ViewerConnection extends PlayHandler {
 
@@ -73,6 +80,8 @@ public class ViewerConnection extends PlayHandler {
 	ConnectionState connectionState = ConnectionState.HANDSHAKE;
 
 	Set<Integer> awaitingTps = new HashSet<>();
+
+	public List<BiPredicate<ViewerConnection, String>> commandHandlers = new ArrayList<>();
 
 	public ViewerConnection(ServerConnection linkTo, Socket client) throws IOException {
 		handlesPackets = new ArrayList<>();
@@ -162,8 +171,50 @@ public class ViewerConnection extends PlayHandler {
 								if (!awaitingTps.isEmpty()) {
 									continue;
 								}
-
 							}
+
+							if (p.id == PlayerMovePacket.packetId) {
+								PlayerMovePacket move = p.convert(new PlayerMovePacket());
+
+								PositionData pos = linked.getData(PositionData.class);
+
+								pos.onGround = move.onGround;
+							}
+
+							if (p.id == PlayerMovePositionPacket.packetId) {
+								PlayerMovePositionPacket move = p.convert(new PlayerMovePositionPacket());
+
+								PositionData pos = linked.getData(PositionData.class);
+
+								pos.onGround = move.onGround;
+								pos.pos.x = move.x;
+								pos.pos.y = move.y;
+								pos.pos.z = move.z;
+							}
+
+							if (p.id == PlayerMoveRotationPacket.packetId) {
+								PlayerMoveRotationPacket move = p.convert(new PlayerMoveRotationPacket());
+
+								PositionData pos = linked.getData(PositionData.class);
+
+								pos.onGround = move.onGround;
+								pos.pitch = move.pitch;
+								pos.yaw = move.yaw;
+							}
+
+							if (p.id == PlayerMovePositionRotationPacket.packetId) {
+								PlayerMovePositionRotationPacket move = p.convert(new PlayerMovePositionRotationPacket());
+
+								PositionData pos = linked.getData(PositionData.class);
+
+								pos.onGround = move.onGround;
+								pos.pitch = move.pitch;
+								pos.yaw = move.yaw;
+								pos.pos.x = move.x;
+								pos.pos.y = move.y;
+								pos.pos.z = move.z;
+							}
+
 							if (p.id == KeepAliveReplyPacket.packetId) {
 								continue;
 							}
@@ -297,29 +348,45 @@ public class ViewerConnection extends PlayHandler {
 		awaitingTps.add(tp.teleportID);
 		clientOut.writePacket(tp);
 
-		clientOut.writePacket(new GameEventPacket(GameEventPacket.START_WAITING_FOR_CHUNKS));
+		int orbId = Registries.registries.get("minecraft:entity_type").get("minecraft:experience_orb");
+		synchronized (world.world.worlds) {
+			for (Entity e : world.world.entities.values()) {
+				if (e.players.contains(linked)) {
+					if (e.type == orbId) {
+						XPOrbSpawnPacket orb = new XPOrbSpawnPacket();
+						orb.count = (short) e.data;
+						orb.entityID = e.entityId;
+						orb.x = e.pos.x;
+						orb.y = e.pos.y;
+						orb.z = e.pos.z;
+						clientOut.writePacket(orb);
+					} else {
+						clientOut.writePacket(new EntitySpawnPacket(e));
+						boolean equipment = false;
+						for (Slot s : e.slots) {
+							if (s != null) {
+								equipment = true;
+								break;
+							}
+						}
+						if (equipment) {
+							clientOut.writePacket(new EntityEquipmentPacket(e));
+						}
 
-		clientOut.writePacket(new ChunkBatchStartPacket());
-
-		Chunk center = world.world.getBlockChunk((int) pos.pos.x, (int) pos.pos.z);
-
-		int sent = 0;
-		for (int i = -10; i <= 10; i++) {
-			for (int j = -10; j <= 10; j++) {
-				Chunk send = world.world.getChunk(center.chunkX + i, center.chunkZ + j);
-				if (send == null) continue;
-				ChunkDataPacket loadChunk = new ChunkDataPacket();
-				loadChunk.chunkX = send.chunkX;
-				loadChunk.chunkZ = send.chunkZ;
-				loadChunk.useBlockEntities(send.blockEntities.values());
-				loadChunk.heightmap = new NBTTagCompound();
-				loadChunk.data = ChunkDataEncoder.encode(send);
-				clientOut.writePacket(loadChunk);
-				sent++;
+						boolean metadata = false;
+						for (EntityMetadata s : e.metadata) {
+							if (s != null) {
+								metadata = true;
+								break;
+							}
+						}
+						if (metadata) {
+							clientOut.writePacket(new EntityMetaDataPacket(e));
+						}
+					}
+				}
 			}
 		}
-
-		clientOut.writePacket(new ChunkBatchFinishPacket(sent));
 		clientOut.writePacket(new SetHealthPacket(player.health, player.food, player.saturation));
 		clientOut.writePacket(new SetContainerContentPacket(inv.inv));
 		if (inv.screen != null) {
@@ -327,6 +394,28 @@ public class ViewerConnection extends PlayHandler {
 			clientOut.writePacket(new SetContainerContentPacket(inv.screen));
 		}
 		clientOut.writePacket(new SetHeldItemPacket((byte) inv.hotbarSlot));
+
+		clientOut.writePacket(new GameEventPacket(GameEventPacket.START_WAITING_FOR_CHUNKS));
+
+		clientOut.writePacket(new ChunkBatchStartPacket());
+
+		int sent = 0;
+		synchronized (world.world.worlds) {
+			for (Chunk c : world.world.chunks.values()) {
+				if (c.players.contains(linked)) {
+					ChunkDataPacket loadChunk = new ChunkDataPacket();
+					loadChunk.chunkX = c.chunkX;
+					loadChunk.chunkZ = c.chunkZ;
+					loadChunk.useBlockEntities(c.blockEntities.values());
+					loadChunk.heightmap = new NBTTagCompound();
+					loadChunk.data = ChunkDataEncoder.encode(c);
+					clientOut.writePacket(loadChunk);
+					sent++;
+				}
+			}
+		}
+
+		clientOut.writePacket(new ChunkBatchFinishPacket(sent));
 
 		tp = new TeleportRequestPacket();
 		tp.x = pos.pos.x;
@@ -350,38 +439,35 @@ public class ViewerConnection extends PlayHandler {
 	}
 
 	public boolean runCommand(String command) {
-		if (command.startsWith("pov ")) {
-			String target = command.substring(4);
-			ViewerTrackPlayData tracked = linked.getData(ViewerTrackPlayData.class);
-
-			var controller = tracked.controller;
-			for (ServerConnection sc : controller.getAlive()) {
-				if (sc.name.equalsIgnoreCase(target)) {
-					synchronized (linked) {
-						linked.removePlayHandler(this);
-						linked = sc;
-					}
-					synchronized (linked) {
-						linked.addPlayHandler(this);
-					}
-					try {
-						initUser();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					//					PlayerData player = linked.getData(PlayerData.class);
-					//
-					//					writePacket(new DeathPacket(player.entityId, new NBTTagString("")));
-
-					return true;
-				}
+		for (var p : commandHandlers) {
+			if (p.test(this, command)) {
+				return true;
 			}
-			SystemChatPacket reply = new SystemChatPacket();
-			reply.content = new NBTTagString("§cUnable to view " + target);
-			writePacket(reply);
-			return true;
 		}
 		return false;
+	}
+
+	public void moveLink(ServerConnection sc) {
+		synchronized (linked) {
+			linked.removePlayHandler(this);
+			linked = sc;
+		}
+		synchronized (linked) {
+			linked.addPlayHandler(this);
+		}
+		try {
+			initUser();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void kick() {
+		try {
+			client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void handlePacket(UnknownPacket packet, ServerConnection sc) throws IOException {

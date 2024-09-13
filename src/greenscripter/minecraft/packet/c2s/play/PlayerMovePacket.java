@@ -33,7 +33,7 @@ public class PlayerMovePacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		throw new UnsupportedOperationException();
+		onGround = in.readBoolean();
 	}
 
 }

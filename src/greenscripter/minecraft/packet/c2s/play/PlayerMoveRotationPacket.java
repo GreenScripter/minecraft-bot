@@ -38,7 +38,9 @@ public class PlayerMoveRotationPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		throw new UnsupportedOperationException();
+		yaw = in.readFloat();
+		pitch = in.readFloat();
+		onGround = in.readBoolean();
 	}
 
 }
