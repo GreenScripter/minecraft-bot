@@ -19,10 +19,13 @@ import greenscripter.minecraft.packet.c2s.configuration.AckFinishConfigPacket;
 import greenscripter.minecraft.packet.c2s.configuration.ClientInfoConfigPacket;
 import greenscripter.minecraft.packet.c2s.configuration.ClientKnownPacksConfigPacket;
 import greenscripter.minecraft.packet.c2s.configuration.KeepAliveReplyConfigPacket;
+import greenscripter.minecraft.packet.c2s.configuration.PingReplyConfigPacket;
 import greenscripter.minecraft.packet.c2s.handshake.HandshakePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginAcknowledgePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginStartPacket;
+import greenscripter.minecraft.packet.s2c.configuration.DisconnectConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.KeepAliveConfigPacket;
+import greenscripter.minecraft.packet.s2c.configuration.PingConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.ServerKnownPacksConfigPacket;
 import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
@@ -179,6 +182,14 @@ public class ServerConnection {
 			case CONFIGURATION -> {
 				out.writePacket(new ClientInfoConfigPacket());
 				UnknownPacket p = in.readGeneralPacket();
+
+				if (p.id == PingConfigPacket.packetId) {
+					out.writePacket(new PingReplyConfigPacket(p.convert(new PingConfigPacket()).value));
+				}
+				if (p.id == DisconnectConfigPacket.packetId) {
+					System.out.println(p.convert(new DisconnectConfigPacket()).reason);
+					socket.close();
+				}
 				if (p.id == AckFinishConfigPacket.packetId) {
 					out.writePacket(new AckFinishConfigPacket());
 					connectionState = ConnectionState.PLAY;
