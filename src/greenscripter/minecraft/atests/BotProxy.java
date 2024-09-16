@@ -18,7 +18,6 @@ import greenscripter.minecraft.AsyncSwarmController;
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.nbt.NBTTagString;
 import greenscripter.minecraft.packet.c2s.handshake.HandshakePacket;
-import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
 import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
 import greenscripter.minecraft.packet.s2c.status.PingData;
 import greenscripter.minecraft.play.data.ClientConfigData;
@@ -43,8 +42,7 @@ public class BotProxy {
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
 
 		controller.joinCallback = sc -> {
-			sc.sendPacket(new ClientInfoPacket(10));
-			sc.getData(ClientConfigData.class).viewDistance = 10;
+			sc.getData(ClientConfigData.class).setViewDistance(10);
 		};
 
 		controller.namesToUUIDs = accounts::getUUID;
