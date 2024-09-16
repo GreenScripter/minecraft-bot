@@ -24,6 +24,7 @@ import greenscripter.minecraft.packet.c2s.configuration.ClientKnownPacksConfigPa
 import greenscripter.minecraft.packet.c2s.handshake.HandshakePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginAcknowledgePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginStartPacket;
+import greenscripter.minecraft.packet.c2s.play.AckChunksPacket;
 import greenscripter.minecraft.packet.c2s.play.ExecuteCommandPacket;
 import greenscripter.minecraft.packet.c2s.play.ExecuteCommandSignedPacket;
 import greenscripter.minecraft.packet.c2s.play.KeepAliveReplyPacket;
@@ -222,6 +223,9 @@ public class ViewerConnection extends PlayHandler {
 									continue;
 								}
 							}
+							if (p.id == AckChunksPacket.packetId) {
+								continue;
+							}
 							if (linked == null) {
 								continue;
 							}
@@ -333,10 +337,12 @@ public class ViewerConnection extends PlayHandler {
 	}
 
 	boolean spawned = false;
+	boolean finishedInit = false;
 	int previousPlayerId = 0;
 	ServerConnection previousLink = null;
 
 	private void initUser() throws IOException {
+		finishedInit = false;
 		PositionData pos = linked.getData(PositionData.class);
 		WorldData world = linked.getData(WorldData.class);
 		PlayerData player = linked.getData(PlayerData.class);
@@ -488,6 +494,8 @@ public class ViewerConnection extends PlayHandler {
 		awaitingTps.add(tp.teleportID);
 		clientOut.writePacket(tp);
 		System.out.println("Wrote tp");
+
+		finishedInit = true;
 	}
 
 	public void writePacket(Packet p) {
@@ -538,6 +546,10 @@ public class ViewerConnection extends PlayHandler {
 		}
 
 		if (connectionState != ConnectionState.PLAY) {
+			return;
+		}
+
+		if (!finishedInit) {
 			return;
 		}
 

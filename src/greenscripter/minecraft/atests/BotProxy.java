@@ -21,6 +21,7 @@ import greenscripter.minecraft.packet.c2s.handshake.HandshakePacket;
 import greenscripter.minecraft.packet.c2s.play.ClientInfoPacket;
 import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
 import greenscripter.minecraft.packet.s2c.status.PingData;
+import greenscripter.minecraft.play.data.ClientConfigData;
 import greenscripter.minecraft.play.handler.PlayHandler;
 import greenscripter.minecraft.play.handler.ViewerConnection;
 import greenscripter.minecraft.play.handler.ViewerTrackPlayHandler;
@@ -43,6 +44,7 @@ public class BotProxy {
 
 		controller.joinCallback = sc -> {
 			sc.sendPacket(new ClientInfoPacket(10));
+			sc.getData(ClientConfigData.class).viewDistance = 10;
 		};
 
 		controller.namesToUUIDs = accounts::getUUID;

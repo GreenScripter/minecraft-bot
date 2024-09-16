@@ -11,6 +11,7 @@ import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.play.AckChunksPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.BlockEntityDataPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.BlockUpdatePacket;
+import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchFinishPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkDataPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ExplosionPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.SectionUpdatePacket;
@@ -79,6 +80,14 @@ public class WorldPlayHandler extends PlayHandler {
 					worldData.world = world;
 				}
 
+			} else if (p.id == ChunkBatchFinishPacket.packetId) {
+				AckChunksPacket ack = new AckChunksPacket();
+				if (sc.getData(ClientConfigData.class).viewDistance <= 1) {
+					ack.chunksPerTick = 0.01f;
+				} else {
+					ack.chunksPerTick = 10;
+				}
+				sc.sendPacket(ack);
 			} else if (p.id == loginPlayId) {
 				LoginPlayPacket respawn = p.convert(new LoginPlayPacket());
 				PositionData pos = sc.getData(PositionData.class);
@@ -106,6 +115,7 @@ public class WorldPlayHandler extends PlayHandler {
 			} else if (p.id == chunkDataId) {
 				int x = ChunkDataPacket.readXCoordinate(p);
 				int z = ChunkDataPacket.readZCoordinate(p);
+
 				if (worldData.world != null) {
 					if (worldData.world.isChunkLoaded(x, z)) {
 						//					System.out.println("Chunk " + chunk.chunkX + " " + chunk.chunkZ + " already loaded");
@@ -130,11 +140,6 @@ public class WorldPlayHandler extends PlayHandler {
 						}
 					}
 				}
-				AckChunksPacket ack = new AckChunksPacket();
-				if (sc.getData(ClientConfigData.class).viewDistance <= 1) {
-					ack.chunksPerTick = 0.01f;
-				}
-				sc.sendPacket(ack);
 			} else if (p.id == unloadChunkId) {
 				UnloadChunkPacket chunkunload = p.convert(new UnloadChunkPacket());
 				Chunk chunk = worldData.world.getChunk(chunkunload.x, chunkunload.z);
@@ -209,7 +214,15 @@ public class WorldPlayHandler extends PlayHandler {
 	}
 
 	public List<Integer> handlesPackets() {//needs to handle respawn, chunk data, section update and block updates
-		return List.of(chunkDataId, respawnId, loginPlayId, unloadChunkId, explosionId, blockUpdateId, sectionUpdateId, blockEntityDataId);
+		return List.of(chunkDataId, //
+				respawnId, //
+				loginPlayId, //
+				unloadChunkId, //
+				explosionId, //
+				blockUpdateId, //
+				sectionUpdateId, //
+				blockEntityDataId, //
+				ChunkBatchFinishPacket.packetId);
 	}
 
 	public void handleDisconnect(ServerConnection sc) {
