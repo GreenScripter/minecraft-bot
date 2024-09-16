@@ -50,6 +50,7 @@ import greenscripter.minecraft.packet.s2c.play.PlayerInfoUpdatePacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchFinishPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchStartPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkDataPacket;
+import greenscripter.minecraft.packet.s2c.play.blocks.SetChunkCenterPacket;
 import greenscripter.minecraft.packet.s2c.play.entity.EntityEquipmentPacket;
 import greenscripter.minecraft.packet.s2c.play.entity.EntityMetaDataPacket;
 import greenscripter.minecraft.packet.s2c.play.entity.EntitySpawnPacket;
@@ -71,6 +72,7 @@ import greenscripter.minecraft.play.handler.ViewerTrackPlayHandler.ViewerTrackPl
 import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
+import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.world.Chunk;
 import greenscripter.minecraft.world.ChunkDataEncoder;
 import greenscripter.minecraft.world.entity.Entity;
@@ -452,6 +454,9 @@ public class ViewerConnection extends PlayHandler {
 
 		clientOut.writePacket(new GameEventPacket(GameEventPacket.START_WAITING_FOR_CHUNKS));
 
+		Position playerBlock = new Position(pos.pos);
+
+		clientOut.writePacket(new SetChunkCenterPacket(playerBlock.x >> 4, playerBlock.z >> 4));
 		clientOut.writePacket(new ChunkBatchStartPacket());
 
 		int sent = 0;

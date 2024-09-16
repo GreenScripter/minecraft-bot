@@ -7,18 +7,20 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class ChunkBatchFinishPacket extends Packet {
+public class SetChunkCenterPacket extends Packet {
 
-	public static final int packetId = PacketIds.getS2CPlayId("minecraft:chunk_batch_finished");
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_chunk_cache_center");
 
-	public int batchSize;
+	public int x;
+	public int z;
 
-	public ChunkBatchFinishPacket() {
+	public SetChunkCenterPacket() {
 
 	}
 
-	public ChunkBatchFinishPacket(int batchSize) {
-		this.batchSize = batchSize;
+	public SetChunkCenterPacket(int x, int z) {
+		this.x = x;
+		this.z = z;
 	}
 
 	public int id() {
@@ -26,11 +28,13 @@ public class ChunkBatchFinishPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		out.writeVarInt(batchSize);
+		out.writeVarInt(x);
+		out.writeVarInt(z);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		batchSize = in.readVarInt();
+		x = in.readVarInt();
+		z = in.readVarInt();
 	}
 
 }
