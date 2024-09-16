@@ -24,7 +24,11 @@ public class XPOrbSpawnPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writeVarInt(entityID);
+		out.writeDouble(x);
+		out.writeDouble(y);
+		out.writeDouble(z);
+		out.writeShort(count);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

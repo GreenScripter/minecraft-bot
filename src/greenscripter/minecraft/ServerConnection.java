@@ -209,7 +209,7 @@ public class ServerConnection {
 
 			case PLAY -> {
 				//				in.available();
-				if (!blocking && peeker.peek() <= 0) return;
+				if (!blocking && !peeker.peekPacket()) return;
 				//				if (!blocking && !(in.available() > 1)) return;
 
 				UnknownPacket p = in.readGeneralPacket();
@@ -245,7 +245,7 @@ public class ServerConnection {
 	}
 
 	public boolean waiting() throws IOException {
-		return !(in.available() > 0);
+		return !peeker.peekPacket();
 	}
 
 	public static enum ConnectionState {
