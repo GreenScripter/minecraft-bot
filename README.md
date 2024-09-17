@@ -1,5 +1,4 @@
 # GreenScripter's Minecraft Bot Swarm Library
-# 1.21 still WIP, see 1.20.4 branch.
 A lightweight headless Java library reimplementing a Minecraft client from scratch for programmatically controlling bot players in large swarms of up to 100-1000 bots to play on cracked vanilla and paper servers on version 1.21.  
 See the greenscripter.minecraft.atests package for some examples of varying quality.  
 In order to actually support a swarm on the larger end you need a fairly powerful minecraft server. (Not for this library, but the server the bots are connecting to.) Making most of the bots not load chunks and instead rely on the shared world of a global WorldPlayHandler is recommended.   
