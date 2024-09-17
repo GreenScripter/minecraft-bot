@@ -10,7 +10,7 @@ import java.io.IOException;
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.UnknownPacket;
 
-public abstract class PlayPacketHandler extends PlayHandler {
+public class PlayPacketHandler extends PlayHandler {
 
 	public BiConsumer<UnknownPacket, ServerConnection> onPacket;
 
