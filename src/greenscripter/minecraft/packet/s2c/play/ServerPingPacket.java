@@ -7,15 +7,15 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class PingPacket extends Packet {
+public class ServerPingPacket extends Packet {
 
 	public static final int packetId = PacketIds.getS2CPlayId("minecraft:ping");
 
 	public int value;
 
-	public PingPacket() {}
+	public ServerPingPacket() {}
 
-	public PingPacket(int value) {
+	public ServerPingPacket(int value) {
 		this.value = value;
 	}
 

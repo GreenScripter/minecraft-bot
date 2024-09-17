@@ -7,15 +7,15 @@ import greenscripter.minecraft.packet.Packet;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
-public class PongPacket extends Packet {
+public class ClientPingPacket extends Packet {
 
-	public static final int packetId = PacketIds.getC2SPlayId("minecraft:pong");
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:ping_request");
 
-	public int value;
+	public long value;
 
-	public PongPacket() {}
+	public ClientPingPacket() {}
 
-	public PongPacket(int value) {
+	public ClientPingPacket(long value) {
 		this.value = value;
 	}
 
@@ -24,11 +24,11 @@ public class PongPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		out.writeInt(value);
+		out.writeLong(value);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		value = in.readInt();
+		value = in.readLong();
 	}
 
 }
