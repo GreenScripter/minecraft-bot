@@ -92,4 +92,8 @@ public class PositionData implements PlayData {
 		onGround = p.onGround;
 	}
 
+	public String toString() {
+		return "PositionData [" + (pos != null ? "pos=" + pos + ", " : "") + "pitch=" + pitch + ", yaw=" + yaw + ", onGround=" + onGround + ", " + (dimension != null ? "dimension=" + dimension : "") + "]";
+	}
+
 }

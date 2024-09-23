@@ -106,6 +106,8 @@ public class ViewerConnection extends PlayHandler {
 
 	public int viewMode;
 
+	public PositionData clientPos = new PositionData();
+
 	public static final int FORCE_LOOK = 0b1;
 	public static final int FORCE_MOVE = 0b10;
 	public static final int FORCE_BLOCKS = 0b100;
@@ -127,6 +129,47 @@ public class ViewerConnection extends PlayHandler {
 	}
 
 	boolean started = false;
+
+	private boolean updatePositionFor(UnknownPacket p, PositionData pos) {
+		if (p.id == PlayerMovePacket.packetId) {
+			PlayerMovePacket move = p.convert(new PlayerMovePacket());
+
+			pos.onGround = move.onGround;
+			return true;
+		}
+
+		if (p.id == PlayerMovePositionPacket.packetId) {
+			PlayerMovePositionPacket move = p.convert(new PlayerMovePositionPacket());
+
+			pos.onGround = move.onGround;
+			pos.pos.x = move.x;
+			pos.pos.y = move.y;
+			pos.pos.z = move.z;
+			return true;
+		}
+
+		if (p.id == PlayerMoveRotationPacket.packetId) {
+			PlayerMoveRotationPacket move = p.convert(new PlayerMoveRotationPacket());
+
+			pos.onGround = move.onGround;
+			pos.pitch = move.pitch;
+			pos.yaw = move.yaw;
+			return true;
+		}
+
+		if (p.id == PlayerMovePositionRotationPacket.packetId) {
+			PlayerMovePositionRotationPacket move = p.convert(new PlayerMovePositionRotationPacket());
+
+			pos.onGround = move.onGround;
+			pos.pitch = move.pitch;
+			pos.yaw = move.yaw;
+			pos.pos.x = move.x;
+			pos.pos.y = move.y;
+			pos.pos.z = move.z;
+			return true;
+		}
+		return false;
+	}
 
 	public void start() {
 		if (started) return;
@@ -254,29 +297,35 @@ public class ViewerConnection extends PlayHandler {
 								continue;
 							}
 
+							updatePositionFor(p, clientPos);
+
 							if (viewMode != 0) {
 								if (p.id == PlayerMovePositionPacket.packetId//
 										|| p.id == PlayerMovePositionRotationPacket.packetId) {
 									PositionData pos = linked.getData(PositionData.class);
 									if ((viewMode & (FORCE_MOVE | FORCE_LOOK)) != 0) {
 
-										TeleportRequestPacket tp = new TeleportRequestPacket();
+										PlayerMovePositionPacket move = p.convert(new PlayerMovePositionPacket());
 
-										tp.x = pos.pos.x;
-										tp.y = pos.pos.y;
-										tp.z = pos.pos.z;
-										if ((viewMode & FORCE_LOOK) != 0) {
-											tp.pitch = pos.pitch;
-											tp.yaw = pos.yaw;
-										} else {
-											tp.pitch = 0;
-											tp.yaw = 0;
-											tp.flags |= 0x08 | 0x10;
+										if (move.x != pos.pos.x || move.y != pos.pos.y || move.z != pos.pos.z) {
+											TeleportRequestPacket tp = new TeleportRequestPacket();
+
+											tp.x = pos.pos.x;
+											tp.y = pos.pos.y;
+											tp.z = pos.pos.z;
+											if ((viewMode & FORCE_LOOK) != 0) {
+												tp.pitch = pos.pitch;
+												tp.yaw = pos.yaw;
+											} else {
+												tp.pitch = 0;
+												tp.yaw = 0;
+												tp.flags |= 0x08 | 0x10;
+											}
+											tp.teleportID = Integer.MAX_VALUE - 1;
+
+											awaitingTps.add(tp.teleportID);
+											clientOut.writePacket(tp);
 										}
-										tp.teleportID = Integer.MAX_VALUE - 1;
-
-										awaitingTps.add(tp.teleportID);
-										clientOut.writePacket(tp);
 										continue;
 									}
 								}
@@ -362,47 +411,8 @@ public class ViewerConnection extends PlayHandler {
 								if ((viewMode & FORCE_BLOCK_OUTGOING) != 0) continue;
 							}
 
-							if (p.id == PlayerMovePacket.packetId) {
-								PlayerMovePacket move = p.convert(new PlayerMovePacket());
-
-								PositionData pos = linked.getData(PositionData.class);
-
-								pos.onGround = move.onGround;
-							}
-
-							if (p.id == PlayerMovePositionPacket.packetId) {
-								PlayerMovePositionPacket move = p.convert(new PlayerMovePositionPacket());
-
-								PositionData pos = linked.getData(PositionData.class);
-
-								pos.onGround = move.onGround;
-								pos.pos.x = move.x;
-								pos.pos.y = move.y;
-								pos.pos.z = move.z;
-							}
-
-							if (p.id == PlayerMoveRotationPacket.packetId) {
-								PlayerMoveRotationPacket move = p.convert(new PlayerMoveRotationPacket());
-
-								PositionData pos = linked.getData(PositionData.class);
-
-								pos.onGround = move.onGround;
-								pos.pitch = move.pitch;
-								pos.yaw = move.yaw;
-							}
-
-							if (p.id == PlayerMovePositionRotationPacket.packetId) {
-								PlayerMovePositionRotationPacket move = p.convert(new PlayerMovePositionRotationPacket());
-
-								PositionData pos = linked.getData(PositionData.class);
-
-								pos.onGround = move.onGround;
-								pos.pitch = move.pitch;
-								pos.yaw = move.yaw;
-								pos.pos.x = move.x;
-								pos.pos.y = move.y;
-								pos.pos.z = move.z;
-							}
+							PositionData pos = linked.getData(PositionData.class);
+							updatePositionFor(p, pos);
 
 							if (p.id == KeepAliveReplyPacket.packetId) {
 								continue;
@@ -519,6 +529,9 @@ public class ViewerConnection extends PlayHandler {
 			clientOut.writePacket(respawn);
 
 		}
+
+		clientPos.dimension = player.pos.dimension;
+
 		clientOut.writePacket(tracked.commands);
 
 		synchronized (tracked.playerList) {
