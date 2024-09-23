@@ -31,6 +31,28 @@ public class Position {
 		return this;
 	}
 
+	public Position add(Position other) {
+		return add(other.x, other.y, other.z);
+	}
+
+	public Position multiply(int v) {
+		this.x *= v;
+		this.y *= v;
+		this.z *= v;
+		return this;
+	}
+
+	public Position multiply(int x, int y, int z) {
+		this.x *= x;
+		this.y *= y;
+		this.z *= z;
+		return this;
+	}
+
+	public Position multiply(Position other) {
+		return add(other.x, other.y, other.z);
+	}
+
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

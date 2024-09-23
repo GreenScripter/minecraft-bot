@@ -49,7 +49,14 @@ public class UseItemOnPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		throw new UnsupportedOperationException();
+		hand = in.readVarInt();
+		pos = in.readPosition();
+		face = in.readVarInt();
+		cursorX = in.readFloat();
+		cursorY = in.readFloat();
+		cursorZ = in.readFloat();
+		inside = in.readBoolean();
+		sequence = in.readVarInt();
 	}
 
 	public static final int MAIN_HAND = 0;

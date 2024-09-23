@@ -28,11 +28,13 @@ import greenscripter.minecraft.packet.c2s.play.AckChunksPacket;
 import greenscripter.minecraft.packet.c2s.play.ExecuteCommandPacket;
 import greenscripter.minecraft.packet.c2s.play.ExecuteCommandSignedPacket;
 import greenscripter.minecraft.packet.c2s.play.KeepAliveReplyPacket;
+import greenscripter.minecraft.packet.c2s.play.PlayerActionPacket;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePacket;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionPacket;
 import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
 import greenscripter.minecraft.packet.c2s.play.PlayerMoveRotationPacket;
 import greenscripter.minecraft.packet.c2s.play.TeleportConfirmPacket;
+import greenscripter.minecraft.packet.c2s.play.UseItemOnPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.ClickContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.CloseContainerPacket;
 import greenscripter.minecraft.packet.c2s.play.inventory.HotbarSlotPacket;
@@ -44,10 +46,13 @@ import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.ServerKnownPacksConfigPacket;
 import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
+import greenscripter.minecraft.packet.s2c.play.AckBlockChangePacket;
 import greenscripter.minecraft.packet.s2c.play.GameEventPacket;
 import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
 import greenscripter.minecraft.packet.s2c.play.PlayerInfoRemovePacket;
 import greenscripter.minecraft.packet.s2c.play.PlayerInfoUpdatePacket;
+import greenscripter.minecraft.packet.s2c.play.SystemChatPacket;
+import greenscripter.minecraft.packet.s2c.play.blocks.BlockUpdatePacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchFinishPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchStartPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkDataPacket;
@@ -98,6 +103,16 @@ public class ViewerConnection extends PlayHandler {
 	public Supplier<String> pingResponse;
 
 	public List<BiPredicate<ViewerConnection, String>> commandHandlers = new ArrayList<>();
+
+	public int viewMode;
+
+	public static final int FORCE_LOOK = 0b1;
+	public static final int FORCE_MOVE = 0b10;
+	public static final int FORCE_BLOCKS = 0b100;
+	public static final int FORCE_INVENTORY = 0b1000;
+	public static final int FORCE_BLOCK_OUTGOING = 0b10000;
+
+	public static final int FORCE_DEFAULT = FORCE_MOVE | FORCE_BLOCKS | FORCE_INVENTORY | FORCE_BLOCK_OUTGOING;
 
 	public ViewerConnection(ServerConnection linkTo, Socket client) throws IOException {
 		handlesPackets = new ArrayList<>();
@@ -223,12 +238,130 @@ public class ViewerConnection extends PlayHandler {
 									continue;
 								}
 							}
+
 							if (p.id == AckChunksPacket.packetId) {
 								continue;
 							}
+
+							if (p.id == ExecuteCommandPacket.packetId || p.id == ExecuteCommandSignedPacket.packetId) {
+								ExecuteCommandPacket command = p.convert(new ExecuteCommandPacket());
+								if (runCommand(command.command)) {
+									continue;
+								}
+							}
+
 							if (linked == null) {
 								continue;
 							}
+
+							if (viewMode != 0) {
+								if (p.id == PlayerMovePositionPacket.packetId//
+										|| p.id == PlayerMovePositionRotationPacket.packetId) {
+									PositionData pos = linked.getData(PositionData.class);
+									if ((viewMode & (FORCE_MOVE | FORCE_LOOK)) != 0) {
+
+										TeleportRequestPacket tp = new TeleportRequestPacket();
+
+										tp.x = pos.pos.x;
+										tp.y = pos.pos.y;
+										tp.z = pos.pos.z;
+										if ((viewMode & FORCE_LOOK) != 0) {
+											tp.pitch = pos.pitch;
+											tp.yaw = pos.yaw;
+										} else {
+											tp.pitch = 0;
+											tp.yaw = 0;
+											tp.flags |= 0x08 | 0x10;
+										}
+										tp.teleportID = Integer.MAX_VALUE - 1;
+
+										awaitingTps.add(tp.teleportID);
+										clientOut.writePacket(tp);
+										continue;
+									}
+								}
+
+								InventoryData inv = linked.getData(InventoryData.class);
+								if (p.id == ClickContainerPacket.packetId) {
+									if ((viewMode & FORCE_INVENTORY) != 0) {
+										clientOut.writePacket(new SetContainerContentPacket(inv.inv));
+										if (inv.screen != null) {
+											clientOut.writePacket(new SetContainerContentPacket(inv.screen));
+										}
+										continue;
+									}
+								}
+
+								if (p.id == HotbarSlotPacket.packetId) {
+									if ((viewMode & FORCE_INVENTORY) != 0) {
+										clientOut.writePacket(new SetHeldItemPacket((byte) inv.hotbarSlot));
+										continue;
+									}
+								}
+
+								if (p.id == UseItemOnPacket.packetId) {
+									if ((viewMode & FORCE_BLOCKS) != 0) {
+										UseItemOnPacket use = p.convert(new UseItemOnPacket());
+										WorldData world = linked.getData(WorldData.class);
+
+										for (int i = -1; i < 2; i++) {
+											for (int j = -1; j < 2; j++) {
+												for (int k = -1; k < 2; k++) {
+													Position update = use.pos.copy().add(i, j, k);
+													int block = world.world.getBlock(update);
+													if (block >= 0) {
+														clientOut.writePacket(new BlockUpdatePacket(update, block));
+													}
+												}
+											}
+										}
+
+										clientOut.writePacket(new AckBlockChangePacket(use.sequence));
+
+										if ((viewMode & FORCE_INVENTORY) != 0) {
+											clientOut.writePacket(new SetContainerContentPacket(inv.inv));
+											if (inv.screen != null) {
+												clientOut.writePacket(new SetContainerContentPacket(inv.screen));
+											}
+										}
+										continue;
+									}
+								}
+
+								if (p.id == PlayerActionPacket.packetId) {
+									WorldData world = linked.getData(WorldData.class);
+
+									PlayerActionPacket action = p.convert(new PlayerActionPacket());
+									if (action.status == PlayerActionPacket.FINISH_MINING //
+											|| action.status == PlayerActionPacket.START_MINING//
+											|| action.status == PlayerActionPacket.CANCEL_MINING) {
+										if ((viewMode & FORCE_BLOCKS) != 0) {
+											int block = world.world.getBlock(action.pos);
+											if (block >= 0) {
+												clientOut.writePacket(new AckBlockChangePacket(action.sequence));
+												clientOut.writePacket(new BlockUpdatePacket(action.pos, block));
+											}
+											continue;
+										}
+									}
+
+									if (action.status == PlayerActionPacket.SWAP_HANDS//
+											|| action.status == PlayerActionPacket.DROP_ITEM//
+											|| action.status == PlayerActionPacket.DROP_STACK) {
+										if ((viewMode & FORCE_INVENTORY) != 0) {
+											clientOut.writePacket(new SetContainerContentPacket(inv.inv));
+											if (inv.screen != null) {
+												clientOut.writePacket(new SetContainerContentPacket(inv.screen));
+											}
+											continue;
+										}
+									}
+
+								}
+
+								if ((viewMode & FORCE_BLOCK_OUTGOING) != 0) continue;
+							}
+
 							if (p.id == PlayerMovePacket.packetId) {
 								PlayerMovePacket move = p.convert(new PlayerMovePacket());
 
@@ -273,12 +406,6 @@ public class ViewerConnection extends PlayHandler {
 
 							if (p.id == KeepAliveReplyPacket.packetId) {
 								continue;
-							}
-							if (p.id == ExecuteCommandPacket.packetId || p.id == ExecuteCommandSignedPacket.packetId) {
-								ExecuteCommandPacket command = p.convert(new ExecuteCommandPacket());
-								if (runCommand(command.command)) {
-									continue;
-								}
 							}
 
 							synchronized (linked) {
@@ -508,16 +635,28 @@ public class ViewerConnection extends PlayHandler {
 
 	public boolean runCommand(String command) {
 		for (var p : commandHandlers) {
-			if (p.test(this, command)) {
-				return true;
+			try {
+				if (p.test(this, command)) {
+					return true;
+				}
+			} catch (Exception e) {
+				SystemChatPacket reply = new SystemChatPacket();
+				reply.content = new NBTTagString("§cInternal error running command.");
+				writePacket(reply);
+				System.err.println("Error running proxy command: " + command);
+				e.printStackTrace();
 			}
 		}
 		return false;
 	}
 
 	public void moveLink(ServerConnection sc) {
-		synchronized (linked) {
-			linked.removePlayHandler(this);
+		if (linked != null) {
+			synchronized (linked) {
+				linked.removePlayHandler(this);
+				linked = sc;
+			}
+		} else {
 			linked = sc;
 		}
 		synchronized (linked) {

@@ -15,12 +15,22 @@ public class BlockUpdatePacket extends Packet {
 	public Position pos;
 	public int state;
 
+	public BlockUpdatePacket() {
+
+	}
+
+	public BlockUpdatePacket(Position pos, int state) {
+		this.pos = pos;
+		this.state = state;
+	}
+
 	public int id() {
 		return packetId;
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		throw new UnsupportedOperationException();
+		out.writePosition(pos);
+		out.writeVarInt(state);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

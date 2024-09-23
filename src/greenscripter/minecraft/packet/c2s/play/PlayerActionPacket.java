@@ -40,7 +40,10 @@ public class PlayerActionPacket extends Packet {
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		throw new UnsupportedOperationException();
+		status = in.readVarInt();
+		pos = in.readPosition();
+		face = in.readByte();
+		sequence = in.readVarInt();
 	}
 
 	public static final int START_MINING = 0;

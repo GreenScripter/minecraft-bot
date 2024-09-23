@@ -42,7 +42,7 @@ public class BotProxy {
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
 
 		controller.joinCallback = sc -> {
-			sc.getData(ClientConfigData.class).setViewDistance(10);
+			sc.getData(ClientConfigData.class).setViewDistance(5);
 		};
 
 		controller.namesToUUIDs = accounts::getUUID;
@@ -58,11 +58,58 @@ public class BotProxy {
 				for (ServerConnection move : controller.getAlive()) {
 					if (move.name.equalsIgnoreCase(target)) {
 						vc.moveLink(move);
+						SystemChatPacket reply = new SystemChatPacket();
+						reply.content = new NBTTagString("§bSwitched to " + move.name);
+						vc.writePacket(reply);
 						return true;
 					}
 				}
 				SystemChatPacket reply = new SystemChatPacket();
 				reply.content = new NBTTagString("§cUnable to view " + target);
+				vc.writePacket(reply);
+				return true;
+			}
+			if (command.startsWith("view")) {
+				String target = command.substring(4);
+				SystemChatPacket reply = new SystemChatPacket();
+
+				if (target.equals(" stale")) {
+					if (vc.viewMode == ViewerConnection.FORCE_BLOCK_OUTGOING) {
+						vc.viewMode = ViewerConnection.FORCE_BLOCK_OUTGOING;
+						vc.moveLink(vc.linked);
+					}
+					vc.viewMode = ViewerConnection.FORCE_BLOCK_OUTGOING;
+					reply.content = new NBTTagString("§bViewing the current state with desync as " + vc.linked.name);
+				} else if (target.equals(" edit")) {
+					if (vc.viewMode != 0) {
+						vc.viewMode = 0;
+						vc.moveLink(vc.linked);
+					}
+					vc.viewMode = 0;
+
+					reply.content = new NBTTagString("§bEditing as " + vc.linked.name);
+				} else if (target.equals(" look")) {
+					if (vc.viewMode == ViewerConnection.FORCE_BLOCK_OUTGOING) {
+						vc.viewMode = ViewerConnection.FORCE_DEFAULT;
+						vc.moveLink(vc.linked);
+					}
+					vc.viewMode = ViewerConnection.FORCE_DEFAULT;
+					reply.content = new NBTTagString("§bViewing the synced current state of " + vc.linked.name);
+				} else {
+					String result = "";
+					if (vc.viewMode == ViewerConnection.FORCE_BLOCK_OUTGOING) {
+						result = "§bViewing " + vc.linked.name + " in stale mode";
+					} else if (vc.viewMode == ViewerConnection.FORCE_DEFAULT) {
+						result = "§bViewing " + vc.linked.name + " in look mode";
+					} else if (vc.viewMode == 0) {
+						result = "§bViewing " + vc.linked.name + " in edit mode";
+					} else {
+						result = "§bViewing " + vc.linked.name + " in mode " + Integer.toBinaryString(vc.viewMode);
+					}
+					result += "\nUse /view <stale | edit | look> to change mode";
+					reply.content = new NBTTagString(result);
+
+				}
 				vc.writePacket(reply);
 				return true;
 			}
