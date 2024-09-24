@@ -28,6 +28,7 @@ import greenscripter.minecraft.packet.s2c.configuration.KeepAliveConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.PingConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.ServerKnownPacksConfigPacket;
+import greenscripter.minecraft.packet.s2c.login.DisconnectLoginPacket;
 import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.play.data.PlayData;
@@ -160,7 +161,7 @@ public class ServerConnection {
 
 				UnknownPacket p = in.readGeneralPacket();
 				int compression = -1;
-				if (p.id() == new SetCompressionPacket().id()) {
+				if (p.id() == SetCompressionPacket.packetId) {
 					var compress = p.convert(new SetCompressionPacket());
 					if (compress.value >= 0) {
 						compression = compress.value;
@@ -171,12 +172,17 @@ public class ServerConnection {
 					//			System.out.println(Arrays.toString(in.readAllBytes()));
 					p = in.readGeneralPacket();
 				}
-				LoginSuccessPacket success = p.convert(new LoginSuccessPacket());
-				System.out.println("Logged in " + success.name + " " + success.uuid + " " + success.properties);
-				name = success.name;
-				uuid = success.uuid;
-				out.writePacket(new LoginAcknowledgePacket());
-				connectionState = ConnectionState.CONFIGURATION;
+				if (p.id == DisconnectLoginPacket.packetId) {
+					System.out.println(p.convert(new DisconnectLoginPacket()).reason);
+					socket.close();
+				} else {
+					LoginSuccessPacket success = p.convert(new LoginSuccessPacket());
+					System.out.println("Logged in " + success.name + " " + success.uuid + " " + success.properties);
+					name = success.name;
+					uuid = success.uuid;
+					out.writePacket(new LoginAcknowledgePacket());
+					connectionState = ConnectionState.CONFIGURATION;
+				}
 				//				System.out.println("Finished Login");
 			}
 			case CONFIGURATION -> {
