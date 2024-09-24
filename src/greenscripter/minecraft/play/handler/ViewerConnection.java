@@ -1,6 +1,7 @@
 package greenscripter.minecraft.play.handler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -92,6 +93,7 @@ public class ViewerConnection extends PlayHandler {
 	public String requestedName;
 
 	public ServerConnection linked;
+	public List<ServerConnection> secondaryLinks = Collections.synchronizedList(new ArrayList<>());
 
 	List<Integer> handlesPackets;
 	ConnectionState connectionState = ConnectionState.HANDSHAKE;
@@ -440,6 +442,13 @@ public class ViewerConnection extends PlayHandler {
 								}
 
 								linked.sendPacket(p);
+								if (!secondaryLinks.isEmpty()) {
+									secondaryLinks.forEach(sc2 -> {
+										synchronized (sc2) {
+											sc2.sendPacket(p);
+										}
+									});
+								}
 							}
 							break;
 						default:

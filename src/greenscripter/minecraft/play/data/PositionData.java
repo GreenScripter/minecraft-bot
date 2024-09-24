@@ -24,12 +24,16 @@ public class PositionData implements PlayData {
 	public void sendMovePacket(ServerConnection sc, Packet p) {
 		if (p instanceof PlayerMovePositionRotationPacket p2) {
 			setPosRotation(sc, p2);
+			return;
 		} else if (p instanceof PlayerMovePositionPacket p2) {
 			setPos(sc, p2);
+			return;
 		} else if (p instanceof PlayerMoveRotationPacket p2) {
 			setRotation(sc, p2);
+			return;
 		} else if (p instanceof PlayerMovePacket p2) {
 			setOnGround(sc, p2);
+			return;
 		}
 		throw new IllegalArgumentException(p + " is not a movement packet");
 	}
