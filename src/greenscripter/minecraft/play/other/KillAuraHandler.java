@@ -1,7 +1,9 @@
 package greenscripter.minecraft.play.other;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -23,7 +25,10 @@ import greenscripter.minecraft.world.entity.Entity;
 public class KillAuraHandler extends PlayHandler {
 
 	Set<Integer> swarm = new HashSet<>();
+	Map<Integer, Long> lastHit = new HashMap<>();
 	public Predicate<Entity> target = e -> true;
+	Map<Integer, Long> lastHitBy = new HashMap<>();
+	double reachSquared = 4.25 * 4.25;
 	public boolean swingHand = false;
 	{
 		if (!PlayData.playData.containsKey(KillAuraData.class)) {
@@ -40,17 +45,23 @@ public class KillAuraHandler extends PlayHandler {
 		Entity target = world.entities.values().stream()//
 				.filter(e -> Registries.safeAttack[e.type])//
 				.filter(e -> !swarm.contains(e.entityId))//
-				.filter(e -> e.pos.squaredDistanceTo(player.pos.pos) < 36)//
+				.filter(e -> e.pos.squaredDistanceTo(player.pos.pos) < reachSquared)//
+				.filter(e -> !lastHit.containsKey(e.entityId) || System.currentTimeMillis() - lastHit.get(e.entityId) > 500)//
 				.filter(this.target)//
-				.min((e1, e2) -> (int) (e2.pos.squaredDistanceTo(player.pos.pos) * 10 - e1.pos.squaredDistanceTo(player.pos.pos) * 10))//
+				.max((e1, e2) -> (int) (e2.pos.squaredDistanceTo(player.pos.pos) * 10 - e1.pos.squaredDistanceTo(player.pos.pos) * 10))//
 				.orElse(null);
 
 		if (target != null) {
 			player.lastSwing = System.currentTimeMillis();
+			lastHit.put(target.entityId, System.currentTimeMillis());
 			//			System.out.println("Attacked " + target.entityId + " " + target.type);
 			sc.sendPacket(new InteractEntityPacket(target.entityId, InteractEntityPacket.TYPE_ATTACK));
 			if (swingHand) sc.sendPacket(new SwingArmPacket(SwingArmPacket.MAIN_HAND));
 		}
+	}
+
+	public boolean causedRecentHarm(Entity e) {
+		return lastHitBy.containsKey(e.entityId) && System.currentTimeMillis() - lastHitBy.get(e.entityId) < 30000;
 	}
 
 	public void handlePacket(UnknownPacket packet, ServerConnection sc) throws IOException {
@@ -60,6 +71,7 @@ public class KillAuraHandler extends PlayHandler {
 		if (p.entityID == player.entityId) {
 			if (p.damagerIDPlusOne == 0) return;
 			sc.getData(KillAuraData.class).lastHitBy = p.damagerIDPlusOne - 1;
+			lastHitBy.put(p.damagerIDPlusOne - 1, System.currentTimeMillis());
 			//			var rot = RotationUtils.getNeededRotations(player.pos.getEyePos(), en.pos.copy().add(0, 1.62, 0));
 			//			player.pos.pitch = rot.getPitch();
 			//			player.pos.yaw = rot.getYaw();
