@@ -131,6 +131,8 @@ public class WorldPlayHandler extends PlayHandler {
 						for (ChunkDataPacket.BlockEntity e : chunk.blockEntities) {
 							BlockEntity en = new BlockEntity();
 							en.pos = new Position(e.xinchunk + chunk.chunkX * 16, e.y, e.zinchunk + chunk.chunkZ * 16);
+							en.data = e.data;
+							en.type = e.type;
 							c.addBlockEntity(en);
 						}
 

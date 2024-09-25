@@ -12,4 +12,9 @@ public class BlockEntity {
 	public BlockEntity() {
 
 	}
+
+	public String toString() {
+		return "BlockEntity [" + (pos != null ? "pos=" + pos + ", " : "") + "type=" + type + ", " + (data != null ? "data=" + data : "") + "]";
+	}
+
 }

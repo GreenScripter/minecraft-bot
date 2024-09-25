@@ -146,6 +146,8 @@ public class ChunkDataPacket extends Packet {
 			b.xinchunk = (byte) (en.pos.x - chunkX * 16);
 			b.zinchunk = (byte) (en.pos.z - chunkZ * 16);
 			b.y = (short) en.pos.y;
+			b.data = en.data;
+			blockEntities.add(b);
 		}
 	}
 
