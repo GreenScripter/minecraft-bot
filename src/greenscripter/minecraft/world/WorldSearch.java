@@ -29,6 +29,7 @@ public class WorldSearch {
 	private BlockChangeListener bcl;
 	private ChunkFirstLoadListener cfll;
 	private ChunkUnloadListener cul;
+	private Runnable tl;
 
 	Set<ServerConnection> using = new HashSet<>();
 
@@ -39,6 +40,10 @@ public class WorldSearch {
 
 	}
 
+	private List<QueueItem> queue = new ArrayList<>();
+
+	private record QueueItem(World w, int x, int y, int z, int s) {}
+
 	public void activate() {
 		if (searchNew) worlds.handler.chunkLoadListeners.add(cfll = (sc, c) -> {
 			searchChunk(c);
@@ -47,9 +52,18 @@ public class WorldSearch {
 		worlds.handler.chunkUnloadListeners.add(cul = (sc, c) -> {
 			clearChunk(c);
 		});
-		if (activeUpdates) worlds.handler.blockChangeListeners.add(bcl = (sc, w, x, y, z, s) -> {
-			addBlock(w, x, y, z, s);
-		});
+
+		if (activeUpdates) {
+			worlds.handler.blockChangeListeners.add(bcl = (sc, w, x, y, z, s) -> {
+				queue.add(new QueueItem(w, x, y, z, s));
+			});
+			worlds.handler.onTickListeners.add(tl = () -> {
+				for (var q : queue) {
+					addBlock(q.w, q.x, q.y, q.z, q.s);
+				}
+				queue.clear();
+			});
+		}
 	}
 
 	public void addBlock(World w, int x, int y, int z, int state) {
@@ -84,6 +98,7 @@ public class WorldSearch {
 		worlds.handler.chunkLoadListeners.remove(cfll);
 		worlds.handler.chunkUnloadListeners.remove(cul);
 		worlds.handler.blockChangeListeners.remove(bcl);
+		worlds.handler.onTickListeners.remove(tl);
 	}
 
 	public void searchChunk(Chunk c) {

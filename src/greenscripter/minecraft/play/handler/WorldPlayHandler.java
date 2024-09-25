@@ -46,6 +46,7 @@ public class WorldPlayHandler extends PlayHandler {
 	public List<ChunkFirstLoadListener> chunkLoadListeners = new ArrayList<>();
 	public List<ChunkUnloadListener> chunkUnloadListeners = new ArrayList<>();
 	public List<BlockChangeListener> blockChangeListeners = new ArrayList<>();
+	public List<Runnable> onTickListeners = new ArrayList<>();
 
 	public WorldPlayHandler() {
 		worlds = new Worlds(this);
@@ -215,6 +216,16 @@ public class WorldPlayHandler extends PlayHandler {
 		}
 	}
 
+	long lastTick = System.currentTimeMillis();
+
+	public void tick(ServerConnection sc) throws IOException {
+		if (System.currentTimeMillis() - lastTick < 50) {
+			return;
+		}
+		lastTick = System.currentTimeMillis();
+		onTickListeners.forEach(r -> r.run());
+	}
+
 	public List<Integer> handlesPackets() {//needs to handle respawn, chunk data, section update and block updates
 		return List.of(chunkDataId, //
 				respawnId, //
@@ -225,6 +236,10 @@ public class WorldPlayHandler extends PlayHandler {
 				sectionUpdateId, //
 				blockEntityDataId, //
 				ChunkBatchFinishPacket.packetId);
+	}
+
+	public boolean handlesTick() {
+		return true;
 	}
 
 	public void handleDisconnect(ServerConnection sc) {

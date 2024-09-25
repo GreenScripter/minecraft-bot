@@ -80,6 +80,7 @@ import greenscripter.minecraft.play.inventory.Slot;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.Position;
+import greenscripter.minecraft.utils.Vector;
 import greenscripter.minecraft.world.Chunk;
 import greenscripter.minecraft.world.ChunkDataEncoder;
 import greenscripter.minecraft.world.entity.Entity;
@@ -737,8 +738,43 @@ public class ViewerConnection extends PlayHandler {
 
 	}
 
+	Vector lastPos = new Vector();
+
+	public void tick(ServerConnection sc) throws IOException {
+		if (sc != linked) {
+			System.out.println("Handling packets from incorrect ServerConnection " + sc.name);
+			sc.removePlayHandler(this);
+			return;
+		}
+
+		if (connectionState != ConnectionState.PLAY) {
+			return;
+		}
+
+		if (!finishedInit) {
+			return;
+		}
+		PositionData pos = linked.getData(PositionData.class);
+
+		if (pos.pos.distanceTo(lastPos) > 1 && (viewMode & FORCE_MOVE) != 0) {
+			TeleportRequestPacket tp = new TeleportRequestPacket();
+			tp.x = pos.pos.x;
+			tp.y = pos.pos.y;
+			tp.z = pos.pos.z;
+			tp.pitch = 0;
+			tp.yaw = 0;
+			tp.flags |= 0x08 | 0x10;
+			tp.teleportID = Integer.MAX_VALUE - 1;
+
+			awaitingTps.add(tp.teleportID);
+			clientOut.writePacket(tp);
+		}
+
+		lastPos = pos.pos.copy();
+	}
+
 	public boolean handlesTick() {
-		return super.handlesTick();
+		return true;
 	}
 
 	public List<Integer> handlesPackets() {

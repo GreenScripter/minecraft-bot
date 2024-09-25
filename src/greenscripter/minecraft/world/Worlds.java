@@ -76,10 +76,13 @@ public class Worlds {
 
 			for (var s : searches) {
 				if (Arrays.equals(s.searchTargets, states)) {
-					s.using.add(sc);
+					if (sc != null) s.using.add(sc);
 					return s;
 				}
 			}
+
+			if (sc == null) return null;
+
 			WorldSearch search = new WorldSearch(this, states, active);
 			search.using.add(sc);
 			searches.add(search);

@@ -127,7 +127,12 @@ public class PathfindState extends PlayerState {
 				}
 				if (render != null && index > 2 && index < pathIds.size()) render.removeShape(pathIds.get(index - 3));
 
-				pos.setPosRotation(e.value, followPath.get(index), pos.pitch, pos.yaw);
+				Vector target = followPath.get(index).copy();
+				if ((index & 0xF) > 1) {
+					target.y += 0.05;
+				}
+
+				pos.setPosRotation(e.value, target, pos.pitch, pos.yaw);
 				last = pos.pos.copy();
 				index++;
 			});

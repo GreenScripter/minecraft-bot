@@ -51,4 +51,28 @@ public class BlockBox {
 		return new BlockBox(pos1.copy().add(-amount, -amount, -amount), pos2.copy().add(amount, amount, amount));
 	}
 
+	public BlockBox copy() {
+		return new BlockBox(pos2, pos1);
+	}
+
+	public Position getIndex(int i) {
+		int rx = pos2.x + 1 - pos1.x;
+		int ry = pos2.y + 1 - pos1.y;
+
+		int a = (rx * ry);
+
+		int tz = i / a;
+
+		int b = i - a * tz;
+
+		int ty = b / rx;
+		int tx = b % rx;
+
+		return new Position(pos1.x + tx, pos1.y + ty, pos1.z + tz);
+	}
+
+	public String toString() {
+		return "BlockBox [" + (pos1 != null ? "pos1=" + pos1 + ", " : "") + (pos2 != null ? "pos2=" + pos2 : "") + "]";
+	}
+
 }

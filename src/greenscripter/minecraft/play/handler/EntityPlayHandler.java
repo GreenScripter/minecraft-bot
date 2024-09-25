@@ -56,7 +56,7 @@ public class EntityPlayHandler extends PlayHandler {
 				EntityEffectPacket p = up.convert(new EntityEffectPacket());
 				PlayerData player = sc.getData(PlayerData.class);
 
-				System.out.println("From " + player.entityId + " add to " + p.entityId + " " + p.effectId + " " + p.duration + " " + p.amplifier);
+				//				System.out.println("From " + player.entityId + " add to " + p.entityId + " " + p.effectId + " " + p.duration + " " + p.amplifier);
 			} else if (up.id == equipmentId) {
 				EntityEquipmentPacket p = up.convert(new EntityEquipmentPacket());
 				Entity e = world.getEntity(p.entityID);
