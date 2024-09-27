@@ -48,6 +48,7 @@ import greenscripter.minecraft.packet.s2c.configuration.ServerKnownPacksConfigPa
 import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.packet.s2c.play.AckBlockChangePacket;
+import greenscripter.minecraft.packet.s2c.play.DisconnectPacket;
 import greenscripter.minecraft.packet.s2c.play.GameEventPacket;
 import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
 import greenscripter.minecraft.packet.s2c.play.PlayerInfoRemovePacket;
@@ -520,6 +521,9 @@ public class ViewerConnection extends PlayHandler {
 		}
 		previousLink = linked;
 		previousPlayerId = player.entityId;
+		if (tracked.loginPacket == null) {
+			writePacket(new DisconnectPacket(new NBTTagString("Bot not yet logged in.")));
+		}
 		clientOut.writePacket(tracked.loginPacket);
 
 		if (spawned) {
@@ -542,6 +546,9 @@ public class ViewerConnection extends PlayHandler {
 
 		clientPos.dimension = player.pos.dimension;
 
+		if (tracked.commands == null) {
+			writePacket(new DisconnectPacket(new NBTTagString("Bot not yet logged in.")));
+		}
 		clientOut.writePacket(tracked.commands);
 
 		synchronized (tracked.playerList) {

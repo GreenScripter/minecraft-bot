@@ -236,11 +236,12 @@ public class ServerConnection {
 	}
 
 	public void sendPacket(Packet p) {
-		try {
-			//			System.out.println(p);
-			this.out.writePacket(p);
-		} catch (IOException e) {
-			e.printStackTrace();
+		synchronized (this) {
+			try {
+				this.out.writePacket(p);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

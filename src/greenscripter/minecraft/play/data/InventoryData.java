@@ -91,6 +91,21 @@ public class InventoryData implements PlayData {
 		}
 	}
 
+	public void rerequestInventory() {
+		OpenedScreen screen = getActiveScreen();
+
+		ClickContainerPacket p = new ClickContainerPacket(screen.windowId, 0, 0, -999);
+		p.stateId = screen.stateId - 1;
+		screen.cursor.setCount(0);
+		p.carriedItem = screen.cursor;
+		Slot empty = new Slot();
+		for (Slot s : screen.slots) {
+			p.changed.add(new SlotChange(screen.getSlotId(s), empty));
+		}
+
+		sc.sendPacket(p);
+	}
+
 	public void shiftClickSlot(Slot slot) {
 		OpenedScreen screen = getActiveScreen();
 		if (screen.slotIds.get(slot) == null) {

@@ -71,17 +71,27 @@ public class Worlds {
 		return getSearchFor(sc, states, false, true);
 	}
 
+	public synchronized WorldSearch getSearchIfExists(boolean[] states) {
+		synchronized (searches) {
+			for (var s : searches) {
+				if (Arrays.equals(s.searchTargets, states)) {
+					return s;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public synchronized WorldSearch getSearchFor(ServerConnection sc, boolean[] states, boolean active, boolean searchNow) {
 		synchronized (searches) {
 
 			for (var s : searches) {
 				if (Arrays.equals(s.searchTargets, states)) {
-					if (sc != null) s.using.add(sc);
+					s.using.add(sc);
 					return s;
 				}
 			}
-
-			if (sc == null) return null;
 
 			WorldSearch search = new WorldSearch(this, states, active);
 			search.using.add(sc);
