@@ -19,6 +19,10 @@ public class OpenedScreen {
 	public Map<Slot, Integer> slotIds = new HashMap<>();
 	public Map<Short, Short> properties = new HashMap<>();
 
+	public boolean isInitialized() {
+		return slots != null;
+	}
+
 	public void initWithSlotCount(int count) {
 		slots = new Slot[count];
 		slotIds.clear();

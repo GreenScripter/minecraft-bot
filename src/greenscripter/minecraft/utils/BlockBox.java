@@ -71,6 +71,10 @@ public class BlockBox {
 		return new Position(pos1.x + tx, pos1.y + ty, pos1.z + tz);
 	}
 
+	public int getSize() {
+		return (pos2.x + 1 - pos1.x) * (pos2.y + 1 - pos1.y) * (pos2.z + 1 - pos1.z);
+	}
+
 	public String toString() {
 		return "BlockBox [" + (pos1 != null ? "pos1=" + pos1 + ", " : "") + (pos2 != null ? "pos2=" + pos2 : "") + "]";
 	}

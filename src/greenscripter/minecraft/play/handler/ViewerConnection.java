@@ -459,7 +459,7 @@ public class ViewerConnection extends PlayHandler {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				linked.removePlayHandler(this);
+				if (linked != null) linked.removePlayHandler(this);
 				try {
 					client.close();
 				} catch (IOException e1) {
