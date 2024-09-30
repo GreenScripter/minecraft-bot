@@ -67,6 +67,10 @@ public class BreakBlockState extends PlayerState {
 							break;
 						}
 					} else {
+						if (next.present && !next.getItemInfo().isTool) {
+							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
+						}
+
 						if (next.present && ItemId.tags(target).contains(next.itemId)) {
 							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
 							break;

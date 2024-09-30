@@ -71,6 +71,22 @@ public class BlockBox {
 		return new Position(pos1.x + tx, pos1.y + ty, pos1.z + tz);
 	}
 
+	public Position getIndexXZY(int i) {
+		int rx = pos2.x + 1 - pos1.x;
+		int rz = pos2.z + 1 - pos1.z;
+
+		int a = (rx * rz);
+
+		int ty = i / a;
+
+		int b = i - a * ty;
+
+		int tz = b / rx;
+		int tx = b % rx;
+
+		return new Position(pos1.x + tx, pos1.y + ty, pos1.z + tz);
+	}
+
 	public int getSize() {
 		return (pos2.x + 1 - pos1.x) * (pos2.y + 1 - pos1.y) * (pos2.z + 1 - pos1.z);
 	}

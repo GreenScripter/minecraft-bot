@@ -238,7 +238,12 @@ public class ServerConnection {
 	public void sendPacket(Packet p) {
 		synchronized (this) {
 			try {
-				this.out.writePacket(p);
+				if (connectionState == ConnectionState.PLAY && owner == Thread.currentThread()) {
+					this.out.writePacketNoFlush(p);
+				} else {
+					this.out.writePacket(p);
+				}
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

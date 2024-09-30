@@ -212,6 +212,7 @@ public class AsyncSwarmController {
 							}
 
 							sc.tick();
+							sc.out.flush();
 						}
 
 					} catch (Exception e) {

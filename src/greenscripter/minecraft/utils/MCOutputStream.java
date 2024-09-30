@@ -91,14 +91,14 @@ public class MCOutputStream extends DataOutputStream {
 		writeLong(uuid.getLeastSignificantBits());
 	}
 
-	public synchronized void writePacket(int id, byte[] data) throws IOException {
+	public synchronized void writePacket(int id, byte[] data, boolean flush) throws IOException {
 		if (actuallyCompress && compressionThreshold >= 0 && data.length >= compressionThreshold) {
 			byte[] compressed = ZLib.compress(id, data);
 			int originLength = varIntSize(id) + data.length;
 			writeVarInt(compressed.length + varIntSize(originLength));
 			writeVarInt(originLength);
 			write(compressed);
-			flush();
+			if (flush) flush();
 
 		} else {
 			int extra = 0;
@@ -111,7 +111,7 @@ public class MCOutputStream extends DataOutputStream {
 			}
 			writeVarInt(id);
 			write(data);
-			flush();
+			if (flush) flush();
 		}
 	}
 
@@ -122,7 +122,17 @@ public class MCOutputStream extends DataOutputStream {
 		MCOutputStream pout = new MCOutputStream(bout);
 		packet.toBytes(pout);
 		byte[] data = bout.toByteArray();
-		writePacket(packet.id(), data);
+		writePacket(packet.id(), data, true);
+	}
+
+	public void writePacketNoFlush(Packet packet) throws IOException {
+		//		System.out.println("Wrote id " + packet.id() + " " + packet);
+
+		var bout = new ByteArrayOutputStream();
+		MCOutputStream pout = new MCOutputStream(bout);
+		packet.toBytes(pout);
+		byte[] data = bout.toByteArray();
+		writePacket(packet.id(), data, false);
 	}
 
 	public void writeNBT(NBTComponent nbt) throws IOException {

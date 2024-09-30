@@ -55,6 +55,21 @@ public class Vector {
 		return this;
 	}
 
+	public Vector setX(double x) {
+		this.x = x;
+		return this;
+	}
+
+	public Vector setY(double y) {
+		this.y = y;
+		return this;
+	}
+
+	public Vector setZ(double z) {
+		this.z = z;
+		return this;
+	}
+
 	public double length() {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
