@@ -190,21 +190,27 @@ public class MCInputStream extends DataInputStream {
 		slot.present = slot.itemCount != 0;
 		if (slot.present) {
 			slot.itemId = readVarInt();
-			int componentsToAdd = readVarInt();
-			int componentsToRemove = readVarInt();
-
-			//			System.out.println("Reading components of " + ItemId.get(slot.itemId) + " +" + componentsToAdd + " -" + componentsToRemove);
-			for (int i = 0; i < componentsToAdd; i++) {
-				Component c = readComponent();
-				//				System.out.println("Read component " + i + " of " + ItemId.get(slot.itemId) + " " + c);
-				slot.getComponents().setComponent(c);
-			}
-
-			for (int i = 0; i < componentsToRemove; i++) {
-				slot.getComponents().removeComponent(i);
-			}
+			slot.setComponents(readComponents());
 		}
 		return slot;
+	}
+
+	public Components readComponents() throws IOException {
+		Components components = new Components();
+		int componentsToAdd = readVarInt();
+		int componentsToRemove = readVarInt();
+
+		//			System.out.println("Reading components of " + ItemId.get(slot.itemId) + " +" + componentsToAdd + " -" + componentsToRemove);
+		for (int i = 0; i < componentsToAdd; i++) {
+			Component c = readComponent();
+			//				System.out.println("Read component " + i + " of " + ItemId.get(slot.itemId) + " " + c);
+			components.setComponent(c);
+		}
+
+		for (int i = 0; i < componentsToRemove; i++) {
+			components.removeComponent(i);
+		}
+		return components;
 	}
 
 	public Component readComponent() throws IOException {

@@ -35,9 +35,27 @@ public class MerchantOffersPacket extends Packet {
 		for (int i = 0; i < trades.length; i++) {
 			Trade t = new Trade();
 
-			t.item1 = in.readSlot();
+			// This uses it's own unique slot encoding for some god awful reason.
+			t.item1 = new Slot();
+			t.item1.present = true;
+			t.item1.itemId = in.readVarInt();
+			t.item1.itemCount = in.readVarInt();
+			if (in.readBoolean()) t.item1.setComponents(in.readComponents());
+
+			// This one is normal.
 			t.output = in.readSlot();
-			t.item2 = in.readSlot();
+
+			// And this one is an optional stupid CODEC again for no reason.
+			t.item2 = new Slot();
+			if (in.readBoolean()) {
+				t.item2.present = true;
+				t.item2.itemId = in.readVarInt();
+				t.item2.itemCount = in.readVarInt();
+				if (in.readBoolean()) t.item2.setComponents(in.readComponents());
+			} else {
+				t.item2.present = false;
+			}
+
 			t.disabled = in.readBoolean();
 			t.tradesUsedUp = in.readInt();
 			t.maxTrades = in.readInt();

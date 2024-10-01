@@ -15,7 +15,7 @@ import com.google.gson.reflect.TypeToken;
 public class Registries {
 
 	public static void main(String[] args) {
-		System.out.println(registries.get("minecraft:data_component_type"));
+		System.out.println(registriesFromIds.get("minecraft:item").get(166));
 	}
 
 	public static Map<String, Integer> registryIds = new HashMap<>();
