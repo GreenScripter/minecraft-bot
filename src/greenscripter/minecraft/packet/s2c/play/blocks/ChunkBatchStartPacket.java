@@ -15,10 +15,8 @@ public class ChunkBatchStartPacket extends Packet {
 		return packetId;
 	}
 
-	public void toBytes(MCOutputStream out) throws IOException {
-	}
+	public void toBytes(MCOutputStream out) throws IOException {}
 
-	public void fromBytes(MCInputStream in) throws IOException {
-	}
+	public void fromBytes(MCInputStream in) throws IOException {}
 
 }

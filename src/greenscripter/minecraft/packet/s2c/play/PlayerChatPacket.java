@@ -29,7 +29,7 @@ public class PlayerChatPacket extends Packet {
 	public void fromBytes(MCInputStream in) throws IOException {
 		sender = in.readUUID();
 		in.readVarInt();
-		if (in.readBoolean()){
+		if (in.readBoolean()) {
 			in.readNBytes(256);
 		}
 		message = in.readString();

@@ -1,11 +1,15 @@
 package greenscripter.minecraft.packet.s2c.play;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java.io.IOException;
-import java.util.*;
 
 import greenscripter.minecraft.gameinfo.PacketIds;
 import greenscripter.minecraft.packet.Packet;
-import greenscripter.minecraft.play.statistics.*;
+import greenscripter.minecraft.play.statistics.StatisticsCategory;
+import greenscripter.minecraft.play.statistics.StatisticsEntry;
+import greenscripter.minecraft.play.statistics.StatisticsKey;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 
@@ -23,7 +27,7 @@ public class AwardStatsPacket extends Packet {
 
 	public void toBytes(MCOutputStream out) throws IOException {
 		out.writeVarInt(changed.size());
-		for (StatisticsEntry entry: changed) {
+		for (StatisticsEntry entry : changed) {
 			out.writeVarInt(entry.key().category().ordinal());
 			out.writeVarInt(entry.key().statistic());
 			out.writeVarInt(entry.value());

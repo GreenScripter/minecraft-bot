@@ -47,7 +47,7 @@ public class ExecuteCommandSignedPacket extends Packet {
 		command = in.readString();
 		instant = Instant.ofEpochMilli(in.readLong());
 		salt = in.readLong();
-		
+
 		//no signatures or messages supported;
 	}
 

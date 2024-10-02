@@ -100,7 +100,7 @@ public class EMParticle extends EntityMetadata {
 				out.writeFloat(b2);//b
 				out.writeFloat(scale);//scale
 			}
-			case 20 ->{
+			case 20 -> {
 				out.writeInt(color);
 			}
 			case 35 -> {
