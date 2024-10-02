@@ -13,6 +13,8 @@ import greenscripter.minecraft.play.handler.PlayHandler;
 public class WaitForPacketState extends PlayerState {
 
 	public boolean done = false;
+	public long start = System.currentTimeMillis();
+	public long timeout = Long.MAX_VALUE;
 
 	public WaitForPacketState(int... ids) {
 		this(null, ids);
@@ -25,7 +27,9 @@ public class WaitForPacketState extends PlayerState {
 			packetIds.add(i);
 		}
 
-		until(e -> done);
+		onInit(e -> start = System.currentTimeMillis());
+
+		until(e -> done || (System.currentTimeMillis() - start > timeout));
 		addStickyGameHandler(new PlayHandler() {
 
 			public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
