@@ -13,6 +13,9 @@ public class WorldData implements PlayData {
 
 	public World world;
 
+	public long worldAge = -1;
+	public long timeOfDay = -1;
+
 	public int breakSeq;
 
 	public void useItemOn(ServerConnection sc, int hand, Position pos, int face) {

@@ -9,6 +9,7 @@ import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.gameinfo.BlockStates;
 import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.packet.c2s.play.AckChunksPacket;
+import greenscripter.minecraft.packet.s2c.play.SetTimePacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.BlockEntityDataPacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.BlockUpdatePacket;
 import greenscripter.minecraft.packet.s2c.play.blocks.ChunkBatchFinishPacket;
@@ -42,6 +43,7 @@ public class WorldPlayHandler extends PlayHandler {
 	int blockUpdateId = new BlockUpdatePacket().id();
 	int sectionUpdateId = new SectionUpdatePacket().id();
 	int blockEntityDataId = new BlockEntityDataPacket().id();
+	int setTimeId = SetTimePacket.packetId;
 
 	public List<ChunkFirstLoadListener> chunkLoadListeners = new ArrayList<>();
 	public List<ChunkUnloadListener> chunkUnloadListeners = new ArrayList<>();
@@ -212,6 +214,10 @@ public class WorldPlayHandler extends PlayHandler {
 				en.type = update.type;
 				worldData.world.addBlockEntity(en);
 				//			System.out.println("Added " + en.pos + " " + en.type + " " + en.data);
+			} else if (p.id == setTimeId) {
+				SetTimePacket packet = p.convert(new SetTimePacket());
+				worldData.worldAge = packet.worldAge;
+				worldData.timeOfDay = packet.timeOfDay;
 			}
 		}
 	}
@@ -235,6 +241,7 @@ public class WorldPlayHandler extends PlayHandler {
 				blockUpdateId, //
 				sectionUpdateId, //
 				blockEntityDataId, //
+				setTimeId, //
 				ChunkBatchFinishPacket.packetId);
 	}
 
