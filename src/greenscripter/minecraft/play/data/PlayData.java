@@ -19,6 +19,7 @@ public interface PlayData {
 			this.put(PlayerData.class, PlayerData::new);
 			this.put(ClientConfigData.class, ClientConfigData::new);
 			this.put(InventoryData.class, InventoryData::new);
+			this.put(PingIDData.class, PingIDData::new);
 		}
 	}
 
