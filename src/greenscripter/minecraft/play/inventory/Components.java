@@ -195,7 +195,7 @@ public class Components {
 	}
 
 	public String toString() {
-		return toString(true);
+		return toString(false);
 	}
 
 	public String toString(boolean includeDefaults) {

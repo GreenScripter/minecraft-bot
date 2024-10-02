@@ -22,7 +22,7 @@ public class TrimComponent extends Component {
 	public float modelIndex;
 	public List<Override> overrides = new ArrayList<>();
 	public NBTComponent description;
-	public int trimPatternType;
+	public int trimPatternTypePlusOne;
 	public String assetName2;
 	public int templateItem;
 	public NBTComponent description2;
@@ -45,7 +45,9 @@ public class TrimComponent extends Component {
 				e.toBytes(out);
 			}
 			out.writeNBT(description);
-			out.writeVarInt(trimPatternType);
+		}
+		out.writeVarInt(trimPatternTypePlusOne);
+		if (trimPatternTypePlusOne == 0) {
 			out.writeString(assetName2);
 			out.writeVarInt(templateItem);
 			out.writeNBT(description2);
@@ -67,7 +69,9 @@ public class TrimComponent extends Component {
 				overrides.add(e);
 			}
 			description = in.readNBT();
-			trimPatternType = in.readVarInt();
+		}
+		trimPatternTypePlusOne = in.readVarInt();
+		if (trimPatternTypePlusOne == 0) {
 			assetName2 = in.readString();
 			templateItem = in.readVarInt();
 			description2 = in.readNBT();
@@ -83,7 +87,7 @@ public class TrimComponent extends Component {
 		c.ingredient = ingredient;
 		c.modelIndex = modelIndex;
 		if (description != null) c.description = description.copy();
-		c.trimPatternType = trimPatternType;
+		c.trimPatternTypePlusOne = trimPatternTypePlusOne;
 		c.assetName2 = assetName2;
 		c.templateItem = templateItem;
 		if (description2 != null) c.description2 = description2.copy();
