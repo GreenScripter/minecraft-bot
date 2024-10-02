@@ -24,8 +24,8 @@ public class AwardStatsPacket extends Packet {
 	public void toBytes(MCOutputStream out) throws IOException {
 		out.writeVarInt(changed.size());
 		for (StatisticsEntry entry: changed) {
-			out.writeVarInt(entry.category().ordinal());
-			out.writeVarInt(entry.statistic());
+			out.writeVarInt(entry.key().category().ordinal());
+			out.writeVarInt(entry.key().statistic());
 			out.writeVarInt(entry.value());
 		}
 	}
@@ -34,7 +34,7 @@ public class AwardStatsPacket extends Packet {
 		changed.clear();
 		int entries = in.readVarInt();
 		for (int i = 0; i < entries; i++) {
-			changed.add(new StatisticsEntry(StatisticsCategory.values()[in.readVarInt()], in.readVarInt(), in.readVarInt()));
+			changed.add(new StatisticsEntry(new StatisticsKey(StatisticsCategory.values()[in.readVarInt()], in.readVarInt()), in.readVarInt()));
 		}
 	}
 }
