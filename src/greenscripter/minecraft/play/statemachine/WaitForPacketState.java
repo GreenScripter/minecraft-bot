@@ -15,13 +15,14 @@ public class WaitForPacketState extends PlayerState {
 	public boolean done = false;
 	public long start = System.currentTimeMillis();
 	public long timeout = Long.MAX_VALUE;
+	public Predicate<UnknownPacket> check;
 
 	public WaitForPacketState(int... ids) {
 		this(null, ids);
 	}
 
 	public WaitForPacketState(Predicate<UnknownPacket> c, int... ids) {
-		Predicate<UnknownPacket> check = c == null ? p -> true : c;
+		check = c == null ? p -> true : c;
 		List<Integer> packetIds = new ArrayList<>();
 		for (int i : ids) {
 			packetIds.add(i);

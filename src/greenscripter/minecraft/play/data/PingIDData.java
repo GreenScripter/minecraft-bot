@@ -1,9 +1,12 @@
 package greenscripter.minecraft.play.data;
 
-public class PingIDData implements PlayData {
-	private long nextID = 0;
+import java.util.concurrent.atomic.AtomicLong;
 
-	public synchronized long nextID() {
-		return nextID++;
+public class PingIDData implements PlayData {
+
+	private AtomicLong nextID = new AtomicLong(0);
+
+	public long nextID() {
+		return nextID.getAndIncrement();
 	}
 }

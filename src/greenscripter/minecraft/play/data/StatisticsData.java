@@ -1,17 +1,14 @@
 package greenscripter.minecraft.play.data;
 
-import greenscripter.minecraft.ServerConnection;
+import java.util.HashMap;
+import java.util.Map;
+
 import greenscripter.minecraft.packet.s2c.play.AwardStatsPacket;
 import greenscripter.minecraft.play.statistics.StatisticsKey;
 
-import java.util.HashMap;
-
 public class StatisticsData implements PlayData {
-	private HashMap<StatisticsKey, Integer> stats = new HashMap<>();
 
-	public void init(ServerConnection sc) {
-		stats.clear();
-	}
+	private Map<StatisticsKey, Integer> stats = new HashMap<>();
 
 	public void handleStatsPacket(AwardStatsPacket packet) {
 		packet.changed.forEach(chg -> {
