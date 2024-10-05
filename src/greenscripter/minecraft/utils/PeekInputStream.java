@@ -68,11 +68,11 @@ public class PeekInputStream extends FilterInputStream {
 	public boolean peekPacket() throws IOException {
 		try {
 			int size = peekVarInt();
-			if (size <= storage.remaining()) {
+			if (size + MCOutputStream.varIntSize(size) <= storage.remaining()) {
 				return true;
 			}
 			addToPeek();
-			return size <= storage.remaining();
+			return size + MCOutputStream.varIntSize(size) <= storage.remaining();
 		} catch (Exception e) {
 			return false;
 		}

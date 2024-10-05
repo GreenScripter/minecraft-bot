@@ -31,6 +31,8 @@ public class Slot {
 		this.components = other.components;
 		if (this.components != null) {
 			components = components.copy();
+		} else {
+			components = new Components();
 		}
 	}
 
