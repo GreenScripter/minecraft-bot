@@ -8,6 +8,12 @@ public class Position {
 
 	public Position() {}
 
+	public Position(long val) {
+		x = (int) (val >> 38);
+		y = (int) (val << 52 >> 52);
+		z = (int) (val << 26 >> 38);
+	}
+
 	public Position(int x, int y, int z) {
 		this.x = x;
 		this.y = y;

@@ -166,19 +166,23 @@ public class MCOutputStream extends DataOutputStream {
 		if (slot.itemCount > 0) {
 			writeVarInt(slot.itemId);
 
-			List<Component> added = slot.getComponents().getAddedComponents();
-			List<Integer> removed = slot.getComponents().getRemovedComponents();
+			writeComponents(slot.getComponents());
+		}
+	}
 
-			writeVarInt(added.size());
-			writeVarInt(removed.size());
+	public void writeComponents(Components c) throws IOException {
+		List<Component> added = c.getAddedComponents();
+		List<Integer> removed = c.getRemovedComponents();
 
-			for (Component c : added) {
-				writeComponent(c);
-			}
+		writeVarInt(added.size());
+		writeVarInt(removed.size());
 
-			for (int i : removed) {
-				writeVarInt(i);
-			}
+		for (Component co : added) {
+			writeComponent(co);
+		}
+
+		for (int i : removed) {
+			writeVarInt(i);
 		}
 	}
 
