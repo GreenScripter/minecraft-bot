@@ -91,6 +91,28 @@ public class BlockBox {
 		return (pos2.x + 1 - pos1.x) * (pos2.y + 1 - pos1.y) * (pos2.z + 1 - pos1.z);
 	}
 
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((pos1 == null) ? 0 : pos1.hashCode());
+		result = prime * result + ((pos2 == null) ? 0 : pos2.hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		BlockBox other = (BlockBox) obj;
+		if (pos1 == null) {
+			if (other.pos1 != null) return false;
+		} else if (!pos1.equals(other.pos1)) return false;
+		if (pos2 == null) {
+			if (other.pos2 != null) return false;
+		} else if (!pos2.equals(other.pos2)) return false;
+		return true;
+	}
+
 	public String toString() {
 		return "BlockBox [" + (pos1 != null ? "pos1=" + pos1 + ", " : "") + (pos2 != null ? "pos2=" + pos2 : "") + "]";
 	}
