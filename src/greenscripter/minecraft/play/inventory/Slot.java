@@ -47,13 +47,26 @@ public class Slot {
 	}
 
 	public void setCount(int count) {
-		itemCount = (byte) count;
+		itemCount = count;
 		if (itemCount <= 0) {
 			present = false;
 			itemId = 0;
 			itemCount = 0;
 			components = new Components();
 		}
+	}
+
+	public boolean insert(Slot other, int count) {
+		if (!this.present || other.equivalent(this)) {
+			if (!this.present) {
+				this.become(other);
+				this.setCount(count);
+			} else {
+				this.setCount(this.itemCount + count);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public void setComponents(Components c) {
