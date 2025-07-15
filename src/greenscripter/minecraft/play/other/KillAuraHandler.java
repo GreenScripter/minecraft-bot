@@ -64,6 +64,12 @@ public class KillAuraHandler extends PlayHandler {
 		return lastHitBy.containsKey(e.entityId) && System.currentTimeMillis() - lastHitBy.get(e.entityId) < 30000;
 	}
 
+	private int player = Registries.registries.get("minecraft:entity_type").get("minecraft:player");
+
+	public boolean notPlayer(Entity e) {
+		return e.type != player;
+	}
+
 	public void handlePacket(UnknownPacket packet, ServerConnection sc) throws IOException {
 		DamageEventPacket p = packet.convert(new DamageEventPacket());
 		PlayerData player = sc.getData(PlayerData.class);

@@ -35,6 +35,7 @@ public class PathFinder {
 	public int pathRetainDistance = 10;
 	public int maxSpeed = 10;
 	public int restrictRadius = -1;
+	public int longRangeHeight = 322;
 
 	public boolean infiniteVClipAllowed = true;
 	public long timeout = 1000;
@@ -98,14 +99,14 @@ public class PathFinder {
 		List<Vector> path = new ArrayList<>();
 
 		List<Vector> part;
-		part = pathFind(start, new Vector(start.x, 322, start.z), radius);
+		part = pathFind(start, new Vector(start.x, longRangeHeight, start.z), radius);
 		if (part == null) {
 			//			System.out.println("Failed first part");
 			return null;
 		}
 		path.addAll(part);
-		path.addAll(getBeamPath(new Vector(start.x, 322, start.z), new Vector(end.x, 322, end.z)));
-		part = pathFind(new Vector(end.x, 322, end.z), end, radius);
+		path.addAll(getBeamPath(new Vector(start.x, longRangeHeight, start.z), new Vector(end.x, longRangeHeight, end.z)));
+		part = pathFind(new Vector(end.x, longRangeHeight, end.z), end, radius);
 		if (part != null) {
 			path.addAll(part);
 		} else {
@@ -718,9 +719,15 @@ public class PathFinder {
 		List<Vector> packets = new ArrayList<>();
 		for (Vector v : path) {
 			double distance = v.distanceTo(previous);
-			if (distance > 10) {
-				for (int i = 0; i < distance / 10; i++) {
-					packets.add(new Vector(previous.x, previous.y, previous.z));
+			if (distance > (infiniteVClipAllowed ? 10 : maxSpeed)) {
+				int max = (infiniteVClipAllowed ? 10 : maxSpeed);
+				Vector delta = v.copy().subtract(previous).normalize().multiply(max);
+				for (int i = 0; i < distance / max; i++) {
+					if (infiniteVClipAllowed) {
+						packets.add(previous.add(delta.copy().multiply(i)));
+					} else {
+						packets.add(new Vector(previous.x, previous.y, previous.z));
+					}
 				}
 			}
 

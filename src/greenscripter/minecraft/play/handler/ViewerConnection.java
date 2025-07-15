@@ -45,6 +45,7 @@ import greenscripter.minecraft.packet.s2c.configuration.DisconnectConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.FinishConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.RegistryConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.ServerKnownPacksConfigPacket;
+import greenscripter.minecraft.packet.s2c.login.DisconnectLoginPacket;
 import greenscripter.minecraft.packet.s2c.login.LoginSuccessPacket;
 import greenscripter.minecraft.packet.s2c.login.SetCompressionPacket;
 import greenscripter.minecraft.packet.s2c.play.AckBlockChangePacket;
@@ -93,12 +94,13 @@ public class ViewerConnection extends PlayHandler {
 	MCInputStream clientIn;
 	MCOutputStream clientOut;
 	public String requestedName;
+	public UUID requestedUUID;
 
 	public ServerConnection linked;
 	public List<ServerConnection> secondaryLinks = Collections.synchronizedList(new ArrayList<>());
 
 	List<Integer> handlesPackets;
-	ConnectionState connectionState = ConnectionState.HANDSHAKE;
+	public ConnectionState connectionState = ConnectionState.HANDSHAKE;
 
 	Set<Integer> awaitingTps = new HashSet<>();
 
@@ -111,6 +113,7 @@ public class ViewerConnection extends PlayHandler {
 	public int viewMode;
 
 	public PositionData clientPos = new PositionData();
+	public boolean compress = true;
 
 	public static final int FORCE_LOOK = 0b1;
 	public static final int FORCE_MOVE = 0b10;
@@ -128,6 +131,7 @@ public class ViewerConnection extends PlayHandler {
 		this.linked = linkTo;
 
 		this.client = client;
+		client.setSoTimeout(20000);
 		clientIn = new MCInputStream(client.getInputStream());
 		clientOut = new MCOutputStream(client.getOutputStream());
 	}
@@ -222,6 +226,7 @@ public class ViewerConnection extends PlayHandler {
 								if (requestedName.length() > 16) {
 									requestedName = requestedName.substring(0, 16);
 								}
+								requestedUUID = loginStart.uuid;
 
 								SetCompressionPacket compress = new SetCompressionPacket();
 								compress.value = 256;
@@ -229,7 +234,8 @@ public class ViewerConnection extends PlayHandler {
 
 								clientIn.compression = true;
 								clientOut.compressionThreshold = compress.value;
-								clientOut.actuallyCompress = true;
+
+								clientOut.actuallyCompress = this.compress;
 
 								LoginSuccessPacket login = new LoginSuccessPacket();
 								login.name = requestedName;
@@ -458,7 +464,7 @@ public class ViewerConnection extends PlayHandler {
 
 					}
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				if (linked != null) linked.removePlayHandler(this);
 				try {
@@ -469,13 +475,19 @@ public class ViewerConnection extends PlayHandler {
 
 		}).start();
 
+		long start = System.currentTimeMillis();
 		new Thread(() -> {
 			try {
 				while (true) {
 					if (connectionState == ConnectionState.PLAY) {
 						clientOut.writePacket(new KeepAlivePacket(System.currentTimeMillis()));
+					} else {
+						if (System.currentTimeMillis() - start > 30000) {
+							break;
+						}
 					}
 					Thread.sleep(10000);
+
 				}
 			} catch (Exception e) {
 				//				e.printStackTrace();
@@ -548,6 +560,8 @@ public class ViewerConnection extends PlayHandler {
 
 		if (tracked.commands == null) {
 			writePacket(new DisconnectPacket(new NBTTagString("Bot not yet logged in.")));
+			kick();
+			return;
 		}
 		clientOut.writePacket(tracked.commands);
 
@@ -707,6 +721,26 @@ public class ViewerConnection extends PlayHandler {
 		}
 	}
 
+	public void kick(String message) {
+		try {
+			NBTTagString nbt = new NBTTagString(message);
+			if (connectionState == ConnectionState.PLAY) {
+				clientOut.writePacket(new DisconnectPacket(nbt));
+			}
+			if (connectionState == ConnectionState.CONFIGURATION) {
+				clientOut.writePacket(new DisconnectConfigPacket(nbt));
+			}
+			if (connectionState == ConnectionState.LOGIN) {
+				clientOut.writePacket(new DisconnectLoginPacket(nbt));
+			}
+			clientOut.flush();
+			client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			kick();
+		}
+	}
+
 	public void handlePacket(UnknownPacket packet, ServerConnection sc) throws IOException {
 		if (sc != linked) {
 			System.out.println("Handling packets from incorrect ServerConnection " + sc.name);
@@ -748,6 +782,7 @@ public class ViewerConnection extends PlayHandler {
 	Vector lastPos = new Vector();
 
 	public void tick(ServerConnection sc) throws IOException {
+		//		clientOut.flush();
 		if (sc != linked) {
 			System.out.println("Handling packets from incorrect ServerConnection " + sc.name);
 			sc.removePlayHandler(this);

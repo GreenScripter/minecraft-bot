@@ -8,11 +8,11 @@ import java.io.IOException;
 
 import greenscripter.minecraft.ServerConnection;
 import greenscripter.minecraft.packet.UnknownPacket;
-import greenscripter.minecraft.packet.s2c.play.ServerPingPacket;
+import greenscripter.minecraft.packet.s2c.play.KeepAlivePacket;
 
 public class TimeoutHandler extends PlayHandler {
 
-	int pingId = new ServerPingPacket().id();
+	int pingId = new KeepAlivePacket().id();
 
 	Map<ServerConnection, Long> times = new ConcurrentHashMap<>();
 
@@ -24,8 +24,13 @@ public class TimeoutHandler extends PlayHandler {
 
 	public void tick(ServerConnection sc) throws IOException {
 		if (times.containsKey(sc)) if (System.currentTimeMillis() - times.get(sc) > 30000) {
+			times.remove(sc);
 			throw new IOException("Minecraft Timeout");
 		}
+	}
+
+	public void handleDisconnect(ServerConnection sc) throws IOException {
+		times.remove(sc);
 	}
 
 	public List<Integer> handlesPackets() {

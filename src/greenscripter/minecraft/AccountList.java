@@ -23,5 +23,5 @@ public class AccountList extends ArrayList<Account> {
 		return this.stream().filter(a -> a.name.equals(name)).map(a -> UUID.fromString(a.uuid)).findAny().orElse(null);
 	}
 
-	record Account(String name, String uuid) {}
+	public record Account(String name, String uuid) {}
 }

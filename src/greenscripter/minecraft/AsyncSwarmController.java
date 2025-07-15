@@ -88,9 +88,13 @@ public class AsyncSwarmController {
 	}
 
 	public void reconnectDead(List<ServerConnection> dead, long joinDelay) {
+		reconnectDead(dead, joinDelay, false);
+	}
+
+	public void reconnectDead(List<ServerConnection> dead, long joinDelay, boolean wait) {
 		for (ServerConnection serverConn : dead) {
 			ServerConnection sc = serverConn;
-			new Thread(() -> {
+			Thread t = new Thread(() -> {
 				try {
 					sc.connect();
 					sc.owner = Thread.currentThread();
@@ -104,14 +108,17 @@ public class AsyncSwarmController {
 							break;
 						}
 					}
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					e.printStackTrace();
 					synchronized (this.dead) {
 						this.dead.add(sc);
 					}
 				}
-			}).start();
+			});
+			t.setName("ReconnectDead");
+			t.start();
 			try {
+				if (wait) t.join();
 				Thread.sleep(joinDelay);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -142,10 +149,23 @@ public class AsyncSwarmController {
 	 * Take connections out of the dead pool.
 	 */
 	public List<ServerConnection> takeDead(List<ServerConnection> toRemove) {
+		List<ServerConnection> removed = new ArrayList<>();
 		synchronized (dead) {
-			dead.removeAll(toRemove);
+			for (ServerConnection sc : toRemove) {
+				if (dead.remove(sc)) {
+					removed.add(sc);
+				} else {
+					System.out.println("Failed to remove bot " + sc + "!!!!!");
+				}
+			}
 		}
-		return toRemove;
+		return removed;
+	}
+
+	public void grantDead(List<ServerConnection> toRemove) {
+		synchronized (dead) {
+			dead.addAll(toRemove);
+		}
 	}
 
 	/**

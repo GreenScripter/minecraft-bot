@@ -7,7 +7,9 @@ import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
 import greenscripter.minecraft.ServerConnection;
+import greenscripter.minecraft.packet.s2c.play.self.TeleportRequestPacket;
 import greenscripter.minecraft.play.data.PositionData;
+import greenscripter.minecraft.play.handler.PlayPacketHandler;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.utils.Vector;
 import greenscripter.minecraft.world.PathFinder;
@@ -27,6 +29,7 @@ public class PathfindState extends PlayerState {
 	public IndicatorServer render;
 	public List<Integer> pathIds = new ArrayList<>();
 	ExecutorService exec;
+	public boolean shouldRetry = true;
 
 	public PathfindState(ExecutorService exec, PathFinder finder, Position start, Predicate<Position> target) {
 		this(exec, finder, start, null, target);
@@ -87,31 +90,33 @@ public class PathfindState extends PlayerState {
 			onTick(e -> {
 				PositionData pos = e.value.getData(PositionData.class);
 				if (last != null && !pos.pos.equals(last)) {
-					if (!triedOver) {
-						triedOver = true;
-						repathing = exec.submit(() -> {
-							followPath = finder.pathfindOver(start, target);
-							if (followPath != null) {
-								followPath = finder.getPacketVectors(followPath, pos.pos);
-							}
-							index = 0;
-							last = null;
-							if (render != null) for (int id : pathIds) {
-								render.removeShape(id);
-							}
-							if (render != null) if (followPath != null && !followPath.isEmpty()) {
-								Vector pathPos = followPath.get(0);
-								for (int i = 1; i < followPath.size(); i++) {
-									pathIds.add(render.addLine(finder.world.id, pathPos, followPath.get(i), IndicatorServer.getColor(0, 255, 0, 255)));
-									pathPos = followPath.get(i);
+					if (shouldRetry) {
+						if (!triedOver) {
+							triedOver = true;
+							repathing = exec.submit(() -> {
+								followPath = finder.pathfindOver(start, target);
+								if (followPath != null) {
+									followPath = finder.getPacketVectors(followPath, pos.pos);
 								}
-							}
-						});
+								index = 0;
+								last = null;
+								if (render != null) for (int id : pathIds) {
+									render.removeShape(id);
+								}
+								if (render != null) if (followPath != null && !followPath.isEmpty()) {
+									Vector pathPos = followPath.get(0);
+									for (int i = 1; i < followPath.size(); i++) {
+										pathIds.add(render.addLine(finder.world.id, pathPos, followPath.get(i), IndicatorServer.getColor(0, 255, 0, 255)));
+										pathPos = followPath.get(i);
+									}
+								}
+							});
 
-						return;
-					} else {
-						if (!repathing.isDone()) {
 							return;
+						} else {
+							if (!repathing.isDone()) {
+								return;
+							}
 						}
 					}
 					if (travelFailed != null) travelFailed.tick(e);
@@ -122,15 +127,20 @@ public class PathfindState extends PlayerState {
 					e.pop();
 				}
 				if (index >= followPath.size()) {
+					Vector target = last.copy();
+					// beam paths in the sky end up floating and fly kicked
+					if (target.y > 320) {
+						target.y -= 0.1;
+					}
+					pos.setPosRotation(e.value, target, pos.pitch, pos.yaw);
 					if (travelComplete != null) travelComplete.tick(e);
 					e.pop();
 				}
 				if (render != null && index > 2 && index < pathIds.size()) render.removeShape(pathIds.get(index - 3));
 
 				Vector target = followPath.get(index).copy();
-				if ((index & 0xF) > 1) {
-					target.y += 0.05;
-				}
+				target.y += 0.2 - 0.04 * (index % 5);
+				//				System.out.println(target.y);
 
 				pos.setPosRotation(e.value, target, pos.pitch, pos.yaw);
 				last = pos.pos.copy();
@@ -142,6 +152,11 @@ public class PathfindState extends PlayerState {
 				}
 				PathfindState.this.finished(e.state);
 			});
+
+//			addGameHandler(new PlayPacketHandler(List.of(TeleportRequestPacket.packetId), (p, sc) -> {
+//				TeleportRequestPacket tp = p.convert(new TeleportRequestPacket());
+//				System.out.println("Teleported back to " + tp.x + " " + tp.y + " " + tp.z);
+//			}));
 		}
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import greenscripter.minecraft.ServerConnection;
@@ -26,6 +27,7 @@ import greenscripter.minecraft.play.data.PositionData;
 import greenscripter.minecraft.play.data.RegistryData;
 import greenscripter.minecraft.play.data.WorldData;
 import greenscripter.minecraft.utils.DynamicRegistry.RegistryEntry;
+import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.world.BlockEntity;
 import greenscripter.minecraft.world.Chunk;
@@ -33,7 +35,10 @@ import greenscripter.minecraft.world.ChunkDataDecoder;
 import greenscripter.minecraft.world.World;
 import greenscripter.minecraft.world.Worlds;
 
-public class WorldPlayHandler extends PlayHandler {
+/**
+ * Threaded chunk parser test.
+ */
+public class WorldPlayHandlerParallel extends WorldPlayHandler {
 
 	public Worlds worlds;
 
@@ -51,8 +56,9 @@ public class WorldPlayHandler extends PlayHandler {
 	public List<ChunkUnloadListener> chunkUnloadListeners = new ArrayList<>();
 	public List<BlockChangeListener> blockChangeListeners = new ArrayList<>();
 	public List<Runnable> onTickListeners = new ArrayList<>();
+	public static ExecutorService parsers = Executors.newFixedThreadPool(8);
 
-	public WorldPlayHandler() {
+	public WorldPlayHandlerParallel() {
 		worlds = new Worlds(this);
 	}
 
@@ -127,25 +133,45 @@ public class WorldPlayHandler extends PlayHandler {
 						worldData.world.addChunkLoader(worldData.world.getChunk(x, z), sc);
 					} else {
 						//					System.out.println("Making new Chunk");
-						ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
 						//						System.out.println("Loading chunk " + chunk.chunkX + " " + chunk.chunkZ + "");
-						Chunk c = new Chunk(chunk.chunkX, chunk.chunkZ, worldData.world.min_y, worldData.world.height, worldData.world);
+						Chunk c = new Chunk(x, z, worldData.world.min_y, worldData.world.height, worldData.world);
 
 						worldData.world.addChunkLoader(c, sc);
+						c.inProgress = true;
 
-						ChunkDataDecoder.decode(c, chunk.data);
+						parsers.submit(() -> {
+							if (c.players.isEmpty()) {
+								return;
+							}
+							ChunkDataPacket chunk = p.convert(new ChunkDataPacket());
 
-						for (ChunkDataPacket.BlockEntity e : chunk.blockEntities) {
-							BlockEntity en = new BlockEntity();
-							en.pos = new Position(e.xinchunk + chunk.chunkX * 16, e.y, e.zinchunk + chunk.chunkZ * 16);
-							en.data = e.data;
-							en.type = e.type;
-							c.addBlockEntity(en);
-						}
+							try {
+								ChunkDataDecoder.decode(c, chunk.data);
+								if (c.players.isEmpty()) {
+									return;
+								}
+								synchronized (c.waiting) {
+									for (ChunkDataPacket.BlockEntity e : chunk.blockEntities) {
+										BlockEntity en = new BlockEntity();
+										en.pos = new Position(e.xinchunk + chunk.chunkX * 16, e.y, e.zinchunk + chunk.chunkZ * 16);
+										en.data = e.data;
+										en.type = e.type;
+										c.addBlockEntity(en);
+									}
 
-						for (ChunkFirstLoadListener listener : chunkLoadListeners) {
-							listener.chunkLoaded(sc, c);
-						}
+									for (UnknownPacket up : c.waiting) {
+										handlePacket(up, sc);
+									}
+
+									for (ChunkFirstLoadListener listener : chunkLoadListeners) {
+										listener.chunkLoaded(sc, c);
+									}
+									c.inProgress = false;
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						});
 					}
 				}
 			} else if (p.id == unloadChunkId) {
@@ -167,6 +193,21 @@ public class WorldPlayHandler extends PlayHandler {
 					for (Position pos : explosion.blocks) {
 						//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " minecraft:red_stained_glass"));
 						//					sc.out.writePacket(new ExecuteCommandPacket("setblock " + pos.x + " " + pos.y + " " + pos.z + " " + BlockStates.getState(worldState.world.getBlock(pos.x, pos.y, pos.z)).format()));
+						Chunk c = worldData.world.getBlockChunk(pos.x, pos.z);
+
+						if (c != null && c.inProgress) {
+							synchronized (c.waiting) {
+								if (c.inProgress) {
+									BlockUpdatePacket update = new BlockUpdatePacket(pos, air);
+									ByteArrayOutputStream out = new ByteArrayOutputStream();
+									new MCOutputStream(out).writePacket(update);
+									byte[] bytes = out.toByteArray();
+									UnknownPacket up = new UnknownPacket(update.id(), bytes, 0, bytes.length, false);
+									c.waiting.add(up);
+									continue;
+								}
+							}
+						}
 						if (worldData.world.getBlock(pos.x, pos.y, pos.z) != air) {
 							worldData.world.setBlock(pos.x, pos.y, pos.z, air);
 							for (BlockChangeListener listener : blockChangeListeners) {
@@ -179,6 +220,15 @@ public class WorldPlayHandler extends PlayHandler {
 
 			} else if (p.id == blockUpdateId) {
 				BlockUpdatePacket update = p.convert(new BlockUpdatePacket());
+				Chunk c = worldData.world.getBlockChunk(update.pos.x, update.pos.z);
+				if (c != null && c.inProgress) {
+					synchronized (c.waiting) {
+						if (c.inProgress) {
+							c.waiting.add(p);
+							return;
+						}
+					}
+				}
 				//			sc.out.writePacket(new ExecuteCommandPacket("setblock " + update.pos.x + " " + update.pos.y + " " + update.pos.z + " " + BlockStates.getState(worldState.world.getBlock(update.pos.x, update.pos.y, update.pos.z)).format()));
 				if (worldData.world.getBlock(update.pos.x, update.pos.y, update.pos.z) != update.state) {
 					worldData.world.setBlock(update.pos.x, update.pos.y, update.pos.z, update.state);
@@ -192,6 +242,14 @@ public class WorldPlayHandler extends PlayHandler {
 				SectionUpdatePacket update = p.convert(new SectionUpdatePacket());
 				Chunk chunk = worldData.world.getChunk(update.sectionX, update.sectionZ);
 				if (chunk != null) {
+					if (chunk.inProgress) {
+						synchronized (chunk.waiting) {
+							if (chunk.inProgress) {
+								chunk.waiting.add(p);
+								return;
+							}
+						}
+					}
 					int sectionBlockX = update.sectionX * 16;
 					int sectionBlockY = update.sectionY * 16;
 					int sectionBlockZ = update.sectionZ * 16;
@@ -211,6 +269,15 @@ public class WorldPlayHandler extends PlayHandler {
 				}
 			} else if (p.id == blockEntityDataId) {
 				BlockEntityDataPacket update = p.convert(new BlockEntityDataPacket());
+				Chunk c = worldData.world.getBlockChunk(update.pos.x, update.pos.z);
+				if (c != null && c.inProgress) {
+					synchronized (c.waiting) {
+						if (c.inProgress) {
+							c.waiting.add(p);
+							return;
+						}
+					}
+				}
 				BlockEntity en = new BlockEntity();
 				en.data = update.nbt;
 				en.pos = update.pos;

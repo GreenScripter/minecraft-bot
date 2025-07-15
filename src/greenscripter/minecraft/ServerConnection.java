@@ -99,6 +99,7 @@ public class ServerConnection {
 		channel.connect(new InetSocketAddress(hostname, port));
 		channel.configureBlocking(true);
 		this.socket = channel.socket();//new Socket(hostname, port);
+		socket.setSoTimeout(20000);
 		socket.setReceiveBufferSize(1024 * 1024 * 1);
 		peeker = new PeekInputStream(socket.getInputStream(), channel);
 		in = new MCInputStream(peeker);

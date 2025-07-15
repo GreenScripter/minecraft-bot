@@ -10,6 +10,7 @@ public class WaitForPongState extends WaitForPacketState {
 
 	public WaitForPongState() {
 		this(System.nanoTime());
+		this.timeout = 2000;
 	}
 
 	public WaitForPongState(long ping) {

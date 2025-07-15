@@ -1,11 +1,14 @@
 package greenscripter.minecraft.world;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import greenscripter.minecraft.ServerConnection;
+import greenscripter.minecraft.packet.UnknownPacket;
 import greenscripter.minecraft.utils.Position;
 
 public class Chunk {
@@ -17,6 +20,8 @@ public class Chunk {
 	public World world;
 	public Set<ServerConnection> players = new HashSet<>();
 	public Map<Position, BlockEntity> blockEntities = new HashMap<>();
+	public boolean inProgress;
+	public List<UnknownPacket> waiting = new ArrayList<>();
 
 	public int[][][] blocks;//stored in y,z,x order to match chunk data from the server.
 	public int[][][] biomes;

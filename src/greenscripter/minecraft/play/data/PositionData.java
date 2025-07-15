@@ -67,7 +67,7 @@ public class PositionData implements PlayData {
 	}
 
 	public void setPos(ServerConnection sc, PlayerMovePositionPacket p) {
-		sc.sendPacket(p);
+		sendMove(sc, p);
 		pos.x = p.x;
 		pos.y = p.y;
 		pos.z = p.z;
@@ -75,7 +75,7 @@ public class PositionData implements PlayData {
 	}
 
 	public void setPosRotation(ServerConnection sc, PlayerMovePositionRotationPacket p) {
-		sc.sendPacket(p);
+		sendMove(sc, p);
 		pos.x = p.x;
 		pos.y = p.y;
 		pos.z = p.z;
@@ -85,15 +85,19 @@ public class PositionData implements PlayData {
 	}
 
 	public void setRotation(ServerConnection sc, PlayerMoveRotationPacket p) {
-		sc.sendPacket(p);
+		sendMove(sc, p);
 		pitch = p.pitch;
 		yaw = p.yaw;
 		onGround = p.onGround;
 	}
 
 	public void setOnGround(ServerConnection sc, PlayerMovePacket p) {
-		sc.sendPacket(p);
+		sendMove(sc, p);
 		onGround = p.onGround;
+	}
+
+	protected void sendMove(ServerConnection sc, Packet p) {
+		sc.sendPacket(p);
 	}
 
 	public String toString() {

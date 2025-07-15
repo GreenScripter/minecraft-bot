@@ -94,6 +94,7 @@ public class PeekInputStream extends FilterInputStream {
 				return exists;
 			}
 		}
+		//		System.out.println("Forced into blocking read.");
 		return in.read(b, off + exists, len - exists) + exists;
 	}
 
