@@ -7,9 +7,7 @@ import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
 import greenscripter.minecraft.ServerConnection;
-import greenscripter.minecraft.packet.s2c.play.self.TeleportRequestPacket;
 import greenscripter.minecraft.play.data.PositionData;
-import greenscripter.minecraft.play.handler.PlayPacketHandler;
 import greenscripter.minecraft.utils.Position;
 import greenscripter.minecraft.utils.Vector;
 import greenscripter.minecraft.world.PathFinder;

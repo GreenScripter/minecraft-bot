@@ -1,7 +1,6 @@
 package greenscripter.minecraft.nbt;
 
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
