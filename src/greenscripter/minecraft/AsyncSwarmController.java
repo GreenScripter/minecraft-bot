@@ -247,6 +247,10 @@ public class AsyncSwarmController {
 					ArrayList<ServerConnection> copy = new ArrayList<>(connections);
 
 					for (ServerConnection sc : copy) {
+						if (sc.connectionState == ServerConnection.ConnectionState.DISCONNECTED) {
+							if (!remove.contains(sc)) remove.add(sc);
+							continue;
+						}
 						ticking = sc;
 						try {
 							synchronized (sc) {
@@ -262,7 +266,12 @@ public class AsyncSwarmController {
 
 						} catch (Exception e) {
 							e.printStackTrace();
-							remove.add(sc);
+							if (!remove.contains(sc)) remove.add(sc);
+							var removed = connectionMapping.remove(sc);
+							if (removed != null) {
+								keyMapping.remove(removed);
+								removed.cancel();
+							}
 							sc.connectionState = ServerConnection.ConnectionState.DISCONNECTED;
 							try {
 								sc.channel.close();
@@ -370,7 +379,10 @@ public class AsyncSwarmController {
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
-									remove.add(sc);
+									if (!remove.contains(sc)) remove.add(sc);
+									keyMapping.remove(key);
+									connectionMapping.remove(sc);
+									key.cancel();
 									sc.connectionState = ServerConnection.ConnectionState.DISCONNECTED;
 									try {
 										sc.channel.close();

@@ -125,14 +125,14 @@ public class PeekInputStream extends InputStream {
 			extra = (int) Math.min(storage.remaining(), n);
 			storage.position(storage.position() + extra);
 		}
-		long r = blockingSkip(n - extra);
-		return r + extra;
+		long r = blockingSkip(n - extra) + extra;
+		return r;
 	}
 
 	private long blockingSkip(long n) throws IOException {
 		selector.select();
 		peek();
-		ByteBuffer buf = ByteBuffer.allocate((int) Math.max(n, Integer.MAX_VALUE - 100));
+		ByteBuffer buf = ByteBuffer.allocate((int) Math.min(n, Integer.MAX_VALUE - 100));
 		int skipped = channel.read(buf);
 		return skipped;
 	}
