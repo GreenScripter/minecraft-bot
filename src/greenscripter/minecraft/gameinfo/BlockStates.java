@@ -18,6 +18,7 @@ public class BlockStates {
 
 	public static void main(String[] args) {
 		System.out.println(RegistryTags.blockTags);
+		System.out.println(blockStates.keySet());
 	}
 
 	public static Map<String, Map<String, List<String>>> blockProperties = new HashMap<>();

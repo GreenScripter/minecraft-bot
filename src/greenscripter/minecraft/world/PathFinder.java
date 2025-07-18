@@ -637,6 +637,73 @@ public class PathFinder {
 		return null;
 	}
 
+	public Position findDestinations(Position target, Predicate<Position> p) {
+		Position grounded = findDestinations(target, true, p);
+		if (grounded == null) {
+			return findDestinations(target, false, p);
+		}
+		return grounded;
+	}
+
+	public Position findDestinations(Position target, boolean grounded, Predicate<Position> p) {
+		target = target.copy();
+		if (isPassible(target) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides)) && p.test(target)) {
+			return target;
+		}
+		target.add(0, 1, 0);
+		if (isPassible(target) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides)) && p.test(target)) {
+			return target;
+		}
+		target.add(0, -2, 0);
+		if (isPassible(target) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides)) && p.test(target)) {
+			return target;
+		}
+		target.add(0, -1, 0);
+		if (isPassible(target) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides)) && p.test(target)) {
+			return target;
+		}
+		target.add(0, -1, 0);
+		if (isPassible(target) && (!grounded || !world.isPassible(target.x, target.y - 1, target.z, noCollides)) && p.test(target)) {
+			return target;
+		}
+		target.add(0, 3, 0);
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				for (int k = -1; k <= 1; k++) {
+					Position next = target.copy().add(i, j, k);
+					if (isPassible(next) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides)) && p.test(next)) {
+						return next;
+					}
+				}
+			}
+		}
+		for (int i = -2; i <= 2; i++) {
+			for (int j = -2; j <= 2; j++) {
+				for (int k = -2; k <= 2; k++) {
+					if (i * i + (j + 1.5) * (j + 1.5) + k * k > 25) continue;
+					if (Math.abs(i) <= 1 && Math.abs(j) <= 1 && Math.abs(k) <= 1) continue;
+					Position next = target.copy().add(i, j, k);
+					if (isPassible(next) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides)) && p.test(next)) {
+						return next;
+					}
+				}
+			}
+		}
+		for (int i = -3; i <= 3; i++) {
+			for (int j = -4; j <= 3; j++) {
+				for (int k = -3; k <= 3; k++) {
+					if (i * i + (j + 1.5) * (j + 1.5) + k * k > 25) continue;
+					if (Math.abs(i) <= 2 && Math.abs(j) <= 2 && Math.abs(k) <= 2) continue;
+					Position next = target.copy().add(i, j, k);
+					if (isPassible(next) && (!grounded || !world.isPassible(next.x, next.y - 1, next.z, noCollides)) && p.test(next)) {
+						return next;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	public Position findValidStartNear(Vector start) {
 		Position first = new Position((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
 		//		MoveCheckPlayerEntity move = new MoveCheckPlayerEntity();

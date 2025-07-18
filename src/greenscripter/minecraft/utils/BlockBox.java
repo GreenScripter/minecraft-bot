@@ -33,6 +33,42 @@ public class BlockBox {
 		}
 	}
 
+	public int getMinX() {
+		return pos1.x;
+	}
+
+	public int getMinY() {
+		return pos1.y;
+	}
+
+	public int getMinZ() {
+		return pos1.z;
+	}
+
+	public int getMaxX() {
+		return pos2.x;
+	}
+
+	public int getMaxY() {
+		return pos2.y;
+	}
+
+	public int getMaxZ() {
+		return pos2.z;
+	}
+
+	public int getHeight() {
+		return getMaxY() - getMinY() + 1;
+	}
+
+	public int getWidthX() {
+		return getMaxX() - getMinX() + 1;
+	}
+
+	public int getWidthZ() {
+		return getMaxZ() - getMinZ() + 1;
+	}
+
 	public boolean contains(Position p) {
 		if (p.x >= pos1.x && p.y >= pos1.y && p.z >= pos1.z && p.x <= pos2.x && p.y <= pos2.y && p.z <= pos2.z) {
 			return true;

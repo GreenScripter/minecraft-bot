@@ -365,6 +365,9 @@ public class AsyncSwarmController {
 							selector.select(wait);
 							var keys = selector.selectedKeys();
 							for (var key : keys) {
+								if (System.currentTimeMillis() - start >= 50) {
+									break;
+								}
 								ServerConnection sc = keyMapping.get(key);
 								if (sc == null) continue;
 								ticking = sc;
