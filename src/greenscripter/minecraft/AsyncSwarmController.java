@@ -2,13 +2,18 @@ package greenscripter.minecraft;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
 
 import greenscripter.minecraft.play.handler.PlayHandler;
@@ -190,132 +195,200 @@ public class AsyncSwarmController {
 
 	public void start() {
 		tickThread = new Thread(() -> {
-			long lastLog = System.currentTimeMillis();
-			long max = 0;
-			long min = Integer.MAX_VALUE;
-			int steps = 0;
-			long timeSkipped = 0;
-			long packets = 0;
-			while (true) {
-				long start = System.currentTimeMillis();
-				if (!next.isEmpty()) synchronized (next) {
-					synchronized (connections) {
-						next.removeIf(sc -> {
-							if (sc.owner == null) {
-								sc.owner = Thread.currentThread();
-								if (joinCallback != null) try {
-									joinCallback.accept(sc);
+			try {
+				Selector selector = Selector.open();
+
+				long lastLog = System.currentTimeMillis();
+				long max = 0;
+				long min = Integer.MAX_VALUE;
+				int steps = 0;
+				long timeSkipped = 0;
+				long packets = 0;
+				Map<SelectionKey, ServerConnection> keyMapping = new IdentityHashMap<>();
+				Map<ServerConnection, SelectionKey> connectionMapping = new IdentityHashMap<>();
+				while (true) {
+					long start = System.currentTimeMillis();
+					if (!next.isEmpty()) synchronized (next) {
+						synchronized (connections) {
+							next.removeIf(sc -> {
+								ticking = sc;
+								try {
+									if (sc.owner == null) {
+										sc.owner = Thread.currentThread();
+										if (joinCallback != null) try {
+											joinCallback.accept(sc);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+										try {
+											sc.channel.configureBlocking(false);
+											SelectionKey sk = sc.channel.register(selector, SelectionKey.OP_READ);
+											keyMapping.put(sk, sc);
+											connectionMapping.put(sc, sk);
+										} catch (ClosedChannelException e) {
+											e.printStackTrace();
+										}
+										connections.add(sc);
+										return true;
+									} else {
+										return false;
+									}
 								} catch (Exception e) {
 									e.printStackTrace();
+									return false;
 								}
-								connections.add(sc);
-								return true;
-							} else {
-								return false;
+							});
+							ticking = null;
+							connections.sort(Comparator.comparing(c -> c.id));
+						}
+					}
+					//connections only needs to be synchronized during writes, 
+					//other threads are not allowed to write, only read.
+					ArrayList<ServerConnection> copy = new ArrayList<>(connections);
+
+					for (ServerConnection sc : copy) {
+						ticking = sc;
+						try {
+							synchronized (sc) {
+								sc.step();
+
+								while (!sc.waiting()) {
+									sc.step();
+								}
+
+								sc.tick();
+								sc.out.flush();
+							}
+
+						} catch (Exception e) {
+							e.printStackTrace();
+							remove.add(sc);
+							sc.connectionState = ServerConnection.ConnectionState.DISCONNECTED;
+							try {
+								sc.channel.close();
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+						}
+						packets += (sc.in.packetCounter);
+						sc.in.packetCounter = 0;
+					}
+					ticking = null;
+
+					if (!remove.isEmpty()) synchronized (remove) {
+						synchronized (extract) {
+							remove.removeAll(extract);
+						}
+						remove.forEach(sc -> {
+							sc.owner = null;
+							var removed = connectionMapping.remove(sc);
+							if (removed != null) {
+								keyMapping.remove(removed);
+								removed.cancel();
 							}
 						});
-						connections.sort(Comparator.comparing(c -> c.id));
-					}
-				}
-				//connections only needs to be synchronized during writes, 
-				//other threads are not allowed to write, only read.
-				ArrayList<ServerConnection> copy = new ArrayList<>(connections);
-
-				for (ServerConnection sc : copy) {
-					ticking = sc;
-					try {
-						synchronized (sc) {
-							sc.step();
-
-							while (!sc.waiting()) {
-								sc.step();
-							}
-
-							sc.tick();
-							sc.out.flush();
+						synchronized (connections) {
+							connections.removeAll(remove);
 						}
-
-					} catch (Exception e) {
-						e.printStackTrace();
-						remove.add(sc);
-						sc.connectionState = ServerConnection.ConnectionState.DISCONNECTED;
-						try {
-							sc.channel.close();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-					}
-					packets += (sc.in.packetCounter);
-					sc.in.packetCounter = 0;
-				}
-				ticking = null;
-
-				if (!remove.isEmpty()) synchronized (remove) {
-					synchronized (extract) {
-						remove.removeAll(extract);
-					}
-					remove.forEach(sc -> sc.owner = null);
-					synchronized (connections) {
-						connections.removeAll(remove);
-					}
-					synchronized (dead) {
-						dead.addAll(remove);
-						if (deathCallback != null) {
-							for (ServerConnection sc : remove) {
-								try {
-									deathCallback.accept(sc);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-								for (PlayHandler handler : sc.getPlayHandlers()) {
+						synchronized (dead) {
+							dead.addAll(remove);
+							if (deathCallback != null) {
+								for (ServerConnection sc : remove) {
 									try {
-										handler.handleDisconnect(sc);
+										deathCallback.accept(sc);
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
-								}
+									for (PlayHandler handler : sc.getPlayHandlers()) {
+										try {
+											handler.handleDisconnect(sc);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
 
+								}
 							}
 						}
+
+						remove.clear();
+					}
+					if (!extract.isEmpty()) synchronized (extract) {
+						synchronized (connections) {
+							connections.removeAll(extract);
+						}
+						extract.forEach(sc -> {
+							sc.owner = null;
+							var removed = connectionMapping.remove(sc);
+							if (removed != null) {
+								keyMapping.remove(removed);
+								removed.cancel();
+							}
+						});
+						extract.clear();
 					}
 
-					remove.clear();
-				}
-				if (!extract.isEmpty()) synchronized (extract) {
-					synchronized (connections) {
-						connections.removeAll(extract);
-					}
-					extract.forEach(sc -> sc.owner = null);
-					extract.clear();
-				}
-
-				if (tickCallback != null) try {
-					tickCallback.run();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				long duration = System.currentTimeMillis() - start;
-				max = Math.max(max, duration);
-				min = Math.min(min, duration);
-				steps++;
-				if (System.currentTimeMillis() - lastLog > 1000) {
-					System.out.println("Servicing all clients took " + (duration) + " ms. min " + min + " max " + max + " average " + (System.currentTimeMillis() - lastLog - timeSkipped) / steps + " packets " + packets);
-					packets = 0;
-					lastLog = System.currentTimeMillis();
-					max = 0;
-					min = Integer.MAX_VALUE;
-					steps = 0;
-					timeSkipped = 0;
-				}
-				if (duration < 50) {
-					try {
-						timeSkipped += 50 - duration;
-						Thread.sleep(50 - duration);
-					} catch (InterruptedException e) {
+					if (tickCallback != null) try {
+						tickCallback.run();
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
+
+					long duration = System.currentTimeMillis() - start;
+					max = Math.max(max, duration);
+					min = Math.min(min, duration);
+					steps++;
+					if (System.currentTimeMillis() - lastLog > 1000) {
+						System.out.println("Servicing all clients took " + (duration) + " ms. min " + min + " max " + max + " average " + (System.currentTimeMillis() - lastLog - timeSkipped) / steps + " packets " + packets);
+						packets = 0;
+						lastLog = System.currentTimeMillis();
+						max = 0;
+						min = Integer.MAX_VALUE;
+						steps = 0;
+						timeSkipped = 0;
+					}
+					timeSkipped += 50 - duration;
+
+					while (System.currentTimeMillis() - start < 50) {
+						try {
+							long wait = 50 - (System.currentTimeMillis() - start);
+							if (wait <= 0) break;
+							selector.select(wait);
+							var keys = selector.selectedKeys();
+							for (var key : keys) {
+								ServerConnection sc = keyMapping.get(key);
+								if (sc == null) continue;
+								ticking = sc;
+								try {
+									synchronized (sc) {
+										sc.step();
+
+										while (!sc.waiting()) {
+											sc.step();
+										}
+										sc.out.flush();
+									}
+								} catch (Exception e) {
+									e.printStackTrace();
+									remove.add(sc);
+									sc.connectionState = ServerConnection.ConnectionState.DISCONNECTED;
+									try {
+										sc.channel.close();
+									} catch (IOException e1) {
+										e1.printStackTrace();
+									}
+								}
+								packets += (sc.in.packetCounter);
+								sc.in.packetCounter = 0;
+							}
+							ticking = null;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 		tickThread.setName("AsyncSwarmController-" + id);

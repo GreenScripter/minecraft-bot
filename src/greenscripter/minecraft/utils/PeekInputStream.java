@@ -1,18 +1,22 @@
 package greenscripter.minecraft.utils;
 
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
-public class PeekInputStream extends FilterInputStream {
+public class PeekInputStream extends InputStream {
 
-	public PeekInputStream(InputStream in, SocketChannel channel) {
-		super(in);//in and channel must go to the same place.
+	public PeekInputStream(SocketChannel channel) throws IOException {
 		this.channel = channel;
 		storage.limit(0);
+		selector = Selector.open();
+		channel.register(selector, SelectionKey.OP_READ);
 	}
+
+	Selector selector;
 
 	SocketChannel channel;
 	ByteBuffer storage = ByteBuffer.allocate(3 * 1024 * 1024);
@@ -21,9 +25,7 @@ public class PeekInputStream extends FilterInputStream {
 	public int peek() throws IOException {
 		if (storage.hasRemaining()) return storage.remaining();
 		storage.clear();
-		channel.configureBlocking(false);
 		int read = channel.read(storage);
-		channel.configureBlocking(true);
 		storage.flip();
 		return read;
 	}
@@ -34,7 +36,7 @@ public class PeekInputStream extends FilterInputStream {
 
 		channel.configureBlocking(false);
 		channel.read(temp);
-		channel.configureBlocking(true);
+		//		channel.configureBlocking(true);
 
 		ByteBuffer next = storage;
 		storage = temp;
@@ -78,11 +80,14 @@ public class PeekInputStream extends FilterInputStream {
 		}
 	}
 
+	private byte[] single = new byte[1];
+
 	public int read() throws IOException {
 		if (storage.hasRemaining()) {
 			return storage.get() & 0xFF;
 		}
-		return in.read();
+		blockingRead(single, 0, 1);
+		return single[0];
 	}
 
 	public int read(byte b[], int off, int len) throws IOException {
@@ -95,7 +100,23 @@ public class PeekInputStream extends FilterInputStream {
 			}
 		}
 		//		System.out.println("Forced into blocking read.");
-		return in.read(b, off + exists, len - exists) + exists;
+		return blockingRead(b, off + exists, len - exists) + exists;
+	}
+
+	private int blockingRead(byte b[], int off, int len) throws IOException {
+		int toRead = len;
+		int exists = 0;
+		while (len > 0 && exists == 0) {
+			selector.select();
+			peek();
+			if (storage.hasRemaining()) {
+				exists = Math.min(storage.remaining(), len);
+				storage.get(b, off, exists);
+				off += exists;
+				len -= exists;
+			}
+		}
+		return toRead;
 	}
 
 	public long skip(long n) throws IOException {
@@ -104,15 +125,23 @@ public class PeekInputStream extends FilterInputStream {
 			extra = (int) Math.min(storage.remaining(), n);
 			storage.position(storage.position() + extra);
 		}
-		long r = in.skip(n - extra);
+		long r = blockingSkip(n - extra);
 		return r + extra;
+	}
+
+	private long blockingSkip(long n) throws IOException {
+		selector.select();
+		peek();
+		ByteBuffer buf = ByteBuffer.allocate((int) Math.max(n, Integer.MAX_VALUE - 100));
+		int skipped = channel.read(buf);
+		return skipped;
 	}
 
 	public int available() throws IOException {
 		if (storage.hasRemaining()) {
 			return storage.remaining();
 		}
-		return in.available();
+		return peek();
 	}
 
 	public void close() throws IOException {}

@@ -23,6 +23,10 @@ import greenscripter.minecraft.packet.c2s.configuration.PingReplyConfigPacket;
 import greenscripter.minecraft.packet.c2s.handshake.HandshakePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginAcknowledgePacket;
 import greenscripter.minecraft.packet.c2s.login.LoginStartPacket;
+import greenscripter.minecraft.packet.c2s.play.PlayerMovePacket;
+import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionPacket;
+import greenscripter.minecraft.packet.c2s.play.PlayerMovePositionRotationPacket;
+import greenscripter.minecraft.packet.c2s.play.PlayerMoveRotationPacket;
 import greenscripter.minecraft.packet.s2c.configuration.DisconnectConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.KeepAliveConfigPacket;
 import greenscripter.minecraft.packet.s2c.configuration.PingConfigPacket;
@@ -44,6 +48,7 @@ import greenscripter.minecraft.play.handler.PlayerPlayHandler;
 import greenscripter.minecraft.play.handler.StatisticsHandler;
 import greenscripter.minecraft.play.handler.TeleportRequestPlayHandler;
 import greenscripter.minecraft.play.handler.WorldPlayHandler;
+import greenscripter.minecraft.utils.BlockingNonBlockingOutputStream;
 import greenscripter.minecraft.utils.MCInputStream;
 import greenscripter.minecraft.utils.MCOutputStream;
 import greenscripter.minecraft.utils.PeekInputStream;
@@ -97,13 +102,13 @@ public class ServerConnection {
 		uuid = targetUuid;
 		channel = SocketChannel.open();
 		channel.connect(new InetSocketAddress(hostname, port));
-		channel.configureBlocking(true);
+		channel.configureBlocking(false);
 		this.socket = channel.socket();//new Socket(hostname, port);
 		socket.setSoTimeout(20000);
 		socket.setReceiveBufferSize(1024 * 1024 * 1);
-		peeker = new PeekInputStream(socket.getInputStream(), channel);
+		peeker = new PeekInputStream(channel);
 		in = new MCInputStream(peeker);
-		out = new MCOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+		out = new MCOutputStream(new BufferedOutputStream(new BlockingNonBlockingOutputStream(channel)));
 		connectionState = ConnectionState.HANDSHAKE;
 	}
 
