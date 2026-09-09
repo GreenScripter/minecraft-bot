@@ -1,0 +1,59 @@
+package com.greenscripter.minecraftbot.play.data;
+
+import com.greenscripter.minecraftbot.ServerConnection;
+import com.greenscripter.minecraftbot.packet.c2s.play.InteractEntityPacket;
+import com.greenscripter.minecraftbot.packet.c2s.play.PlayerActionPacket;
+import com.greenscripter.minecraftbot.packet.c2s.play.UseItemOnPacket;
+import com.greenscripter.minecraftbot.packet.c2s.play.UseItemPacket;
+import com.greenscripter.minecraftbot.play.statemachine.BreakBlockState;
+import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.world.World;
+
+public class WorldData implements PlayData {
+
+	public World world;
+
+	public long worldAge = -1;
+	public long timeOfDay = -1;
+
+	public int breakSeq;
+
+	public void useItemOn(ServerConnection sc, int hand, Position pos, int face) {
+		UseItemOnPacket p = new UseItemOnPacket(hand, pos, face, breakSeq++);
+		sc.sendPacket(p);
+	}
+
+	public void useItem(ServerConnection sc, int hand) {
+		sc.sendPacket(new UseItemPacket(hand, breakSeq++));
+	}
+
+	public void attackEntity(ServerConnection sc, int entityId) {
+		sc.sendPacket(new InteractEntityPacket(entityId, InteractEntityPacket.TYPE_ATTACK));
+	}
+
+	public void interactEntity(ServerConnection sc, int entityId) {
+		sc.sendPacket(new InteractEntityPacket(entityId, InteractEntityPacket.TYPE_INTERACT));
+	}
+
+	public void startBreaking(ServerConnection sc, int x, int y, int z) {
+		this.startBreaking(sc, new Position(x, y, z));
+	}
+
+	public void startBreaking(ServerConnection sc, Position pos) {
+		sc.sendPacket(new PlayerActionPacket(PlayerActionPacket.START_MINING, pos, (byte) 1, breakSeq++));
+	}
+
+	public boolean finishBreaking(ServerConnection sc, int x, int y, int z) {
+		return this.finishBreaking(sc, new Position(x, y, z));
+	}
+
+	public boolean finishBreaking(ServerConnection sc, Position pos) {
+		int type = world.getBlock(pos);
+		if (type <= 0 || BreakBlockState.air[type]) {
+			return true;
+		}
+		sc.sendPacket(new PlayerActionPacket(PlayerActionPacket.FINISH_MINING, pos, (byte) 1, breakSeq++));
+		return false;
+	}
+
+}

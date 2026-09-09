@@ -1,0 +1,111 @@
+package com.greenscripter.minecraftbot.play.handler;
+
+import java.util.List;
+
+import java.io.IOException;
+
+import com.greenscripter.minecraftbot.ServerConnection;
+import com.greenscripter.minecraftbot.packet.UnknownPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.inventory.ForceCloseContainerPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.inventory.OpenContainerPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.inventory.SetContainerContentPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.inventory.SetContainerPropertyPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.inventory.SetContainerSlotPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.inventory.SetHeldItemPacket;
+import com.greenscripter.minecraftbot.play.data.InventoryData;
+import com.greenscripter.minecraftbot.play.inventory.OpenedScreen;
+
+public class InventoryPlayHandler extends PlayHandler {
+
+	int setContentId = new SetContainerContentPacket().id();
+	int setPropertyId = new SetContainerPropertyPacket().id();
+	int setSlotId = new SetContainerSlotPacket().id();
+	int closeId = new ForceCloseContainerPacket().id();
+	int openId = new OpenContainerPacket().id();
+	int hotbarSlotId = new SetHeldItemPacket().id();
+
+	public void handlePacket(UnknownPacket up, ServerConnection sc) throws IOException {
+		synchronized (sc) {
+			InventoryData data = sc.getData(InventoryData.class);
+			if (up.id == setContentId) {
+				//			System.out.println("set container");
+				SetContainerContentPacket p = up.convert(new SetContainerContentPacket());
+				OpenedScreen screen = p.windowId == 0 ? data.inv : data.getActiveScreen();
+				if (screen.windowId == p.windowId) {
+					screen.stateId = p.stateId;
+					if (screen.slots == null) {
+						screen.initWithSlotCount(p.slots.length);
+					}
+					for (int i = 0; i < p.slots.length; i++) {
+						screen.slots[i].become(p.slots[i]);
+						//					System.out.println("Replaced slot " + i + " with " + screen.slots[i]);
+					}
+					screen.cursor.become(p.cursor);
+					//				System.out.println("replaced cursor " + p.cursor);
+					//				System.out.println("replace " + p.stateId);
+				}
+			} else if (up.id == setPropertyId) {
+				SetContainerPropertyPacket p = up.convert(new SetContainerPropertyPacket());
+				OpenedScreen screen = p.windowId == 0 ? data.inv : data.getActiveScreen();
+				if (screen.windowId == p.windowId) {
+					screen.properties.put(p.property, p.value);
+				}
+			} else if (up.id == setSlotId) {
+				SetContainerSlotPacket p = up.convert(new SetContainerSlotPacket());
+				OpenedScreen screen = p.windowId == 0 ? data.inv : data.getActiveScreen();
+				if (screen.windowId == p.windowId) {
+					screen.stateId = p.stateId;
+					screen.slots[p.slotId].become(p.data);
+					//				System.out.println("update " + screen.stateId + " " + p.slotId + " " + p.data);
+				} else if (screen.windowId == 0 && data.previous != null && data.previous.slots != null && data.previous.windowId == p.windowId) {
+					int slotCount = data.previous.slots.length;
+					int endDelta = slotCount - p.slotId;
+					int slot = screen.slots.length - endDelta;
+					if (endDelta <= 36) {
+						screen.slots[slot].become(p.data);
+						//					System.out.println("passed along update from " + p.windowId + " to " + screen.stateId + " " + p.slotId + " to " + slot + " " + p.data);
+					}
+				} else if (p.windowId == -1) {
+					//				System.out.println("Legacy cursor set. " + p.data);
+					if (p.data == null) {
+						screen.cursor.setCount(0);
+					} else {
+						screen.cursor.become(p.data);
+					}
+				}
+			} else if (up.id == closeId) {
+				ForceCloseContainerPacket p = up.convert(new ForceCloseContainerPacket());
+				OpenedScreen screen = p.windowId == 0 ? data.inv : data.getActiveScreen();
+				if (screen.windowId == p.windowId) {
+					if (screen.windowId != 0) {
+						if (data.screen != null && data.screen.slots != null) {
+							data.inv.replicateInvFrom(data.screen);
+						}
+						data.previous = data.screen;
+						data.screen = null;
+					}
+				}
+			} else if (up.id == openId) {
+				OpenContainerPacket p = up.convert(new OpenContainerPacket());
+				OpenedScreen screen = p.windowId == 0 ? data.inv : data.getActiveScreen();
+				if (screen.windowId == p.windowId) {
+					screen.title = p.title;
+					screen.windowType = p.windowType;
+				} else {
+					screen = (data.screen = new OpenedScreen());
+					screen.windowId = p.windowId;
+					screen.windowType = p.windowType;
+					screen.title = p.title;
+
+				}
+			} else if (up.id == hotbarSlotId) {
+				SetHeldItemPacket p = up.convert(new SetHeldItemPacket());
+				data.hotbarSlot = p.slot;
+			}
+		}
+	}
+
+	public List<Integer> handlesPackets() {
+		return List.of(setContentId, setPropertyId, setSlotId, closeId, openId, hotbarSlotId);
+	}
+}

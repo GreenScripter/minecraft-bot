@@ -1,0 +1,57 @@
+package com.greenscripter.minecraftbot.packet.c2s.play;
+
+import java.io.IOException;
+
+import com.greenscripter.minecraftbot.gameinfo.PacketIds;
+import com.greenscripter.minecraftbot.packet.Packet;
+import com.greenscripter.minecraftbot.utils.MCInputStream;
+import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.Position;
+
+public class PlayerActionPacket extends Packet {
+
+	public static final int packetId = PacketIds.getC2SPlayId("minecraft:player_action");
+
+	public int status;
+	public Position pos;
+	public byte face;//Direction.DOWN.ordinal()
+	public int sequence;//used for server response
+
+	public PlayerActionPacket() {
+
+	}
+
+	public PlayerActionPacket(int status, Position pos, byte face, int sequence) {
+		this.status = status;
+		this.pos = pos;
+		this.face = face;
+		this.sequence = sequence;
+	}
+
+	public int id() {
+		return packetId;
+	}
+
+	public void toBytes(MCOutputStream out) throws IOException {
+		out.writeVarInt(status);
+		out.writePosition(pos);
+		out.writeByte(face);
+		out.writeVarInt(sequence);
+	}
+
+	public void fromBytes(MCInputStream in) throws IOException {
+		status = in.readVarInt();
+		pos = in.readPosition();
+		face = in.readByte();
+		sequence = in.readVarInt();
+	}
+
+	public static final int START_MINING = 0;
+	public static final int CANCEL_MINING = 1;
+	public static final int FINISH_MINING = 2;
+	public static final int DROP_STACK = 3;
+	public static final int DROP_ITEM = 4;
+	public static final int FINISH_USE = 5;
+	public static final int SWAP_HANDS = 6;
+
+}
