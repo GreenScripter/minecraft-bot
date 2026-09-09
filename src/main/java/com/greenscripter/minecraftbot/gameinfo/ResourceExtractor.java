@@ -21,7 +21,7 @@ public class ResourceExtractor {
 	//java -DbundlerMainClass=net.minecraft.data.Main -jar mojang_1.21.jar --reports --server
 
 	public static void main(String[] args) throws URISyntaxException, IOException {
-		System.out.println(getJSONs("greenscripter/minecraft/resources/data/minecraft/tags/item"));
+		System.out.println(getJSONs("com/greenscripter/minecraftbot/data/minecraft/tags/item"));
 	}
 
 	public static String getJSON(String path) throws URISyntaxException, IOException {

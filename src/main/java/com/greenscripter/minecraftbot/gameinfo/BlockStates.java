@@ -145,11 +145,11 @@ public class BlockStates {
 	static {
 		long start = System.currentTimeMillis();
 		try {
-			String collidesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/collides.json");
+			String collidesString = ResourceExtractor.getJSON("com/greenscripter/minecraftbot/collides.json");
 			Map<String, JsonElement> collides = JsonParser.parseString(collidesString).getAsJsonObject().asMap();
 			Set<Integer> noCollide = new HashSet<>(collides.keySet().stream().map(i -> Integer.parseInt(i)).toList());
 
-			String registriesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/reports/blocks.json");
+			String registriesString = ResourceExtractor.getJSON("com/greenscripter/minecraftbot/reports/blocks.json");
 			Map<String, JsonElement> registries = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
 			for (var e : registries.entrySet()) {
 				String block = e.getKey();

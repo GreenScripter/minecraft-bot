@@ -28,7 +28,7 @@ public class PacketIds {
 	static {
 		long start = System.currentTimeMillis();
 		try {
-			String registriesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/reports/packets.json");
+			String registriesString = ResourceExtractor.getJSON("com/greenscripter/minecraftbot/reports/packets.json");
 			Map<String, JsonElement> registries = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
 			for (var e : registries.entrySet()) {
 				packetIdsClientbound.put(e.getKey(), new HashMap<>());

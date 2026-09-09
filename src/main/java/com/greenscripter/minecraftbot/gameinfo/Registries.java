@@ -45,7 +45,7 @@ public class Registries {
 	static {
 		long start = System.currentTimeMillis();
 		try {
-			String registriesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/reports/registries.json");
+			String registriesString = ResourceExtractor.getJSON("com/greenscripter/minecraftbot/reports/registries.json");
 			Map<String, JsonElement> registries = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
 			for (var e : registries.entrySet()) {
 				registryIds.put(e.getKey(), e.getValue().getAsJsonObject().get("protocol_id").getAsInt());
@@ -72,7 +72,7 @@ public class Registries {
 			safeAttack[Registries.registries.get("minecraft:entity_type").get(kickIfHit[i])] = false;
 		}
 		try {
-			String registriesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/itemInfo.json");
+			String registriesString = ResourceExtractor.getJSON("com/greenscripter/minecraftbot/itemInfo.json");
 			Type collectionType = new TypeToken<HashMap<String, ItemInfo>>() {
 			}.getType();
 			Map<String, ItemInfo> registries = new Gson().fromJson(registriesString, collectionType);

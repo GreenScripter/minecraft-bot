@@ -171,7 +171,7 @@ public class ComponentData {
 
 		start = System.currentTimeMillis();
 		try {
-			String registriesString = ResourceExtractor.getJSON("greenscripter/minecraft/resources/reports/items.json");
+			String registriesString = ResourceExtractor.getJSON("com/greenscripter/minecraftbot/reports/items.json");
 			Map<String, JsonElement> items = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
 			for (var e : items.entrySet()) {
 				Components components = new Components();
