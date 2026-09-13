@@ -1,9 +1,12 @@
 package com.greenscripter;
 
-import junit.framework.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TestTest extends TestCase {
+import org.junit.jupiter.api.Test;
 
+public class TestTest {
+
+	@Test
 	public void testMethod() {
 		assertTrue(true);
 	}
