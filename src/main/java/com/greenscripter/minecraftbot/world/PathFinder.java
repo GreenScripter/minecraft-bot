@@ -12,9 +12,9 @@ import java.util.function.Predicate;
 
 import com.greenscripter.minecraftbot.gameinfo.BlockStates;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionRotationPacket;
-import com.greenscripter.minecraftbot.utils.BlockBox;
-import com.greenscripter.minecraftbot.utils.Position;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.BlockBox;
+import com.greenscripter.minecraftbot.utils.play.Position;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 
 public class PathFinder {
 

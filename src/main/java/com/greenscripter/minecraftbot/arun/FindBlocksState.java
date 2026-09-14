@@ -6,7 +6,7 @@ import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.data.WorldData;
 import com.greenscripter.minecraftbot.play.statemachine.PlayerState;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.play.Position;
 import com.greenscripter.minecraftbot.world.WorldSearch.SearchResult;
 import com.greenscripter.remoteindicators.IndicatorServer;
 import com.greenscripter.statemachine.StateTickPredicate;

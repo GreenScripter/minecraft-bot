@@ -8,9 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.greenscripter.minecraftbot.gameinfo.ComponentData;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
 import com.greenscripter.minecraftbot.utils.Pair;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class Components {
 

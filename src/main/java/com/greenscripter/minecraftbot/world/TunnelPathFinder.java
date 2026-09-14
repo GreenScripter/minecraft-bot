@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.greenscripter.minecraftbot.gameinfo.BlockStates;
 import com.greenscripter.minecraftbot.gameinfo.BlockStates.BlockState;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.play.Position;
 
 public class TunnelPathFinder extends PathFinder {
 

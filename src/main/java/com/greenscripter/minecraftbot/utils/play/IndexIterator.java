@@ -1,4 +1,4 @@
-package com.greenscripter.minecraftbot.utils;
+package com.greenscripter.minecraftbot.utils.play;
 
 import java.util.Iterator;
 import java.util.function.Function;

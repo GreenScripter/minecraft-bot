@@ -14,7 +14,7 @@ import com.greenscripter.minecraftbot.play.handler.PlayHandler;
 import com.greenscripter.minecraftbot.play.handler.PlayerPlayHandler;
 import com.greenscripter.minecraftbot.play.handler.TeleportRequestPlayHandler;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.play.Position;
 
 public class MCTest {
 

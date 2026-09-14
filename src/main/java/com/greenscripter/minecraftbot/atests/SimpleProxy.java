@@ -19,8 +19,8 @@ import com.greenscripter.minecraftbot.packet.s2c.play.DisconnectPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.KeepAlivePacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.SystemChatPacket;
 import com.greenscripter.minecraftbot.packet.s2c.status.StatusResponsePacket;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class SimpleProxy {
 

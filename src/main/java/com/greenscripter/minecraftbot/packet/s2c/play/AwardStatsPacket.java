@@ -10,8 +10,8 @@ import com.greenscripter.minecraftbot.packet.Packet;
 import com.greenscripter.minecraftbot.play.statistics.StatisticsCategory;
 import com.greenscripter.minecraftbot.play.statistics.StatisticsEntry;
 import com.greenscripter.minecraftbot.play.statistics.StatisticsKey;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class AwardStatsPacket extends Packet {
 

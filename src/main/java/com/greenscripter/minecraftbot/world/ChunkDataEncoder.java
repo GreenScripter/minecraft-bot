@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class ChunkDataEncoder {
 

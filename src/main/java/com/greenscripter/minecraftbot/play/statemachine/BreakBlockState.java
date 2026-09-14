@@ -8,8 +8,8 @@ import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.data.WorldData;
 import com.greenscripter.minecraftbot.play.inventory.ItemId;
 import com.greenscripter.minecraftbot.play.inventory.Slot;
-import com.greenscripter.minecraftbot.utils.Position;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Position;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.remoteindicators.IndicatorServer;
 
 public class BreakBlockState extends PlayerState {

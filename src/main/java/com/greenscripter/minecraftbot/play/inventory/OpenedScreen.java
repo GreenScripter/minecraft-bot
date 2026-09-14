@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.greenscripter.minecraftbot.gameinfo.Registries;
 import com.greenscripter.minecraftbot.nbt.NBTComponent;
-import com.greenscripter.minecraftbot.utils.IndexIterator;
+import com.greenscripter.minecraftbot.utils.play.IndexIterator;
 
 public class OpenedScreen {
 

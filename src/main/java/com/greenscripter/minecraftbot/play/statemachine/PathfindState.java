@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.play.data.PositionData;
-import com.greenscripter.minecraftbot.utils.Position;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Position;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.PathFinder;
 import com.greenscripter.remoteindicators.IndicatorServer;
 import com.greenscripter.statemachine.StateTickCallback;

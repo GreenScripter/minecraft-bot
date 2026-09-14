@@ -14,8 +14,8 @@ import com.greenscripter.minecraftbot.play.statemachine.PathfindState;
 import com.greenscripter.minecraftbot.play.statemachine.PlayerState;
 import com.greenscripter.minecraftbot.play.statemachine.TunnelState;
 import com.greenscripter.minecraftbot.play.statemachine.WaitState;
-import com.greenscripter.minecraftbot.utils.Position;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Position;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.WorldSearch.SearchResult;
 
 public class BreakBlocksState extends PlayerState {

@@ -11,8 +11,8 @@ import com.greenscripter.minecraftbot.play.data.PlayData;
 import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.handler.PlayHandler;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler;
-import com.greenscripter.minecraftbot.utils.Position;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Position;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.PathFinder;
 
 public class PointlessPathfindHandler extends PlayHandler {

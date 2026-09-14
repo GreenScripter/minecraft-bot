@@ -1,4 +1,4 @@
-package com.greenscripter.minecraftbot.utils;
+package com.greenscripter.minecraftbot.utils.data;
 
 import java.util.BitSet;
 import java.util.UUID;
@@ -16,6 +16,7 @@ import com.greenscripter.minecraftbot.packet.UnknownPacket;
 import com.greenscripter.minecraftbot.play.inventory.Component;
 import com.greenscripter.minecraftbot.play.inventory.Components;
 import com.greenscripter.minecraftbot.play.inventory.Slot;
+import com.greenscripter.minecraftbot.utils.play.Position;
 
 @SuppressWarnings("resource")
 public class MCInputStream extends DataInputStream {

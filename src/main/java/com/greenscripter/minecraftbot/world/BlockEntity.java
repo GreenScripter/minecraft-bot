@@ -1,7 +1,7 @@
 package com.greenscripter.minecraftbot.world;
 
 import com.greenscripter.minecraftbot.nbt.NBTTagCompound;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.play.Position;
 
 public class BlockEntity {
 

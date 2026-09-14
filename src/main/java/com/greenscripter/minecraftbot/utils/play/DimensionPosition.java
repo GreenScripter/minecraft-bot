@@ -1,4 +1,4 @@
-package com.greenscripter.minecraftbot.utils;
+package com.greenscripter.minecraftbot.utils.play;
 
 public class DimensionPosition extends Position {
 

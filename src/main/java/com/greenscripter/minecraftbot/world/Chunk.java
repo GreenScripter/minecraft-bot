@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.packet.UnknownPacket;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.play.Position;
 
 public class Chunk {
 

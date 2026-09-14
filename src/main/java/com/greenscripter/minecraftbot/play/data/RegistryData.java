@@ -3,7 +3,7 @@ package com.greenscripter.minecraftbot.play.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.greenscripter.minecraftbot.utils.DynamicRegistry;
+import com.greenscripter.minecraftbot.utils.play.DynamicRegistry;
 
 public class RegistryData implements PlayData {
 

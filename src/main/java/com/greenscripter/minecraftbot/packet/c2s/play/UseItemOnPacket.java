@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import com.greenscripter.minecraftbot.gameinfo.PacketIds;
 import com.greenscripter.minecraftbot.packet.Packet;
-import com.greenscripter.minecraftbot.utils.Direction;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.play.Direction;
+import com.greenscripter.minecraftbot.utils.play.Position;
 
 public class UseItemOnPacket extends Packet {
 

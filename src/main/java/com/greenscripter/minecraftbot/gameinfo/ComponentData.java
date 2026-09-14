@@ -79,6 +79,7 @@ import com.greenscripter.minecraftbot.play.inventory.components.WrittenBookConte
 import com.greenscripter.minecraftbot.play.inventory.components.AttributeModifiersComponent.Attribute;
 import com.greenscripter.minecraftbot.play.inventory.components.BlockPredicate.BlockSet;
 import com.greenscripter.minecraftbot.play.inventory.components.FoodComponent.Effect;
+import com.greenscripter.minecraftbot.utils.ResourceExtractor;
 
 public class ComponentData {
 
@@ -171,7 +172,7 @@ public class ComponentData {
 
 		start = System.currentTimeMillis();
 		try {
-			String registriesString = ResourceExtractor.getJSON("com/greenscripter/minecraftbot/reports/items.json");
+			String registriesString = ResourceExtractor.getResourceString("com/greenscripter/minecraftbot/reports/items.json");
 			Map<String, JsonElement> items = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
 			for (var e : items.entrySet()) {
 				Components components = new Components();

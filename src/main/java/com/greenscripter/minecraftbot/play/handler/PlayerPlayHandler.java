@@ -10,7 +10,7 @@ import com.greenscripter.minecraftbot.packet.s2c.play.self.LoginPlayPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.self.SetExperiencePacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.self.SetHealthPacket;
 import com.greenscripter.minecraftbot.play.data.PlayerData;
-import com.greenscripter.minecraftbot.utils.DimensionPosition;
+import com.greenscripter.minecraftbot.utils.play.DimensionPosition;
 
 public class PlayerPlayHandler extends PlayHandler {
 

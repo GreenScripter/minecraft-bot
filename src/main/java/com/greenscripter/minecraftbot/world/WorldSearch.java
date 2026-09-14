@@ -10,9 +10,9 @@ import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler.BlockChangeListener;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler.ChunkFirstLoadListener;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler.ChunkUnloadListener;
-import com.greenscripter.minecraftbot.utils.BlockBox;
-import com.greenscripter.minecraftbot.utils.Position;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.BlockBox;
+import com.greenscripter.minecraftbot.utils.play.Position;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.remoteindicators.IndicatorServer;
 
 public class WorldSearch {

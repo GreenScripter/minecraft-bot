@@ -3,8 +3,8 @@ package com.greenscripter.minecraftbot.play.inventory.components;
 import java.io.IOException;
 
 import com.greenscripter.minecraftbot.nbt.NBTComponent;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class BlockPredicate {
 

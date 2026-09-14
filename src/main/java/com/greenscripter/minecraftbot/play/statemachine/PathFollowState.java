@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.play.data.PositionData;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.remoteindicators.IndicatorServer;
 import com.greenscripter.statemachine.StateTickCallback;
 

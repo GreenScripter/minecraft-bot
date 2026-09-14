@@ -1,7 +1,7 @@
 package com.greenscripter.minecraftbot.play.data;
 
 import com.greenscripter.minecraftbot.ServerConnection;
-import com.greenscripter.minecraftbot.utils.DimensionPosition;
+import com.greenscripter.minecraftbot.utils.play.DimensionPosition;
 
 public class PlayerData implements PlayData {
 

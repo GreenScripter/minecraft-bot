@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import java.io.IOException;
 
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 import com.greenscripter.minecraftbot.world.entity.EntityMetadata;
 
 public class EMOUUID extends EntityMetadata {

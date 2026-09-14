@@ -7,7 +7,7 @@ import java.util.UUID;
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.nbt.NBTComponent;
 import com.greenscripter.minecraftbot.play.inventory.Slot;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.entity.metadata.EMByte;
 import com.greenscripter.minecraftbot.world.entity.metadata.EMOTextComponent;
 import com.greenscripter.minecraftbot.world.entity.metadata.EMVillagerData;

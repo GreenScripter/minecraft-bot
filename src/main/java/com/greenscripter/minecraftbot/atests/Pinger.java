@@ -8,8 +8,8 @@ import com.greenscripter.minecraftbot.packet.c2s.status.PingRequestPacket;
 import com.greenscripter.minecraftbot.packet.c2s.status.StatusRequestPacket;
 import com.greenscripter.minecraftbot.packet.s2c.status.PingResponsePacket;
 import com.greenscripter.minecraftbot.packet.s2c.status.StatusResponsePacket;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class Pinger {
 

@@ -25,7 +25,7 @@ import com.greenscripter.minecraftbot.play.handler.PlayerPlayHandler;
 import com.greenscripter.minecraftbot.play.handler.TeleportRequestPlayHandler;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler;
 import com.greenscripter.minecraftbot.play.statemachine.PlayerMachine;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.PathFinder;
 import com.greenscripter.minecraftbot.world.entity.Entity;
 import com.greenscripter.statemachine.StateMachine;

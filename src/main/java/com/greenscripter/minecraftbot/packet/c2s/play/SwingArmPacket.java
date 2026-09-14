@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import com.greenscripter.minecraftbot.gameinfo.PacketIds;
 import com.greenscripter.minecraftbot.packet.Packet;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class SwingArmPacket extends Packet {
 

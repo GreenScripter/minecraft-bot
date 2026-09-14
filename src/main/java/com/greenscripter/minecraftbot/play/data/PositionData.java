@@ -6,7 +6,7 @@ import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionRotationPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMoveRotationPacket;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 
 public class PositionData implements PlayData {
 

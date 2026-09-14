@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.google.gson.Gson;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public abstract class Component {
 

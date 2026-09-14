@@ -48,10 +48,10 @@ import com.greenscripter.minecraftbot.play.handler.PlayerPlayHandler;
 import com.greenscripter.minecraftbot.play.handler.StatisticsHandler;
 import com.greenscripter.minecraftbot.play.handler.TeleportRequestPlayHandler;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler;
-import com.greenscripter.minecraftbot.utils.BlockingNonBlockingOutputStream;
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
-import com.greenscripter.minecraftbot.utils.PeekInputStream;
+import com.greenscripter.minecraftbot.utils.data.BlockingNonBlockingOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.PeekInputStream;
 
 public class ServerConnection {
 

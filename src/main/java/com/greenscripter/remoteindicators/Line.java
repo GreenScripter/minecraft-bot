@@ -1,6 +1,6 @@
 package com.greenscripter.remoteindicators;
 
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 
 public class Line extends Shape {
 

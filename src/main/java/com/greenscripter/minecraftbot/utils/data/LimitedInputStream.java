@@ -1,4 +1,4 @@
-package com.greenscripter.minecraftbot.utils;
+package com.greenscripter.minecraftbot.utils.data;
 
 import java.io.FilterInputStream;
 import java.io.IOException;

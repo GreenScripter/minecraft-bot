@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.greenscripter.minecraftbot.utils.ResourceExtractor;
 
 public class RegistryTags {
 
@@ -53,7 +54,7 @@ public class RegistryTags {
 	static {
 		long start = System.currentTimeMillis();
 		try {
-			Map<String, String> itemTagJsons = ResourceExtractor.getJSONs("com/greenscripter/minecraftbot/data/minecraft/tags/item");
+			Map<String, String> itemTagJsons = ResourceExtractor.getResourceStrings("com/greenscripter/minecraftbot/data/minecraft/tags/item");
 			for (var e : itemTagJsons.entrySet()) {
 				Set<String> parts = new HashSet<>();
 				JsonElement element = JsonParser.parseString(e.getValue());
@@ -75,7 +76,7 @@ public class RegistryTags {
 		}
 
 		try {
-			Map<String, String> blockTagJsons = ResourceExtractor.getJSONs("com/greenscripter/minecraftbot/data/minecraft/tags/block");
+			Map<String, String> blockTagJsons = ResourceExtractor.getResourceStrings("com/greenscripter/minecraftbot/data/minecraft/tags/block");
 			for (var e : blockTagJsons.entrySet()) {
 				Set<String> parts = new HashSet<>();
 				JsonElement element = JsonParser.parseString(e.getValue());

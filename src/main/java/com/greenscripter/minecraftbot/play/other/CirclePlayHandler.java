@@ -6,7 +6,7 @@ import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionRotationPacket;
 import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.handler.PlayHandler;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 
 public class CirclePlayHandler extends PlayHandler {
 

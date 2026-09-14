@@ -18,8 +18,8 @@ import com.greenscripter.minecraftbot.play.statemachine.PlayerMachine;
 import com.greenscripter.minecraftbot.play.statemachine.PlayerState;
 import com.greenscripter.minecraftbot.play.statemachine.StepsState;
 import com.greenscripter.minecraftbot.play.statemachine.WaitForResponseState;
-import com.greenscripter.minecraftbot.utils.Direction;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.play.Direction;
+import com.greenscripter.minecraftbot.utils.play.Position;
 
 public class GearBotStateMachine extends PlayerMachine {
 

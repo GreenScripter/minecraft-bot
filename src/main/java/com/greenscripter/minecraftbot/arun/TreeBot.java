@@ -13,8 +13,8 @@ import com.greenscripter.minecraftbot.play.data.WorldData;
 import com.greenscripter.minecraftbot.play.handler.PlayHandler;
 import com.greenscripter.minecraftbot.play.handler.PlayTickHandler;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler;
-import com.greenscripter.minecraftbot.utils.BlockBox;
-import com.greenscripter.minecraftbot.utils.Vector;
+import com.greenscripter.minecraftbot.utils.play.BlockBox;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.PathFinder;
 import com.greenscripter.remoteindicators.IndicatorServer;
 

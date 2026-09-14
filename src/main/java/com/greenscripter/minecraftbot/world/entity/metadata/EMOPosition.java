@@ -2,9 +2,9 @@ package com.greenscripter.minecraftbot.world.entity.metadata;
 
 import java.io.IOException;
 
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.play.Position;
 import com.greenscripter.minecraftbot.world.entity.EntityMetadata;
 
 public class EMOPosition extends EntityMetadata {

@@ -5,8 +5,8 @@ import java.util.zip.GZIPInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class NBTParseTest {
 

@@ -1,4 +1,4 @@
-package com.greenscripter.minecraftbot.gameinfo;
+package com.greenscripter.minecraftbot.utils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,15 +21,15 @@ public class ResourceExtractor {
 	//java -DbundlerMainClass=net.minecraft.data.Main -jar mojang_1.21.jar --reports --server
 
 	public static void main(String[] args) throws URISyntaxException, IOException {
-		System.out.println(getJSONs("com/greenscripter/minecraftbot/data/minecraft/tags/item"));
+		System.out.println(getResourceStrings("com/greenscripter/minecraftbot/data/minecraft/tags/item"));
 	}
 
-	public static String getJSON(String path) throws URISyntaxException, IOException {
+	public static String getResourceString(String path) throws URISyntaxException, IOException {
 		InputStream in = ResourceExtractor.class.getClassLoader().getResource(path).openStream();
 		return new String(in.readAllBytes());
 	}
 
-	public static Map<String, String> getJSONs(String path) throws URISyntaxException, IOException {
+	public static Map<String, String> getResourceStrings(String path) throws URISyntaxException, IOException {
 		URI uri = ResourceExtractor.class.getClassLoader().getResource(path).toURI();
 		Path myPath;
 		if (uri.getScheme().equals("jar")) {

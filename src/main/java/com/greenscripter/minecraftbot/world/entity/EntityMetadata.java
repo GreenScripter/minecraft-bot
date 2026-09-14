@@ -6,8 +6,8 @@ import java.util.function.Supplier;
 
 import java.io.IOException;
 
-import com.greenscripter.minecraftbot.utils.MCInputStream;
-import com.greenscripter.minecraftbot.utils.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.MCInputStream;
+import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 import com.greenscripter.minecraftbot.world.entity.metadata.EMArmadilloState;
 import com.greenscripter.minecraftbot.world.entity.metadata.EMBlockState;
 import com.greenscripter.minecraftbot.world.entity.metadata.EMBoolean;

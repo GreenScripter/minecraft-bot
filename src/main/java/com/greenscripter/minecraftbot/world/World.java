@@ -10,7 +10,7 @@ import java.util.Set;
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.gameinfo.BlockStates;
 import com.greenscripter.minecraftbot.gameinfo.BlockStates.BlockState;
-import com.greenscripter.minecraftbot.utils.Position;
+import com.greenscripter.minecraftbot.utils.play.Position;
 import com.greenscripter.minecraftbot.world.entity.Entity;
 
 public class World {
