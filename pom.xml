@@ -50,6 +50,8 @@
 				<version>3.6.0</version>
 				<configuration>
 					<parallel>classes</parallel>
+					<!-- One minecraft server + bot swarm per thread so keep it low. -->
+					<threadCount>4</threadCount>
 				</configuration>
 			</plugin>
 		</plugins>
