@@ -49,9 +49,16 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.6.0</version>
 				<configuration>
-					<parallel>classes</parallel>
 					<!-- One minecraft server + bot swarm per thread so keep it low. -->
-					<threadCount>4</threadCount>
+					<properties>
+						<configurationParameters>
+							junit.jupiter.execution.parallel.enabled=true
+							junit.jupiter.execution.parallel.mode.default=same_thread
+							junit.jupiter.execution.parallel.mode.classes.default=concurrent
+							junit.jupiter.execution.parallel.config.strategy=dynamic
+							junit.jupiter.execution.parallel.config.dynamic.factor=0.25
+						</configurationParameters>
+					</properties>
 				</configuration>
 			</plugin>
 		</plugins>
