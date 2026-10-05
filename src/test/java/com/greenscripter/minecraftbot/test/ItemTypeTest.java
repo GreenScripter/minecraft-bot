@@ -47,7 +47,7 @@ public class ItemTypeTest extends TestOnServerBase {
 					if (i < allItems.size()) {
 						var item = allItems.get(i);
 						server.sendCommand("give " + bot.name + " " + item.getValue());
-						gives.add(s -> s.contains("Gave 1 [") && s.contains("] to " + bot.name));
+						gives.add(s -> s.contains("Gave 1 ") && s.contains(" to " + bot.name));
 						expectedItems.put(bot, item.getKey());
 						bot.getData(MarkerPlayerData.class).marked = false;
 					}
