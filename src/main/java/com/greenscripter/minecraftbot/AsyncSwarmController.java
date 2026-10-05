@@ -21,7 +21,7 @@ import com.greenscripter.minecraftbot.play.handler.PlayHandler;
 public class AsyncSwarmController {
 
 	private static int nextID = 0;
-	private static int nextBotID = 0;
+	private int nextBotID = 0;
 
 	public int id = nextID++;
 	public boolean bungeeMode = false;
@@ -207,6 +207,9 @@ public class AsyncSwarmController {
 				Map<SelectionKey, ServerConnection> keyMapping = new IdentityHashMap<>();
 				Map<ServerConnection, SelectionKey> connectionMapping = new IdentityHashMap<>();
 				while (true) {
+					if (tickThread.isInterrupted()) {
+						return;
+					}
 					long start = System.currentTimeMillis();
 					if (!next.isEmpty()) synchronized (next) {
 						synchronized (connections) {
@@ -248,7 +251,9 @@ public class AsyncSwarmController {
 
 					for (ServerConnection sc : copy) {
 						if (sc.connectionState == ServerConnection.ConnectionState.DISCONNECTED) {
-							if (!remove.contains(sc)) remove.add(sc);
+							synchronized (remove) {
+								if (!remove.contains(sc)) remove.add(sc);
+							}
 							continue;
 						}
 						ticking = sc;
@@ -266,7 +271,9 @@ public class AsyncSwarmController {
 
 						} catch (Exception e) {
 							e.printStackTrace();
-							if (!remove.contains(sc)) remove.add(sc);
+							synchronized (remove) {
+								if (!remove.contains(sc)) remove.add(sc);
+							}
 							var removed = connectionMapping.remove(sc);
 							if (removed != null) {
 								keyMapping.remove(removed);
@@ -408,6 +415,19 @@ public class AsyncSwarmController {
 		});
 		tickThread.setName("AsyncSwarmController-" + id);
 		tickThread.start();
+	}
+
+	public void shutdown() {
+		synchronized (connections) {
+			tickThread.interrupt();
+			for (var connection : connections) {
+				try {
+					connection.channel.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

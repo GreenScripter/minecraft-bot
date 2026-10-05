@@ -1,6 +1,8 @@
 package com.greenscripter.minecraftbot.test.utils;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +36,7 @@ public class Server implements Closeable {
 	InputStream err;
 	OutputStream out;
 
-	List<String> serverOutput = new ArrayList<>();
-	List<String> serverError = new ArrayList<>();
+	Deque<String> serverOutput = new ArrayDeque<>();
 	boolean collectOutput = false;
 
 	Map<Consumer<String>, Void> messageHandlers = new IdentityHashMap<Consumer<String>, Void>();
@@ -59,18 +60,6 @@ public class Server implements Closeable {
 		return port;
 	}
 
-	public List<String> getOutput() {
-		return serverOutput;
-	}
-
-	public List<String> getError() {
-		return serverError;
-	}
-
-	public void collectOutput() {
-		collectOutput = true;
-	}
-
 	public Consumer<String> messageHandler(Consumer<String> handler) {
 		messageHandlers.put(handler, null);
 		return handler;
@@ -81,18 +70,19 @@ public class Server implements Closeable {
 	}
 
 	public Function<String, Boolean> tempMessageHandler(Function<String, Boolean> handler) {
-		tempMessageHandlers.put(handler, null);
+		synchronized (tempMessageHandlers) {
+			tempMessageHandlers.put(handler, null);
+		}
 		return handler;
 	}
 
 	public void removeTempMessageHandler(Function<String, Boolean> handler) {
-		tempMessageHandlers.remove(handler);
+		synchronized (tempMessageHandlers) {
+			tempMessageHandlers.remove(handler);
+		}
 	}
 
 	private void handleOutput(String s) {
-		if (collectOutput) {
-			serverOutput.add(s);
-		}
 		if (!fullyStarted.sent()) {
 			if (s.matches(".*Done \\([0-9.]*s\\)! For help, type \"help\".*")) {
 				fullyStarted.send();
@@ -107,26 +97,29 @@ public class Server implements Closeable {
 				}
 			}
 		}
-		List<Function<String, Boolean>> toRemove = new ArrayList<>();
-		for (Function<String, Boolean> messageHandler : tempMessageHandlers.keySet()) {
-			if (messageHandler != null) {
-				try {
-					if (messageHandler.apply(s)) {
-						toRemove.add(messageHandler);
+		synchronized (tempMessageHandlers) {
+			List<Function<String, Boolean>> toRemove = new ArrayList<>();
+			for (Function<String, Boolean> messageHandler : tempMessageHandlers.keySet()) {
+				if (messageHandler != null) {
+					try {
+						if (messageHandler.apply(s)) {
+							toRemove.add(messageHandler);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
+			if (tempMessageHandlers.isEmpty()) {
+				synchronized (serverOutput) {
+					serverOutput.add(s);
+				}
+			}
+			toRemove.forEach(tempMessageHandlers::remove);
 		}
-		toRemove.forEach(tempMessageHandlers::remove);
 	}
 
-	private void handleError(String s) {
-		if (collectOutput) {
-			serverError.add(s);
-		}
-	}
+	private void handleError(String s) {}
 
 	public void sendCommand(String s) throws IOException {
 		out.write(s.getBytes());
@@ -191,6 +184,33 @@ public class Server implements Closeable {
 		waitForOutputMatches(wait, s -> s.matches(match));
 	}
 
+	public void waitForOutputContains(int wait, List<String> match) throws InterruptedException {
+		waitForOutputMatchesAll(wait, match.stream().map(s -> (Predicate<String>) c -> c.contains(s)).toList());
+	}
+
+	public void waitForOutputMatches(int wait, List<String> match) throws InterruptedException {
+		waitForOutputMatchesAll(wait, match.stream().map(s -> (Predicate<String>) c -> c.matches(s)).toList());
+	}
+
+	public void waitForOutputMatchesAll(int wait, List<Predicate<String>> match) throws InterruptedException {
+		boolean[] met = new boolean[match.size()];
+		waitForOutputMatches(wait, s -> {
+			boolean anyNotMet = false;
+			for (int i = 0; i < match.size(); i++) {
+				if (met[i]) continue;
+				if (match.get(i).test(s)) {
+					met[i] = true;
+				} else {
+					anyNotMet = true;
+				}
+			}
+			if (anyNotMet) {
+				return false;
+			}
+			return true;
+		});
+	}
+
 	public void waitForOutputMatches(int wait, Predicate<String> match) throws InterruptedException {
 		var result = new Signal<>();
 		var handler = this.tempMessageHandler(s -> {
@@ -200,6 +220,12 @@ public class Server implements Closeable {
 			}
 			return false;
 		});
+		while (!serverOutput.isEmpty()) {
+			var line = serverOutput.removeFirst();
+			if (match.test(line)) {
+				return;
+			}
+		}
 		try {
 			result.waitFor(wait);
 			if (!result.sent()) {

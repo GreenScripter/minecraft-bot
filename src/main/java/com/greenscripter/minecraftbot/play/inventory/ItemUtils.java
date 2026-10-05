@@ -131,7 +131,7 @@ public class ItemUtils {
 		int count = 0;
 		while (slots.hasNext()) {
 			Slot slot = slots.next();
-			if (slot.present && slot.itemId == type) count++;
+			if (slot.present && slot.itemId == type || !slot.present && type == 0) count++;
 		}
 		return count;
 	}
