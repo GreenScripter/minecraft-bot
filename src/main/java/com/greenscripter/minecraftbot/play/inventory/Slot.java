@@ -11,6 +11,16 @@ public class Slot {
 	public int itemCount;
 	private Components components = new Components();
 
+	public Slot() {}
+
+	public Slot(int itemId, int count) {
+		if (itemId != 0) {
+			this.itemId = itemId;
+			present = true;
+			setCount(count);
+		}
+	}
+
 	public String toString() {
 		return "Slot [present=" + present + ", itemId=" + itemId + (present ? " " + getItemId() : "") + ", itemCount=" + itemCount + ", components=" + getComponents() + "]";
 	}

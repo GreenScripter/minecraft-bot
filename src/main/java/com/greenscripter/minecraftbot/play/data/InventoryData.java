@@ -9,6 +9,7 @@ import com.greenscripter.minecraftbot.packet.c2s.play.inventory.ClickContainerBu
 import com.greenscripter.minecraftbot.packet.c2s.play.inventory.ClickContainerPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.inventory.CloseContainerPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.inventory.HotbarSlotPacket;
+import com.greenscripter.minecraftbot.packet.c2s.play.inventory.SetCreativeSlotPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.inventory.ClickContainerPacket.SlotChange;
 import com.greenscripter.minecraftbot.play.inventory.ItemUtils;
 import com.greenscripter.minecraftbot.play.inventory.OpenedScreen;
@@ -498,5 +499,31 @@ public class InventoryData implements PlayData {
 				leftClickSlot(targets.get(0));
 			}
 		}
+	}
+
+	public void creativeSetSlot(Slot s) {
+		OpenedScreen screen = getInventoryScreen();
+		if (inv.slotIds.get(s) == null) {
+			System.err.println(s + " is not part of the player screen " + screen.windowId);
+			return;
+		}
+		SetCreativeSlotPacket set = new SetCreativeSlotPacket(inv.slotIds.get(s), s);
+		sc.sendPacket(set);
+	}
+
+	public void creativeSetSlot(Slot s, Slot other) {
+		OpenedScreen screen = getInventoryScreen();
+		if (inv.slotIds.get(s) == null) {
+			System.err.println(s + " is not part of the player screen " + screen.windowId);
+			return;
+		}
+		s.become(other);
+		SetCreativeSlotPacket set = new SetCreativeSlotPacket(inv.slotIds.get(s), s);
+		sc.sendPacket(set);
+	}
+
+	public void creativeDropItem(Slot s) {
+		SetCreativeSlotPacket set = new SetCreativeSlotPacket(-1, s);
+		sc.sendPacket(set);
 	}
 }

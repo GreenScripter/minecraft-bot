@@ -14,10 +14,12 @@ import org.junit.jupiter.api.Test;
 import com.greenscripter.minecraftbot.AsyncSwarmController;
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.packet.s2c.play.DisguisedChatPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.inventory.SetContainerContentPacket;
 import com.greenscripter.minecraftbot.play.data.InventoryData;
 import com.greenscripter.minecraftbot.play.handler.PlayPacketHandler;
 import com.greenscripter.minecraftbot.play.inventory.ItemId;
 import com.greenscripter.minecraftbot.play.inventory.ItemUtils;
+import com.greenscripter.minecraftbot.play.inventory.Slot;
 import com.greenscripter.minecraftbot.test.utils.MarkerPlayerData;
 import com.greenscripter.minecraftbot.test.utils.TestOnServerBase;
 
@@ -66,6 +68,65 @@ public class ItemTypeTest extends TestOnServerBase {
 				}
 
 				server.sendCommand("clear @a");
+			}
+		} finally {
+			controller.shutdown();
+		}
+	}
+
+	@Test
+	public void spawnAllTest() throws Exception {
+		var controller = new AsyncSwarmController(this.server.getHost(), this.server.getPort(), ServerConnection.getStandardHandlers());
+		try {
+			controller.start();
+			controller.botNames = i -> "botc" + i;
+			controller.joinCallback = bot -> {
+				bot.setData(MarkerPlayerData.class, new MarkerPlayerData());
+				bot.addPlayHandler(new PlayPacketHandler(List.of(SetContainerContentPacket.packetId), (up, sc) -> {
+					bot.getData(MarkerPlayerData.class).marked = true;
+				}));
+			};
+			controller.connect(100, 0);
+
+			waitFor(5000, () -> controller.getAlive().size() == 100);
+			server.waitForOutputContains(5000, IntStream.range(0, 100).mapToObj(i -> "botc" + i + " joined the game").toList());
+			server.sendCommand("gamemode creative @a");
+			server.waitForOutputContains(1000, "game mode to Creative Mode");
+
+			var bots = controller.getAlive();
+			var allItems = new ArrayList<>(ItemId.itemRegistry.entrySet());
+			for (int i = 0; i < allItems.size();) {
+				Map<ServerConnection, Integer> expectedItems = new HashMap<>();
+				for (var bot : bots) {
+					if (i < allItems.size()) {
+						var item = allItems.get(i);
+						var inv = bot.getData(InventoryData.class);
+
+						inv.creativeSetSlot(inv.getInventoryScreen().getHotbarSlot(5), new Slot(item.getKey(), 1));
+						inv.rerequestInventory();
+						expectedItems.put(bot, item.getKey());
+						bot.getData(MarkerPlayerData.class).marked = false;
+					}
+					i++;
+				}
+
+				for (var expect : expectedItems.entrySet()) {
+					waitFor(1000, () -> expect.getKey().getData(MarkerPlayerData.class).marked);
+					var inv = expect.getKey().getData(InventoryData.class);
+					if (expect.getValue() == 0) {
+						assertEquals(inv.inv.slots.length, ItemUtils.countEmptySlots(inv.inv.getIterator()), ItemId.get(expect.getValue()));
+					} else {
+						try {
+							assertEquals(1, ItemUtils.countSlotsWithItem(expect.getValue(), inv.inv.getIterator()), ItemId.get(expect.getValue()));
+						} catch (Throwable t) {
+							System.out.println(inv.inv);
+							throw t;
+						}
+					}
+				}
+
+				server.sendCommand("clear @a");
+				server.waitForOutputContains(1000, "Removed");
 			}
 		} finally {
 			controller.shutdown();
