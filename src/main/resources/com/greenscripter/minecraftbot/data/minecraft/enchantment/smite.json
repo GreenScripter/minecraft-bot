@@ -15,10 +15,10 @@
           }
         },
         "requirements": {
-          "condition": "minecraft:entity_properties",
+          "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "type": "#minecraft:sensitive_to_smite"
+            "minecraft:entity_type": "#minecraft:sensitive_to_smite"
           }
         }
       }
@@ -34,7 +34,7 @@
     "base": 5,
     "per_level_above_first": 8
   },
-  "primary_items": "#minecraft:enchantable/sword",
+  "primary_items": "#minecraft:enchantable/melee_weapon",
   "slots": [
     "mainhand"
   ],

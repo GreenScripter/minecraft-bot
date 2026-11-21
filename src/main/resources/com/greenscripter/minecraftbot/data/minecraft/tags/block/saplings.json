@@ -6,9 +6,11 @@
     "minecraft:jungle_sapling",
     "minecraft:acacia_sapling",
     "minecraft:dark_oak_sapling",
+    "minecraft:pale_oak_sapling",
     "minecraft:azalea",
     "minecraft:flowering_azalea",
     "minecraft:mangrove_propagule",
-    "minecraft:cherry_sapling"
+    "minecraft:cherry_sapling",
+    "minecraft:poplar_sapling"
   ]
 }

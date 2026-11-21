@@ -1,13 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "#": {
-      "item": "minecraft:chest"
-    },
-    "-": {
-      "item": "minecraft:shulker_shell"
-    }
+    "#": "minecraft:chest",
+    "-": "minecraft:shulker_shell"
   },
   "pattern": [
     "-",
@@ -15,7 +10,6 @@
     "-"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:shulker_box"
   }
 }

@@ -1,11 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "group": "carpet",
+  "group": "woolen_carpet",
   "key": {
-    "#": {
-      "item": "minecraft:red_wool"
-    }
+    "#": "minecraft:red_wool"
   },
   "pattern": [
     "##"

@@ -7,9 +7,11 @@
     "minecraft:cherry_wall_hanging_sign",
     "minecraft:jungle_wall_hanging_sign",
     "minecraft:dark_oak_wall_hanging_sign",
+    "minecraft:pale_oak_wall_hanging_sign",
     "minecraft:crimson_wall_hanging_sign",
     "minecraft:warped_wall_hanging_sign",
     "minecraft:mangrove_wall_hanging_sign",
-    "minecraft:bamboo_wall_hanging_sign"
+    "minecraft:bamboo_wall_hanging_sign",
+    "minecraft:poplar_wall_hanging_sign"
   ]
 }

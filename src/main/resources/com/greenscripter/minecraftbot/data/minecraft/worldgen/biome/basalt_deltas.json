@@ -1,36 +1,77 @@
 {
-  "carvers": {
-    "air": "minecraft:nether_cave"
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "additions": {
+        "sound": "minecraft:ambient.basalt_deltas.additions",
+        "tick_chance": 0.0111
+      },
+      "loop": "minecraft:ambient.basalt_deltas.loop",
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "minecraft:ambient.basalt_deltas.mood",
+        "tick_delay": 6000
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "sound": "minecraft:music.nether.basalt_deltas"
+      }
+    },
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "minecraft:strider",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 60
+            }
+          ],
+          "monster": [
+            {
+              "type": "minecraft:ghast",
+              "count": 1,
+              "weight": 40
+            },
+            {
+              "type": "minecraft:magma_cube",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 5,
+                "min_inclusive": 2
+              },
+              "weight": 100
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/ambient_particles": {
+      "argument": [
+        {
+          "particle": {
+            "type": "minecraft:white_ash"
+          },
+          "probability": 0.118093334
+        }
+      ],
+      "modifier": "append"
+    },
+    "minecraft:visual/fog_color": "#685f70"
   },
+  "carvers": "minecraft:nether_cave",
   "downfall": 0.0,
   "effects": {
-    "additions_sound": {
-      "sound": "minecraft:ambient.basalt_deltas.additions",
-      "tick_chance": 0.0111
-    },
-    "ambient_sound": "minecraft:ambient.basalt_deltas.loop",
-    "fog_color": 6840176,
-    "mood_sound": {
-      "block_search_extent": 8,
-      "offset": 2.0,
-      "sound": "minecraft:ambient.basalt_deltas.mood",
-      "tick_delay": 6000
-    },
-    "music": {
-      "max_delay": 24000,
-      "min_delay": 12000,
-      "replace_current_music": false,
-      "sound": "minecraft:music.nether.basalt_deltas"
-    },
-    "particle": {
-      "options": {
-        "type": "minecraft:white_ash"
-      },
-      "probability": 0.118093334
-    },
-    "sky_color": 7254527,
-    "water_color": 4159204,
-    "water_fog_color": 329011
+    "water_color": "#3f76e4"
   },
   "features": [
     [],
@@ -63,36 +104,5 @@
     ]
   ],
   "has_precipitation": false,
-  "spawn_costs": {},
-  "spawners": {
-    "ambient": [],
-    "axolotls": [],
-    "creature": [
-      {
-        "type": "minecraft:strider",
-        "maxCount": 2,
-        "minCount": 1,
-        "weight": 60
-      }
-    ],
-    "misc": [],
-    "monster": [
-      {
-        "type": "minecraft:ghast",
-        "maxCount": 1,
-        "minCount": 1,
-        "weight": 40
-      },
-      {
-        "type": "minecraft:magma_cube",
-        "maxCount": 5,
-        "minCount": 2,
-        "weight": 100
-      }
-    ],
-    "underground_water_creature": [],
-    "water_ambient": [],
-    "water_creature": []
-  },
   "temperature": 2.0
 }

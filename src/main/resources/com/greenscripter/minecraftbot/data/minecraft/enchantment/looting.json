@@ -16,10 +16,10 @@
         },
         "enchanted": "attacker",
         "requirements": {
-          "condition": "minecraft:entity_properties",
+          "type": "minecraft:entity_properties",
           "entity": "attacker",
           "predicate": {
-            "type": "minecraft:player"
+            "minecraft:entity_type": "minecraft:player"
           }
         }
       }
@@ -37,6 +37,6 @@
   "slots": [
     "mainhand"
   ],
-  "supported_items": "#minecraft:enchantable/sword",
+  "supported_items": "#minecraft:enchantable/melee_weapon",
   "weight": 2
 }

@@ -2,16 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:sand"
-    }
+    "#": "minecraft:sand"
   },
   "pattern": [
     "##",
     "##"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:sandstone"
   }
 }

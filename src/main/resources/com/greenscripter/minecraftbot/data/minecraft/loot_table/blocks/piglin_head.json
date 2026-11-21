@@ -2,14 +2,20 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "include": [
+              "minecraft:custom_name"
+            ],
+            "source": "block_entity"
+          },
           "name": "minecraft:piglin_head"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "minecraft:blocks/piglin_head"

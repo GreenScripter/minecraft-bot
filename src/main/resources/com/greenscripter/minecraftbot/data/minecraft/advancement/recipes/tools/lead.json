@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_slime_ball": {
+    "has_string": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:slime_ball"
+            "items": "minecraft:string"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:lead"
+        "recipes": "minecraft:lead"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_slime_ball"
+      "has_string"
     ]
   ],
   "rewards": {

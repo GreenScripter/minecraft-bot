@@ -2,36 +2,17 @@
   "type": "minecraft:crafting_shapeless",
   "category": "building",
   "ingredients": [
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    },
-    {
-      "item": "minecraft:ice"
-    }
+    "minecraft:ice",
+    "minecraft:ice",
+    "minecraft:ice",
+    "minecraft:ice",
+    "minecraft:ice",
+    "minecraft:ice",
+    "minecraft:ice",
+    "minecraft:ice",
+    "minecraft:ice"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:packed_ice"
   }
 }

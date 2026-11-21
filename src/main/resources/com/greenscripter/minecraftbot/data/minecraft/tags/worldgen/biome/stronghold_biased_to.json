@@ -9,6 +9,7 @@
     "minecraft:flower_forest",
     "minecraft:birch_forest",
     "minecraft:dark_forest",
+    "minecraft:pale_garden",
     "minecraft:old_growth_birch_forest",
     "minecraft:old_growth_pine_taiga",
     "minecraft:old_growth_spruce_taiga",
@@ -27,6 +28,7 @@
     "minecraft:eroded_badlands",
     "minecraft:wooded_badlands",
     "minecraft:meadow",
+    "minecraft:cherry_grove",
     "minecraft:grove",
     "minecraft:snowy_slopes",
     "minecraft:frozen_peaks",
@@ -34,6 +36,7 @@
     "minecraft:stony_peaks",
     "minecraft:mushroom_fields",
     "minecraft:dripstone_caves",
-    "minecraft:lush_caves"
+    "minecraft:lush_caves",
+    "minecraft:sulfur_caves"
   ]
 }

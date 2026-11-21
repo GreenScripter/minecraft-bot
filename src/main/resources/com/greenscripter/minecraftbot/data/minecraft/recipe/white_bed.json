@@ -1,21 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "bed",
   "key": {
-    "#": {
-      "item": "minecraft:white_wool"
-    },
-    "X": {
-      "tag": "minecraft:planks"
-    }
+    "#": "minecraft:white_wool",
+    "X": "#minecraft:planks"
   },
   "pattern": [
     "###",
     "XXX"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:white_bed"
   }
 }

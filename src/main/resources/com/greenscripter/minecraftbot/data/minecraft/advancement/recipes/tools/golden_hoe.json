@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "minecraft:gold_ingot"
+            "items": "#minecraft:gold_tool_materials"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:golden_hoe"
+        "recipes": "minecraft:golden_hoe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

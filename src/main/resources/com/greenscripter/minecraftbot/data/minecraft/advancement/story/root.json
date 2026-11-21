@@ -13,12 +13,11 @@
   },
   "display": {
     "announce_to_chat": false,
-    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "background": "minecraft:gui/advancements/backgrounds/stone",
     "description": {
       "translate": "advancements.story.root.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:grass_block"
     },
     "show_toast": false,

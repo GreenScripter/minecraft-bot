@@ -1,11 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "sticks",
   "key": {
-    "#": {
-      "tag": "minecraft:planks"
-    }
+    "#": "#minecraft:planks"
   },
   "pattern": [
     "#",

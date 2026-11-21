@@ -2,7 +2,6 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -11,95 +10,80 @@
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 1.0,
-        "min": 0.0
+        "max": 1,
+        "min": 0
       }
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 5.0,
-                "min": 3.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 5,
+              "min": 3
             }
-          ],
+          },
           "name": "minecraft:wheat",
           "weight": 7
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 5.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 5,
+              "min": 2
             }
-          ],
+          },
           "name": "minecraft:potato",
           "weight": 5
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 5.0,
-                "min": 3.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 5,
+              "min": 3
             }
-          ],
+          },
           "name": "minecraft:carrot",
           "weight": 5
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 3.0,
-        "min": 2.0
+        "max": 3,
+        "min": 2
       }
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 3,
+              "min": 2
             }
-          ],
+          },
           "name": "minecraft:dark_oak_log"
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 3.0,
-        "min": 1.0
+        "max": 3,
+        "min": 1
       }
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -108,107 +92,89 @@
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 6.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 6,
+              "min": 1
             }
-          ],
+          },
           "name": "minecraft:string",
           "weight": 4
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 7.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 7,
+              "min": 2
             }
-          ],
+          },
           "name": "minecraft:arrow",
           "weight": 4
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 3,
+              "min": 1
             }
-          ],
+          },
           "name": "minecraft:tripwire_hook",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 3,
+              "min": 1
             }
-          ],
+          },
           "name": "minecraft:iron_ingot",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly",
-              "options": "#minecraft:on_random_loot"
-            }
-          ],
+          "modifier": {
+            "type": "minecraft:enchant_randomly",
+            "options": "#minecraft:on_random_loot"
+          },
           "name": "minecraft:book"
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 3.0,
-        "min": 2.0
+        "max": 3,
+        "min": 2
       }
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
           "name": "minecraft:goat_horn"
         }
       ],
-      "functions": [
-        {
-          "function": "minecraft:set_instrument",
-          "options": "#minecraft:regular_goat_horns"
-        }
-      ],
+      "modifier": {
+        "type": "minecraft:set_instrument",
+        "options": "#minecraft:regular_goat_horns"
+      },
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 1.0,
-        "min": 0.0
+        "max": 1,
+        "min": 0
       }
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:empty",
@@ -216,37 +182,31 @@
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": 2.0,
-              "function": "minecraft:set_count"
-            }
-          ],
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 2
+          },
           "name": "minecraft:sentry_armor_trim_smithing_template"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:empty"
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly",
-              "options": "minecraft:quick_charge"
-            }
-          ],
+          "modifier": {
+            "type": "minecraft:enchant_randomly",
+            "options": "minecraft:quick_charge"
+          },
           "name": "minecraft:book",
           "weight": 2
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "minecraft:chests/pillager_outpost"

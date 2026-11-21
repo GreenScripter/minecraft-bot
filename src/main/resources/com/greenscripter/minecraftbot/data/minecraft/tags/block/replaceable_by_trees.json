@@ -1,6 +1,8 @@
 {
   "values": [
     "#minecraft:leaves",
+    "#minecraft:small_flowers",
+    "minecraft:pale_moss_carpet",
     "minecraft:short_grass",
     "minecraft:fern",
     "minecraft:dead_bush",
@@ -17,8 +19,14 @@
     "minecraft:water",
     "minecraft:seagrass",
     "minecraft:tall_seagrass",
+    "minecraft:bush",
+    "minecraft:firefly_bush",
     "minecraft:warped_roots",
     "minecraft:nether_sprouts",
-    "minecraft:crimson_roots"
+    "minecraft:crimson_roots",
+    "minecraft:leaf_litter",
+    "minecraft:short_dry_grass",
+    "minecraft:tall_dry_grass",
+    "minecraft:shelf_mushroom"
   ]
 }

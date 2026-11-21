@@ -1,4 +1,6 @@
 {
   "type": "minecraft:crafting_special_mapextending",
-  "category": "misc"
+  "map": "#minecraft:extendable_maps",
+  "material": "minecraft:paper",
+  "result": {}
 }

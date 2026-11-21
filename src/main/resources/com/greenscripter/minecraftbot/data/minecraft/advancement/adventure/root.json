@@ -9,12 +9,11 @@
   },
   "display": {
     "announce_to_chat": false,
-    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "background": "minecraft:gui/advancements/backgrounds/adventure",
     "description": {
       "translate": "advancements.adventure.root.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:map"
     },
     "show_toast": false,

@@ -1,18 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "boat",
   "key": {
-    "#": {
-      "item": "minecraft:acacia_planks"
-    }
+    "#": "minecraft:acacia_planks"
   },
   "pattern": [
     "# #",
     "###"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:acacia_boat"
   }
 }

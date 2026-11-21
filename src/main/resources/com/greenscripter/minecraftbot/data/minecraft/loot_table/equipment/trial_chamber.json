@@ -2,83 +2,74 @@
   "type": "minecraft:equipment",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:loot_table",
           "value": {
             "pools": [
               {
-                "bonus_rolls": 0.0,
-                "conditions": [
-                  {
-                    "chance": 0.5,
-                    "condition": "minecraft:random_chance"
-                  }
-                ],
+                "condition": {
+                  "type": "minecraft:random_chance",
+                  "chance": 0.5
+                },
                 "entries": [
                   {
                     "type": "minecraft:item",
-                    "functions": [
+                    "modifier": [
                       {
+                        "type": "minecraft:set_components",
                         "components": {
                           "minecraft:trim": {
                             "material": "minecraft:copper",
                             "pattern": "minecraft:bolt"
                           }
-                        },
-                        "function": "minecraft:set_components"
+                        }
                       },
                       {
-                        "add": false,
+                        "type": "minecraft:set_enchantments",
                         "enchantments": {
-                          "minecraft:fire_protection": 4.0,
-                          "minecraft:projectile_protection": 4.0,
-                          "minecraft:protection": 4.0
-                        },
-                        "function": "minecraft:set_enchantments"
+                          "minecraft:fire_protection": 4,
+                          "minecraft:projectile_protection": 4,
+                          "minecraft:protection": 4
+                        }
                       }
                     ],
                     "name": "minecraft:chainmail_helmet"
                   }
                 ],
-                "rolls": 1.0
+                "rolls": 1
               },
               {
-                "bonus_rolls": 0.0,
-                "conditions": [
-                  {
-                    "chance": 0.5,
-                    "condition": "minecraft:random_chance"
-                  }
-                ],
+                "condition": {
+                  "type": "minecraft:random_chance",
+                  "chance": 0.5
+                },
                 "entries": [
                   {
                     "type": "minecraft:item",
-                    "functions": [
+                    "modifier": [
                       {
+                        "type": "minecraft:set_components",
                         "components": {
                           "minecraft:trim": {
                             "material": "minecraft:copper",
                             "pattern": "minecraft:bolt"
                           }
-                        },
-                        "function": "minecraft:set_components"
+                        }
                       },
                       {
-                        "add": false,
+                        "type": "minecraft:set_enchantments",
                         "enchantments": {
-                          "minecraft:fire_protection": 4.0,
-                          "minecraft:projectile_protection": 4.0,
-                          "minecraft:protection": 4.0
-                        },
-                        "function": "minecraft:set_enchantments"
+                          "minecraft:fire_protection": 4,
+                          "minecraft:projectile_protection": 4,
+                          "minecraft:protection": 4
+                        }
                       }
                     ],
                     "name": "minecraft:chainmail_chestplate"
                   }
                 ],
-                "rolls": 1.0
+                "rolls": 1
               }
             ]
           },
@@ -89,76 +80,68 @@
           "value": {
             "pools": [
               {
-                "bonus_rolls": 0.0,
-                "conditions": [
-                  {
-                    "chance": 0.5,
-                    "condition": "minecraft:random_chance"
-                  }
-                ],
+                "condition": {
+                  "type": "minecraft:random_chance",
+                  "chance": 0.5
+                },
                 "entries": [
                   {
                     "type": "minecraft:item",
-                    "functions": [
+                    "modifier": [
                       {
+                        "type": "minecraft:set_components",
                         "components": {
                           "minecraft:trim": {
                             "material": "minecraft:copper",
                             "pattern": "minecraft:flow"
                           }
-                        },
-                        "function": "minecraft:set_components"
+                        }
                       },
                       {
-                        "add": false,
+                        "type": "minecraft:set_enchantments",
                         "enchantments": {
-                          "minecraft:fire_protection": 4.0,
-                          "minecraft:projectile_protection": 4.0,
-                          "minecraft:protection": 4.0
-                        },
-                        "function": "minecraft:set_enchantments"
+                          "minecraft:fire_protection": 4,
+                          "minecraft:projectile_protection": 4,
+                          "minecraft:protection": 4
+                        }
                       }
                     ],
                     "name": "minecraft:iron_helmet"
                   }
                 ],
-                "rolls": 1.0
+                "rolls": 1
               },
               {
-                "bonus_rolls": 0.0,
-                "conditions": [
-                  {
-                    "chance": 0.5,
-                    "condition": "minecraft:random_chance"
-                  }
-                ],
+                "condition": {
+                  "type": "minecraft:random_chance",
+                  "chance": 0.5
+                },
                 "entries": [
                   {
                     "type": "minecraft:item",
-                    "functions": [
+                    "modifier": [
                       {
+                        "type": "minecraft:set_components",
                         "components": {
                           "minecraft:trim": {
                             "material": "minecraft:copper",
                             "pattern": "minecraft:flow"
                           }
-                        },
-                        "function": "minecraft:set_components"
+                        }
                       },
                       {
-                        "add": false,
+                        "type": "minecraft:set_enchantments",
                         "enchantments": {
-                          "minecraft:fire_protection": 4.0,
-                          "minecraft:projectile_protection": 4.0,
-                          "minecraft:protection": 4.0
-                        },
-                        "function": "minecraft:set_enchantments"
+                          "minecraft:fire_protection": 4,
+                          "minecraft:projectile_protection": 4,
+                          "minecraft:protection": 4
+                        }
                       }
                     ],
                     "name": "minecraft:iron_chestplate"
                   }
                 ],
-                "rolls": 1.0
+                "rolls": 1
               }
             ]
           },
@@ -169,82 +152,74 @@
           "value": {
             "pools": [
               {
-                "bonus_rolls": 0.0,
-                "conditions": [
-                  {
-                    "chance": 0.5,
-                    "condition": "minecraft:random_chance"
-                  }
-                ],
+                "condition": {
+                  "type": "minecraft:random_chance",
+                  "chance": 0.5
+                },
                 "entries": [
                   {
                     "type": "minecraft:item",
-                    "functions": [
+                    "modifier": [
                       {
+                        "type": "minecraft:set_components",
                         "components": {
                           "minecraft:trim": {
                             "material": "minecraft:copper",
                             "pattern": "minecraft:flow"
                           }
-                        },
-                        "function": "minecraft:set_components"
+                        }
                       },
                       {
-                        "add": false,
+                        "type": "minecraft:set_enchantments",
                         "enchantments": {
-                          "minecraft:fire_protection": 4.0,
-                          "minecraft:projectile_protection": 4.0,
-                          "minecraft:protection": 4.0
-                        },
-                        "function": "minecraft:set_enchantments"
+                          "minecraft:fire_protection": 4,
+                          "minecraft:projectile_protection": 4,
+                          "minecraft:protection": 4
+                        }
                       }
                     ],
                     "name": "minecraft:diamond_helmet"
                   }
                 ],
-                "rolls": 1.0
+                "rolls": 1
               },
               {
-                "bonus_rolls": 0.0,
-                "conditions": [
-                  {
-                    "chance": 0.5,
-                    "condition": "minecraft:random_chance"
-                  }
-                ],
+                "condition": {
+                  "type": "minecraft:random_chance",
+                  "chance": 0.5
+                },
                 "entries": [
                   {
                     "type": "minecraft:item",
-                    "functions": [
+                    "modifier": [
                       {
+                        "type": "minecraft:set_components",
                         "components": {
                           "minecraft:trim": {
                             "material": "minecraft:copper",
                             "pattern": "minecraft:flow"
                           }
-                        },
-                        "function": "minecraft:set_components"
+                        }
                       },
                       {
-                        "add": false,
+                        "type": "minecraft:set_enchantments",
                         "enchantments": {
-                          "minecraft:fire_protection": 4.0,
-                          "minecraft:projectile_protection": 4.0,
-                          "minecraft:protection": 4.0
-                        },
-                        "function": "minecraft:set_enchantments"
+                          "minecraft:fire_protection": 4,
+                          "minecraft:projectile_protection": 4,
+                          "minecraft:protection": 4
+                        }
                       }
                     ],
                     "name": "minecraft:diamond_chestplate"
                   }
                 ],
-                "rolls": 1.0
+                "rolls": 1
               }
             ]
           }
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "minecraft:equipment/trial_chamber"

@@ -18,19 +18,24 @@ import java.nio.file.Paths;
 
 public class ResourceExtractor {
 
-	//java -DbundlerMainClass=net.minecraft.data.Main -jar mojang_1.21.jar --reports --server
+	//java -DbundlerMainClass=net.minecraft.data.Main -jar server.jar --reports --server
 
 	public static void main(String[] args) throws URISyntaxException, IOException {
-		System.out.println(getResourceStrings("com/greenscripter/minecraftbot/data/minecraft/tags/item"));
+		System.out.println(getResourceStrings(""));
 	}
 
 	public static String getResourceString(String path) throws URISyntaxException, IOException {
-		InputStream in = ResourceExtractor.class.getClassLoader().getResource(path).openStream();
-		return new String(in.readAllBytes());
+		URI uri = ResourceExtractor.class.getClassLoader().getResource("").toURI();
+		if (uri.getScheme().equals("jar")) {
+			InputStream in = ResourceExtractor.class.getClassLoader().getResource(path).openStream();
+			return new String(in.readAllBytes());
+		} else {
+			return Files.readString(Paths.get(uri).getParent().getParent().resolve("src/main/resources/" + path));
+		}
 	}
 
 	public static Map<String, String> getResourceStrings(String path) throws URISyntaxException, IOException {
-		URI uri = ResourceExtractor.class.getClassLoader().getResource(path).toURI();
+		URI uri = ResourceExtractor.class.getClassLoader().getResource("").toURI();
 		Path myPath;
 		if (uri.getScheme().equals("jar")) {
 			FileSystem fileSystem = null;
@@ -42,13 +47,14 @@ public class ResourceExtractor {
 			if (fileSystem == null) fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object> emptyMap());
 			myPath = fileSystem.getPath(path);
 		} else {
-			myPath = Paths.get(uri);
+			myPath = Paths.get(uri).getParent().getParent().resolve("src/main/resources/" + path);
 		}
 		Map<String, String> result = new HashMap<>();
 		int pathLength = myPath.toString().length() + 1;
 		try (Stream<Path> walk = Files.walk(myPath, 10)) {
 			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
 				Path p = it.next();
+				System.out.println(p);
 				if (!Files.isDirectory(p)) {
 					if (p.getFileName().toString().startsWith(".")) continue;
 

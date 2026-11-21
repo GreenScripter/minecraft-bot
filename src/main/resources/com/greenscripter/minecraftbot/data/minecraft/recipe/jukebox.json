@@ -1,13 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "#": {
-      "tag": "minecraft:planks"
-    },
-    "X": {
-      "item": "minecraft:diamond"
-    }
+    "#": "#minecraft:planks",
+    "X": "minecraft:diamond"
   },
   "pattern": [
     "###",
@@ -15,7 +10,6 @@
     "###"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:jukebox"
   }
 }

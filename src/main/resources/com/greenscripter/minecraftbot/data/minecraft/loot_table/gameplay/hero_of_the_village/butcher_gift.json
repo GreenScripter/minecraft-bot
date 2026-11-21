@@ -2,7 +2,6 @@
   "type": "minecraft:gift",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -25,7 +24,7 @@
           "name": "minecraft:cooked_mutton"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "minecraft:gameplay/hero_of_the_village/butcher_gift"

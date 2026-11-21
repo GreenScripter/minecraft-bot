@@ -1,23 +1,54 @@
 {
-  "carvers": {
-    "air": [
-      "minecraft:cave",
-      "minecraft:cave_extra_underground",
-      "minecraft:canyon"
-    ]
+  "attributes": {
+    "minecraft:gameplay/can_pillager_patrol_spawn": false,
+    "minecraft:gameplay/increased_fire_burnout": true,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "ambient": [
+            {
+              "type": "minecraft:bat",
+              "count": 8,
+              "weight": 10
+            }
+          ],
+          "creature": [
+            {
+              "type": "minecraft:mooshroom",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 8
+            }
+          ],
+          "underground_water_creature": [
+            {
+              "type": "minecraft:glow_squid",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 6,
+                "min_inclusive": 4
+              },
+              "weight": 10
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/sky_color": "#77a8ff"
   },
+  "carvers": [
+    "minecraft:cave",
+    "minecraft:cave_extra_underground",
+    "minecraft:canyon"
+  ],
   "downfall": 1.0,
   "effects": {
-    "fog_color": 12638463,
-    "mood_sound": {
-      "block_search_extent": 8,
-      "offset": 2.0,
-      "sound": "minecraft:ambient.cave",
-      "tick_delay": 6000
-    },
-    "sky_color": 7842047,
-    "water_color": 4159204,
-    "water_fog_color": 329011
+    "water_color": "#3f76e4"
   },
   "features": [
     [],
@@ -76,44 +107,12 @@
       "minecraft:brown_mushroom_taiga",
       "minecraft:red_mushroom_taiga",
       "minecraft:patch_sugar_cane",
-      "minecraft:patch_pumpkin"
+      "minecraft:patch_firefly_bush_near_water"
     ],
     [
       "minecraft:freeze_top_layer"
     ]
   ],
   "has_precipitation": true,
-  "spawn_costs": {},
-  "spawners": {
-    "ambient": [
-      {
-        "type": "minecraft:bat",
-        "maxCount": 8,
-        "minCount": 8,
-        "weight": 10
-      }
-    ],
-    "axolotls": [],
-    "creature": [
-      {
-        "type": "minecraft:mooshroom",
-        "maxCount": 8,
-        "minCount": 4,
-        "weight": 8
-      }
-    ],
-    "misc": [],
-    "monster": [],
-    "underground_water_creature": [
-      {
-        "type": "minecraft:glow_squid",
-        "maxCount": 6,
-        "minCount": 4,
-        "weight": 10
-      }
-    ],
-    "water_ambient": [],
-    "water_creature": []
-  },
   "temperature": 0.9
 }

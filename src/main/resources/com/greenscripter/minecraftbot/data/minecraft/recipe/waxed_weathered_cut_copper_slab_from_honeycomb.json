@@ -3,15 +3,10 @@
   "category": "building",
   "group": "waxed_weathered_cut_copper_slab",
   "ingredients": [
-    {
-      "item": "minecraft:weathered_cut_copper_slab"
-    },
-    {
-      "item": "minecraft:honeycomb"
-    }
+    "minecraft:weathered_cut_copper_slab",
+    "minecraft:honeycomb"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:waxed_weathered_cut_copper_slab"
   }
 }

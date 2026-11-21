@@ -1,16 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
+  "group": "waxed_weathered_copper_bulb",
   "key": {
-    "B": {
-      "item": "minecraft:blaze_rod"
-    },
-    "C": {
-      "item": "minecraft:waxed_weathered_copper"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "B": "minecraft:blaze_rod",
+    "C": "minecraft:waxed_weathered_copper",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     " C ",

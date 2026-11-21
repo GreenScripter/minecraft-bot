@@ -1,18 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "boat",
   "key": {
-    "#": {
-      "item": "minecraft:cherry_planks"
-    }
+    "#": "minecraft:cherry_planks"
   },
   "pattern": [
     "# #",
     "###"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:cherry_boat"
   }
 }

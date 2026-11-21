@@ -2,16 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:nether_brick_slab"
-    }
+    "#": "minecraft:nether_brick_slab"
   },
   "pattern": [
     "#",
     "#"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:chiseled_nether_bricks"
   }
 }

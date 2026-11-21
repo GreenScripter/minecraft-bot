@@ -3,15 +3,12 @@
   "category": "redstone",
   "group": "wooden_pressure_plate",
   "key": {
-    "#": {
-      "item": "minecraft:cherry_planks"
-    }
+    "#": "minecraft:cherry_planks"
   },
   "pattern": [
     "##"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:cherry_pressure_plate"
   }
 }

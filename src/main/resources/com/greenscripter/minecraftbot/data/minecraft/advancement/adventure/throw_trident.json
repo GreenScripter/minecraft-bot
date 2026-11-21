@@ -6,12 +6,12 @@
         "damage": {
           "type": {
             "direct_entity": {
-              "type": "minecraft:trident"
+              "minecraft:entity_type": "minecraft:trident"
             },
             "tags": [
               {
                 "expected": true,
-                "id": "minecraft:is_projectile"
+                "id": "#minecraft:is_projectile"
               }
             ]
           }
@@ -25,7 +25,6 @@
       "translate": "advancements.adventure.throw_trident.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:trident"
     },
     "title": {

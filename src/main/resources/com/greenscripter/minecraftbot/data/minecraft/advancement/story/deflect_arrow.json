@@ -8,7 +8,7 @@
             "tags": [
               {
                 "expected": true,
-                "id": "minecraft:is_projectile"
+                "id": "#minecraft:is_projectile"
               }
             ]
           },
@@ -23,7 +23,6 @@
       "translate": "advancements.story.deflect_arrow.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:shield"
     },
     "title": {

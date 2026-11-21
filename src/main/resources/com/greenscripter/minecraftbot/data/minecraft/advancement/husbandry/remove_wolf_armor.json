@@ -3,20 +3,18 @@
   "criteria": {
     "remove_wolf_armor": {
       "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "type": "minecraft:wolf"
-            }
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:wolf"
           }
-        ],
+        },
         "item": {
-          "items": "minecraft:shears"
+          "items": "minecraft:wolf_armor"
         }
       },
-      "trigger": "minecraft:player_interacted_with_entity"
+      "trigger": "minecraft:player_sheared_equipment"
     }
   },
   "display": {
@@ -24,7 +22,6 @@
       "translate": "advancements.husbandry.remove_wolf_armor.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:shears"
     },
     "title": {

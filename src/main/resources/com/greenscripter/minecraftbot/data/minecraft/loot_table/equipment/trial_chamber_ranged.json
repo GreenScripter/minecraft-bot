@@ -2,17 +2,15 @@
   "type": "minecraft:equipment",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:loot_table",
           "value": "minecraft:equipment/trial_chamber"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     },
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -21,32 +19,26 @@
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "enchantments": {
-                "minecraft:power": 1.0
-              },
-              "function": "minecraft:set_enchantments"
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:power": 1
             }
-          ],
+          },
           "name": "minecraft:bow"
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "enchantments": {
-                "minecraft:punch": 1.0
-              },
-              "function": "minecraft:set_enchantments"
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:punch": 1
             }
-          ],
+          },
           "name": "minecraft:bow"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "minecraft:equipment/trial_chamber_ranged"

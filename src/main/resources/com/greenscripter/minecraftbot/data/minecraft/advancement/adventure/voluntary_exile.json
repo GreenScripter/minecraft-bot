@@ -3,68 +3,57 @@
   "criteria": {
     "voluntary_exile": {
       "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "type": "#minecraft:raiders",
-              "equipment": {
-                "head": {
-                  "components": {
-                    "minecraft:attribute_modifiers": {
-                      "modifiers": []
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "#minecraft:raiders",
+            "minecraft:equipment": {
+              "head": {
+                "components": {
+                  "minecraft:banner_patterns": [
+                    {
+                      "color": "cyan",
+                      "pattern": "minecraft:rhombus"
                     },
-                    "minecraft:banner_patterns": [
-                      {
-                        "color": "cyan",
-                        "pattern": "minecraft:rhombus"
-                      },
-                      {
-                        "color": "light_gray",
-                        "pattern": "minecraft:stripe_bottom"
-                      },
-                      {
-                        "color": "gray",
-                        "pattern": "minecraft:stripe_center"
-                      },
-                      {
-                        "color": "light_gray",
-                        "pattern": "minecraft:border"
-                      },
-                      {
-                        "color": "black",
-                        "pattern": "minecraft:stripe_middle"
-                      },
-                      {
-                        "color": "light_gray",
-                        "pattern": "minecraft:half_horizontal"
-                      },
-                      {
-                        "color": "light_gray",
-                        "pattern": "minecraft:circle"
-                      },
-                      {
-                        "color": "black",
-                        "pattern": "minecraft:border"
-                      }
-                    ],
-                    "minecraft:enchantments": {
-                      "levels": {}
+                    {
+                      "color": "light_gray",
+                      "pattern": "minecraft:stripe_bottom"
                     },
-                    "minecraft:hide_additional_tooltip": {},
-                    "minecraft:item_name": "{\"color\":\"gold\",\"translate\":\"block.minecraft.ominous_banner\"}",
-                    "minecraft:lore": [],
-                    "minecraft:max_stack_size": 16,
-                    "minecraft:rarity": "common",
-                    "minecraft:repair_cost": 0
-                  },
-                  "items": "minecraft:white_banner"
-                }
+                    {
+                      "color": "gray",
+                      "pattern": "minecraft:stripe_center"
+                    },
+                    {
+                      "color": "light_gray",
+                      "pattern": "minecraft:border"
+                    },
+                    {
+                      "color": "black",
+                      "pattern": "minecraft:stripe_middle"
+                    },
+                    {
+                      "color": "light_gray",
+                      "pattern": "minecraft:half_horizontal"
+                    },
+                    {
+                      "color": "light_gray",
+                      "pattern": "minecraft:circle"
+                    },
+                    {
+                      "color": "black",
+                      "pattern": "minecraft:border"
+                    }
+                  ],
+                  "minecraft:item_name": {
+                    "translate": "block.minecraft.ominous_banner"
+                  }
+                },
+                "items": "minecraft:white_banner"
               }
             }
           }
-        ]
+        }
       },
       "trigger": "minecraft:player_killed_entity"
     }
@@ -110,10 +99,16 @@
             "pattern": "minecraft:border"
           }
         ],
-        "minecraft:hide_additional_tooltip": {},
-        "minecraft:item_name": "{\"color\":\"gold\",\"translate\":\"block.minecraft.ominous_banner\"}"
+        "minecraft:item_name": {
+          "translate": "block.minecraft.ominous_banner"
+        },
+        "minecraft:rarity": "uncommon",
+        "minecraft:tooltip_display": {
+          "hidden_components": [
+            "minecraft:banner_patterns"
+          ]
+        }
       },
-      "count": 1,
       "id": "minecraft:white_banner"
     },
     "title": {

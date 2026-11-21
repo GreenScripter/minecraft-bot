@@ -1,11 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "group": "carpet",
+  "group": "woolen_carpet",
   "key": {
-    "#": {
-      "item": "minecraft:black_wool"
-    }
+    "#": "minecraft:black_wool"
   },
   "pattern": [
     "##"

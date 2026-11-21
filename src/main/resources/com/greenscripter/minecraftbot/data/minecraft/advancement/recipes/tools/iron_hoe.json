@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "minecraft:iron_ingot"
+            "items": "#minecraft:iron_tool_materials"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:iron_hoe"
+        "recipes": "minecraft:iron_hoe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

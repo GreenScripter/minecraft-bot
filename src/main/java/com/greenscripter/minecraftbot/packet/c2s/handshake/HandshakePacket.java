@@ -11,7 +11,7 @@ public class HandshakePacket extends Packet {
 
 	public static final int packetId = PacketIds.getC2SPacketId("handshake", "minecraft:intention");
 
-	public int version = 767;
+	public int version = 777;
 	public String address;
 	public int port;
 	public int nextState;

@@ -2,6 +2,9 @@
   "values": [
     "#minecraft:small_flowers",
     "#minecraft:dirt",
+    "#minecraft:mud",
+    "#minecraft:moss_blocks",
+    "#minecraft:grass_blocks",
     "minecraft:sand",
     "minecraft:red_sand",
     "minecraft:gravel",
@@ -18,6 +21,7 @@
     "minecraft:crimson_roots",
     "minecraft:warped_fungus",
     "minecraft:warped_nylium",
-    "minecraft:warped_roots"
+    "minecraft:warped_roots",
+    "minecraft:cactus_flower"
   ]
 }

@@ -1,10 +1,7 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "minecraft:polished_tuff"
-  },
+  "ingredient": "minecraft:polished_tuff",
   "result": {
-    "count": 1,
     "id": "minecraft:polished_tuff_wall"
   }
 }

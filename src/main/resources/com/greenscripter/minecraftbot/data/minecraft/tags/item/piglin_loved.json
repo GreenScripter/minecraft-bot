@@ -16,12 +16,15 @@
     "minecraft:golden_leggings",
     "minecraft:golden_boots",
     "minecraft:golden_horse_armor",
+    "minecraft:golden_nautilus_armor",
     "minecraft:golden_sword",
+    "minecraft:golden_spear",
     "minecraft:golden_pickaxe",
     "minecraft:golden_shovel",
     "minecraft:golden_axe",
     "minecraft:golden_hoe",
     "minecraft:raw_gold",
-    "minecraft:raw_gold_block"
+    "minecraft:raw_gold_block",
+    "minecraft:golden_dandelion"
   ]
 }

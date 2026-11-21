@@ -2,16 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:prismarine_shard"
-    }
+    "#": "minecraft:prismarine_shard"
   },
   "pattern": [
     "##",
     "##"
   ],
   "result": {
-    "count": 1,
     "id": "minecraft:prismarine"
   }
 }

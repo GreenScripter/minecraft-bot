@@ -1,10 +1,7 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "minecraft:purpur_block"
-  },
+  "ingredient": "minecraft:purpur_block",
   "result": {
-    "count": 1,
     "id": "minecraft:purpur_pillar"
   }
 }
