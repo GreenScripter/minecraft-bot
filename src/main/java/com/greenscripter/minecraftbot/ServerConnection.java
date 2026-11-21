@@ -23,10 +23,6 @@ import com.greenscripter.minecraftbot.packet.c2s.configuration.PingReplyConfigPa
 import com.greenscripter.minecraftbot.packet.c2s.handshake.HandshakePacket;
 import com.greenscripter.minecraftbot.packet.c2s.login.LoginAcknowledgePacket;
 import com.greenscripter.minecraftbot.packet.c2s.login.LoginStartPacket;
-import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePacket;
-import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionPacket;
-import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionRotationPacket;
-import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMoveRotationPacket;
 import com.greenscripter.minecraftbot.packet.s2c.configuration.DisconnectConfigPacket;
 import com.greenscripter.minecraftbot.packet.s2c.configuration.KeepAliveConfigPacket;
 import com.greenscripter.minecraftbot.packet.s2c.configuration.PingConfigPacket;

@@ -11,7 +11,7 @@ import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class LoginSuccessPacket extends Packet {
 
-	public static final int packetId = PacketIds.getS2CPacketId("login", "minecraft:game_profile");
+	public static final int packetId = PacketIds.getS2CPacketId("login", "minecraft:login_finished");
 
 	public String name;
 	public UUID uuid;

@@ -47,6 +47,7 @@ public class ChunkDataDecoder {
 		public ChunkSection readChunkSection() throws IOException {
 			ChunkSection cs = new ChunkSection();
 			cs.nonAir = readShort();
+			cs.fluidCount = readShort();
 			cs.blocks = readPalettedBlockContainer();
 			cs.biomes = readPalettedBiomeContainer();
 			return cs;
@@ -62,9 +63,13 @@ public class ChunkDataDecoder {
 			} else {
 				readDirectPalette(pc);
 			}
-			pc.data = new long[readVarInt()];
-			for (int i = 0; i < pc.data.length; i++) {
-				pc.data[i] = readLong();
+			if (pc.bitsPerEntry != 0) {
+				int entries_per_long = 64 / pc.bitsPerEntry;
+				int number_of_longs = (4096 + entries_per_long - 1) / entries_per_long;
+				pc.data = new long[number_of_longs];
+				for (int i = 0; i < pc.data.length; i++) {
+					pc.data[i] = readLong();
+				}
 			}
 			return pc;
 		}
@@ -79,9 +84,13 @@ public class ChunkDataDecoder {
 			} else {
 				readDirectPalette(pc);
 			}
-			pc.data = new long[readVarInt()];
-			for (int i = 0; i < pc.data.length; i++) {
-				pc.data[i] = readLong();
+			if (pc.bitsPerEntry != 0) {
+				int entries_per_long = 64 / pc.bitsPerEntry;
+				int number_of_longs = (64 + entries_per_long - 1) / entries_per_long;
+				pc.data = new long[number_of_longs];
+				for (int i = 0; i < pc.data.length; i++) {
+					pc.data[i] = readLong();
+				}
 			}
 			return pc;
 		}

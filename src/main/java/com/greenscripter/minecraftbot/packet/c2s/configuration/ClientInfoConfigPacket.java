@@ -19,6 +19,7 @@ public class ClientInfoConfigPacket extends Packet {
 	public int mainHand = 1;
 	public boolean filtering = false;
 	public boolean listing = false;
+	public int particleStatus = 0;
 
 	public ClientInfoConfigPacket() {}
 
@@ -35,6 +36,7 @@ public class ClientInfoConfigPacket extends Packet {
 		out.writeVarInt(mainHand);
 		out.writeBoolean(filtering);
 		out.writeBoolean(listing);
+		out.writeVarInt(particleStatus);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {

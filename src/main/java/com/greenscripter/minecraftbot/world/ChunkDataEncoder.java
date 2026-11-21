@@ -33,6 +33,7 @@ public class ChunkDataEncoder {
 
 		public void writeChunkSection(ChunkSection cs) throws IOException {
 			writeShort(cs.nonAir);
+			writeShort(cs.fluidCount);
 			writePalettedBlockContainer(cs.blocks);
 			writePalettedBiomeContainer(cs.biomes);
 		}
@@ -46,7 +47,6 @@ public class ChunkDataEncoder {
 			} else {
 				writeDirectPalette(pc);
 			}
-			writeVarInt(pc.data.length);
 			for (int i = 0; i < pc.data.length; i++) {
 				writeLong(pc.data[i]);
 			}
@@ -61,7 +61,6 @@ public class ChunkDataEncoder {
 			} else {
 				writeDirectPalette(pc);
 			}
-			writeVarInt(pc.data.length);
 			for (int i = 0; i < pc.data.length; i++) {
 				writeLong(pc.data[i]);
 			}

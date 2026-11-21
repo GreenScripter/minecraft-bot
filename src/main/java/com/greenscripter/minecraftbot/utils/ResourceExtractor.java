@@ -54,7 +54,6 @@ public class ResourceExtractor {
 		try (Stream<Path> walk = Files.walk(myPath, 10)) {
 			for (Iterator<Path> it = walk.iterator(); it.hasNext();) {
 				Path p = it.next();
-				System.out.println(p);
 				if (!Files.isDirectory(p)) {
 					if (p.getFileName().toString().startsWith(".")) continue;
 

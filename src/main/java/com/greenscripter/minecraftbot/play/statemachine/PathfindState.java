@@ -151,10 +151,10 @@ public class PathfindState extends PlayerState {
 				PathfindState.this.finished(e.state);
 			});
 
-//			addGameHandler(new PlayPacketHandler(List.of(TeleportRequestPacket.packetId), (p, sc) -> {
-//				TeleportRequestPacket tp = p.convert(new TeleportRequestPacket());
-//				System.out.println("Teleported back to " + tp.x + " " + tp.y + " " + tp.z);
-//			}));
+			//			addGameHandler(new PlayPacketHandler(List.of(TeleportRequestPacket.packetId), (p, sc) -> {
+			//				TeleportRequestPacket tp = p.convert(new TeleportRequestPacket());
+			//				System.out.println("Teleported back to " + tp.x + " " + tp.y + " " + tp.z);
+			//			}));
 		}
 	}
 }

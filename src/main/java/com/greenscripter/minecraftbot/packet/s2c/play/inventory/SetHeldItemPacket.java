@@ -9,7 +9,7 @@ import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
 public class SetHeldItemPacket extends Packet {
 
-	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_carried_item");
+	public static final int packetId = PacketIds.getS2CPlayId("minecraft:set_held_slot");
 
 	public byte slot;
 

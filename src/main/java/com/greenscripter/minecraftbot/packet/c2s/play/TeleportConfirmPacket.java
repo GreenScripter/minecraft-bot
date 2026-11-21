@@ -12,6 +12,11 @@ public class TeleportConfirmPacket extends Packet {
 	public static final int packetId = PacketIds.getC2SPlayId("minecraft:accept_teleportation");
 
 	public int value;
+	public double x;
+	public double y;
+	public double z;
+	public float yaw;
+	public float pitch;
 
 	public TeleportConfirmPacket() {}
 
@@ -25,10 +30,20 @@ public class TeleportConfirmPacket extends Packet {
 
 	public void toBytes(MCOutputStream out) throws IOException {
 		out.writeVarInt(value);
+		out.writeDouble(x);
+		out.writeDouble(y);
+		out.writeDouble(z);
+		out.writeFloat(yaw);
+		out.writeFloat(pitch);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
 		value = in.readVarInt();
+		x = in.readDouble();
+		y = in.readDouble();
+		z = in.readDouble();
+		yaw = in.readFloat();
+		pitch = in.readFloat();
 	}
 
 }

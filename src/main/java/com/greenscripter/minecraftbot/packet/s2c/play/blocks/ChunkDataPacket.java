@@ -20,7 +20,7 @@ public class ChunkDataPacket extends Packet {
 
 	public int chunkX;
 	public int chunkZ;
-	public NBTTagCompound heightmap;
+	public Heightmap[] heightmap;
 	public byte[] data;
 
 	public List<BlockEntity> blockEntities = new ArrayList<>();
@@ -39,7 +39,12 @@ public class ChunkDataPacket extends Packet {
 	public void toBytes(MCOutputStream out) throws IOException {
 		out.writeInt(chunkX);
 		out.writeInt(chunkZ);
-		out.writeNBT(heightmap);
+
+		out.writeVarInt(heightmap.length);
+		for (int i = 0; i < heightmap.length; i++) {
+			Heightmap.write(out, heightmap[i]);
+		}
+
 		out.writeVarInt(data.length);
 		out.write(data);
 
@@ -96,7 +101,11 @@ public class ChunkDataPacket extends Packet {
 	public void fromBytes(MCInputStream in) throws IOException {
 		chunkX = in.readInt();
 		chunkZ = in.readInt();
-		heightmap = in.readNBT().asCompound();
+		heightmap = new Heightmap[in.readVarInt()];
+		//		System.out.println("Height maps " + heightmap.length);
+		for (int i = 0; i < heightmap.length; i++) {
+			heightmap[i] = Heightmap.read(in);
+		}
 		data = new byte[in.readVarInt()];
 		in.readFully(data);
 		//		System.out.println(data.length + " bytes for " + chunkX + ", " + chunkZ);
@@ -115,8 +124,8 @@ public class ChunkDataPacket extends Packet {
 			blockEntities.add(b);
 		}
 
-		//		// Add code to read light data.
-		//
+		// Add code to read light data.
+
 		//		BitSet b1 = in.readBitSet();
 		//		BitSet b2 = in.readBitSet();
 		//		BitSet b3 = in.readBitSet();
@@ -135,6 +144,8 @@ public class ChunkDataPacket extends Packet {
 		//			int sublength = in.readVarInt();
 		//			in.readNBytes(sublength);
 		//		}
+		//
+		//		System.out.println("Left " + in.readAllBytes().length);
 	}
 
 	public void useBlockEntities(Collection<com.greenscripter.minecraftbot.world.BlockEntity> use) {
@@ -165,5 +176,31 @@ public class ChunkDataPacket extends Packet {
 
 		public NBTTagCompound data;
 
+	}
+
+	public static class Heightmap {
+
+		public int type;
+		public long[] data;
+
+		public static Heightmap read(MCInputStream in) throws IOException {
+			Heightmap h = new Heightmap();
+			h.type = in.readVarInt();
+			//			System.out.println("Heightmap type: " + h.type);
+			h.data = new long[in.readVarInt()];
+			//			System.out.println("Heightmap data: " + h.data.length);
+			for (int i = 0; i < h.data.length; i++) {
+				h.data[i] = in.readLong();
+			}
+			return h;
+		}
+
+		public static void write(MCOutputStream out, Heightmap h) throws IOException {
+			out.writeVarInt(h.type);
+			out.writeVarInt(h.data.length);
+			for (int i = 0; i < h.data.length; i++) {
+				out.writeLong(h.data[i]);
+			}
+		}
 	}
 }

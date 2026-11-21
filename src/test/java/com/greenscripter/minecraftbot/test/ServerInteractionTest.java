@@ -17,7 +17,7 @@ public class ServerInteractionTest extends TestOnServerBase {
 		server.sendCommand("fill 0 0 0 10 10 10 diamond_block");
 		server.waitForOutputContains(1000, "Successfully filled 1331 block(s)");
 	}
-	
+
 	@Test
 	public void summonTest() throws Exception {
 		server.sendCommand("summon cow 0 200 0");

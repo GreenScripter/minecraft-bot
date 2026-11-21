@@ -2,12 +2,10 @@ package com.greenscripter.minecraftbot.play.handler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import java.io.IOException;
 
 import com.greenscripter.minecraftbot.ServerConnection;
-import com.greenscripter.minecraftbot.gameinfo.Registries;
 import com.greenscripter.minecraftbot.packet.UnknownPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.EntityAttributesPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.EntityEffectPacket;
@@ -23,7 +21,6 @@ import com.greenscripter.minecraftbot.packet.s2c.play.entity.RemoveEntitiesPacke
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.RemoveEntityEffectPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.SetPassengersPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.TeleportEntityPacket;
-import com.greenscripter.minecraftbot.packet.s2c.play.entity.XPOrbSpawnPacket;
 import com.greenscripter.minecraftbot.play.data.PlayerData;
 import com.greenscripter.minecraftbot.play.data.WorldData;
 import com.greenscripter.minecraftbot.world.World;
@@ -44,7 +41,6 @@ public class EntityPlayHandler extends PlayHandler {
 	int removeEffectId = new RemoveEntityEffectPacket().id();
 	int setPassengersId = new SetPassengersPacket().id();
 	int teleportId = new TeleportEntityPacket().id();
-	int spawnXpOrbId = new XPOrbSpawnPacket().id();
 
 	public void handlePacket(UnknownPacket up, ServerConnection sc) throws IOException {
 		WorldData worldData = sc.getData(WorldData.class);
@@ -183,32 +179,6 @@ public class EntityPlayHandler extends PlayHandler {
 					e.pitch = p.pitch * (360f / 256);
 					e.yaw = p.yaw * (360f / 256);
 				}
-			} else if (up.id == spawnXpOrbId) {
-				XPOrbSpawnPacket p = up.convert(new XPOrbSpawnPacket());
-				Entity e = world.getEntity(p.entityID);
-				if (e != null) {
-					e.players.add(sc);
-					e.pos.x = p.x;
-					e.pos.y = p.y;
-					e.pos.z = p.z;
-				} else {
-					e = new Entity();
-					e.entityId = p.entityID;
-					e.data = p.count;
-
-					e.headYaw = 0;
-					e.pitch = 0;
-					e.yaw = 0;
-
-					e.pos.x = p.x;
-					e.pos.y = p.y;
-					e.pos.z = p.z;
-
-					e.uuid = UUID.randomUUID();
-					e.type = Registries.registries.get("minecraft:entity_type").get("minecraft:experience_orb");
-					world.addEntityLoader(e, sc);
-
-				}
 			}
 		}
 
@@ -226,6 +196,6 @@ public class EntityPlayHandler extends PlayHandler {
 	public List<Integer> handlesPackets() {
 		return List.of(attributesId, addEffectId, equipmentId, headRotationId, EntityMetaDataPacket.packetId,  //
 				positionId, positionRotationId, rotationId, spawnId, velocityId, removeId, //
-				removeEffectId, setPassengersId, teleportId, spawnXpOrbId);
+				removeEffectId, setPassengersId, teleportId);
 	}
 }

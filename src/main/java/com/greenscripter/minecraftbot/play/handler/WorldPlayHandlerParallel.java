@@ -27,8 +27,8 @@ import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.data.RegistryData;
 import com.greenscripter.minecraftbot.play.data.WorldData;
 import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
-import com.greenscripter.minecraftbot.utils.play.Position;
 import com.greenscripter.minecraftbot.utils.play.DynamicRegistry.RegistryEntry;
+import com.greenscripter.minecraftbot.utils.play.Position;
 import com.greenscripter.minecraftbot.world.BlockEntity;
 import com.greenscripter.minecraftbot.world.Chunk;
 import com.greenscripter.minecraftbot.world.ChunkDataDecoder;
@@ -287,7 +287,7 @@ public class WorldPlayHandlerParallel extends WorldPlayHandler {
 			} else if (p.id == setTimeId) {
 				SetTimePacket packet = p.convert(new SetTimePacket());
 				worldData.worldAge = packet.worldAge;
-				worldData.timeOfDay = packet.timeOfDay;
+				worldData.clocks = packet.clocks;
 			}
 		}
 	}

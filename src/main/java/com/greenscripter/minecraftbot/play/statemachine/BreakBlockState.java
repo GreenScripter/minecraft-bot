@@ -1,8 +1,8 @@
 package com.greenscripter.minecraftbot.play.statemachine;
 
 import com.greenscripter.minecraftbot.gameinfo.BlockStates;
-import com.greenscripter.minecraftbot.gameinfo.RegistryTags;
 import com.greenscripter.minecraftbot.gameinfo.BlockStates.BlockState;
+import com.greenscripter.minecraftbot.gameinfo.RegistryTags;
 import com.greenscripter.minecraftbot.play.data.InventoryData;
 import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.data.WorldData;

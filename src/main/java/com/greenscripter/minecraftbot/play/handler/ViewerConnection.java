@@ -15,8 +15,6 @@ import java.net.Socket;
 
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.ServerConnection.ConnectionState;
-import com.greenscripter.minecraftbot.gameinfo.Registries;
-import com.greenscripter.minecraftbot.nbt.NBTTagCompound;
 import com.greenscripter.minecraftbot.nbt.NBTTagString;
 import com.greenscripter.minecraftbot.packet.Packet;
 import com.greenscripter.minecraftbot.packet.UnknownPacket;
@@ -59,11 +57,11 @@ import com.greenscripter.minecraftbot.packet.s2c.play.blocks.BlockUpdatePacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.blocks.ChunkBatchFinishPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.blocks.ChunkBatchStartPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.blocks.ChunkDataPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.blocks.ChunkDataPacket.Heightmap;
 import com.greenscripter.minecraftbot.packet.s2c.play.blocks.SetChunkCenterPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.EntityEquipmentPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.EntityMetaDataPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.entity.EntitySpawnPacket;
-import com.greenscripter.minecraftbot.packet.s2c.play.entity.XPOrbSpawnPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.inventory.OpenContainerPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.inventory.SetContainerContentPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.inventory.SetHeldItemPacket;
@@ -582,41 +580,30 @@ public class ViewerConnection extends PlayHandler {
 		awaitingTps.add(tp.teleportID);
 		clientOut.writePacket(tp);
 
-		int orbId = Registries.registries.get("minecraft:entity_type").get("minecraft:experience_orb");
 		synchronized (world.world.worlds) {
 			for (Entity e : world.world.entities.values()) {
 				if (e.players.contains(linked)) {
-					if (e.type == orbId) {
-						XPOrbSpawnPacket orb = new XPOrbSpawnPacket();
-						orb.count = (short) e.data;
-						orb.entityID = e.entityId;
-						orb.x = e.pos.x;
-						orb.y = e.pos.y;
-						orb.z = e.pos.z;
-						clientOut.writePacket(orb);
-					} else {
-						clientOut.writePacket(new EntitySpawnPacket(e));
-						boolean equipment = false;
-						for (Slot s : e.slots) {
-							if (s != null) {
-								equipment = true;
-								break;
-							}
+					clientOut.writePacket(new EntitySpawnPacket(e));
+					boolean equipment = false;
+					for (Slot s : e.slots) {
+						if (s != null) {
+							equipment = true;
+							break;
 						}
-						if (equipment) {
-							clientOut.writePacket(new EntityEquipmentPacket(e));
-						}
+					}
+					if (equipment) {
+						clientOut.writePacket(new EntityEquipmentPacket(e));
+					}
 
-						boolean metadata = false;
-						for (EntityMetadata s : e.metadata) {
-							if (s != null) {
-								metadata = true;
-								break;
-							}
+					boolean metadata = false;
+					for (EntityMetadata s : e.metadata) {
+						if (s != null) {
+							metadata = true;
+							break;
 						}
-						if (metadata) {
-							clientOut.writePacket(new EntityMetaDataPacket(e));
-						}
+					}
+					if (metadata) {
+						clientOut.writePacket(new EntityMetaDataPacket(e));
 					}
 				}
 			}
@@ -644,7 +631,7 @@ public class ViewerConnection extends PlayHandler {
 					loadChunk.chunkX = c.chunkX;
 					loadChunk.chunkZ = c.chunkZ;
 					loadChunk.useBlockEntities(c.blockEntities.values());
-					loadChunk.heightmap = new NBTTagCompound();
+					loadChunk.heightmap = new Heightmap[0];
 					loadChunk.data = ChunkDataEncoder.encode(c);
 					clientOut.writePacket(loadChunk);
 					sent++;

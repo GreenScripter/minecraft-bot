@@ -3,6 +3,7 @@ package com.greenscripter.minecraftbot.world;
 public class ChunkSection {
 
 	short nonAir;
+	short fluidCount;
 	PalettedContainer blocks;
 	PalettedContainer biomes;
 

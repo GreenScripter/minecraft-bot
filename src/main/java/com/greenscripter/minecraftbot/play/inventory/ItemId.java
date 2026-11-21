@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.greenscripter.minecraftbot.gameinfo.Registries;
-import com.greenscripter.minecraftbot.gameinfo.RegistryTags;
 import com.greenscripter.minecraftbot.gameinfo.Registries.ItemInfo;
+import com.greenscripter.minecraftbot.gameinfo.RegistryTags;
 
 public class ItemId {
 

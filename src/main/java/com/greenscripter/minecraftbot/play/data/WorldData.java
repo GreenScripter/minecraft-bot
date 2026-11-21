@@ -5,6 +5,7 @@ import com.greenscripter.minecraftbot.packet.c2s.play.InteractEntityPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerActionPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.UseItemOnPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.UseItemPacket;
+import com.greenscripter.minecraftbot.packet.s2c.play.SetTimePacket.Clock;
 import com.greenscripter.minecraftbot.play.statemachine.BreakBlockState;
 import com.greenscripter.minecraftbot.utils.play.Position;
 import com.greenscripter.minecraftbot.world.World;
@@ -14,7 +15,7 @@ public class WorldData implements PlayData {
 	public World world;
 
 	public long worldAge = -1;
-	public long timeOfDay = -1;
+	public Clock[] clocks = new Clock[0];
 
 	public int breakSeq;
 

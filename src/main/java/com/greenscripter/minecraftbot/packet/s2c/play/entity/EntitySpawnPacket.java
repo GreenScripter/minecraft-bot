@@ -8,6 +8,8 @@ import com.greenscripter.minecraftbot.gameinfo.PacketIds;
 import com.greenscripter.minecraftbot.packet.Packet;
 import com.greenscripter.minecraftbot.utils.data.MCInputStream;
 import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
+import com.greenscripter.minecraftbot.utils.data.ScrunchedVector;
+import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.entity.Entity;
 
 public class EntitySpawnPacket extends Packet {
@@ -24,9 +26,7 @@ public class EntitySpawnPacket extends Packet {
 	public byte yaw;
 	public byte headYaw;
 	public int data;
-	public short velocityX;
-	public short velocityY;
-	public short velocityZ;
+	public Vector velocity;
 
 	public EntitySpawnPacket() {}
 
@@ -54,13 +54,11 @@ public class EntitySpawnPacket extends Packet {
 		out.writeDouble(x);
 		out.writeDouble(y);
 		out.writeDouble(z);
+		ScrunchedVector.write(out, velocity);
 		out.writeByte(pitch);
 		out.writeByte(yaw);
 		out.writeByte(headYaw);
 		out.writeVarInt(data);
-		out.writeShort(velocityX);
-		out.writeShort(velocityY);
-		out.writeShort(velocityZ);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
@@ -70,13 +68,11 @@ public class EntitySpawnPacket extends Packet {
 		x = in.readDouble();
 		y = in.readDouble();
 		z = in.readDouble();
+		velocity = ScrunchedVector.read(in);
 		pitch = in.readByte();
 		yaw = in.readByte();
 		headYaw = in.readByte();
 		data = in.readVarInt();
-		velocityX = in.readShort();
-		velocityY = in.readShort();
-		velocityZ = in.readShort();
 	}
 
 }

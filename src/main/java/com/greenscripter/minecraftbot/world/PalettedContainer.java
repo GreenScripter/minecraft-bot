@@ -17,9 +17,9 @@ public class PalettedContainer {
 	long[] data;
 
 	public void readBlocksIntoChunk(Chunk c, int yOffset) {
-		LongBitInStream in = new LongBitInStream(data);
 		switch (type) {
 			case DIRECT -> {
+				LongBitInStream in = new LongBitInStream(data);
 				for (int y = yOffset; y < 16 + yOffset; y++) {
 					for (int z = 0; z < 16; z++) {
 						for (int x = 0; x < 16; x++) {
@@ -29,6 +29,7 @@ public class PalettedContainer {
 				}
 			}
 			case INDIRECT -> {
+				LongBitInStream in = new LongBitInStream(data);
 				for (int y = yOffset; y < 16 + yOffset; y++) {
 					for (int z = 0; z < 16; z++) {
 						for (int x = 0; x < 16; x++) {
@@ -54,9 +55,9 @@ public class PalettedContainer {
 	}
 
 	public void readBiomesIntoChunk(Chunk c, int yOffset) {
-		LongBitInStream in = new LongBitInStream(data);
 		switch (type) {
 			case DIRECT -> {
+				LongBitInStream in = new LongBitInStream(data);
 				for (int y = yOffset; y < 4 + yOffset; y++) {
 					for (int z = 0; z < 4; z++) {
 						for (int x = 0; x < 4; x++) {
@@ -66,6 +67,7 @@ public class PalettedContainer {
 				}
 			}
 			case INDIRECT -> {
+				LongBitInStream in = new LongBitInStream(data);
 				for (int y = yOffset; y < 4 + yOffset; y++) {
 					for (int z = 0; z < 4; z++) {
 						for (int x = 0; x < 4; x++) {

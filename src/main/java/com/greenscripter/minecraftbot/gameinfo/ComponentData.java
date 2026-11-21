@@ -19,10 +19,12 @@ import com.greenscripter.minecraftbot.play.inventory.Components;
 import com.greenscripter.minecraftbot.play.inventory.ItemId;
 import com.greenscripter.minecraftbot.play.inventory.Slot;
 import com.greenscripter.minecraftbot.play.inventory.components.AttributeModifiersComponent;
+import com.greenscripter.minecraftbot.play.inventory.components.AttributeModifiersComponent.Attribute;
 import com.greenscripter.minecraftbot.play.inventory.components.BannerPatternsComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.BaseColorComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.BeesComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.BlockEntityDataComponent;
+import com.greenscripter.minecraftbot.play.inventory.components.BlockPredicate.BlockSet;
 import com.greenscripter.minecraftbot.play.inventory.components.BlockStateComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.BucketEntityDataComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.BundleContentsComponent;
@@ -45,6 +47,7 @@ import com.greenscripter.minecraftbot.play.inventory.components.FireResistantCom
 import com.greenscripter.minecraftbot.play.inventory.components.FireworkExplosionComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.FireworksComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.FoodComponent;
+import com.greenscripter.minecraftbot.play.inventory.components.FoodComponent.Effect;
 import com.greenscripter.minecraftbot.play.inventory.components.HideAdditionalTooltipComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.HideTooltipComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.InstrumentComponent;
@@ -76,9 +79,6 @@ import com.greenscripter.minecraftbot.play.inventory.components.TrimComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.UnbreakableComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.WritableBookContentComponent;
 import com.greenscripter.minecraftbot.play.inventory.components.WrittenBookContentComponent;
-import com.greenscripter.minecraftbot.play.inventory.components.AttributeModifiersComponent.Attribute;
-import com.greenscripter.minecraftbot.play.inventory.components.BlockPredicate.BlockSet;
-import com.greenscripter.minecraftbot.play.inventory.components.FoodComponent.Effect;
 import com.greenscripter.minecraftbot.utils.ResourceExtractor;
 
 public class ComponentData {
