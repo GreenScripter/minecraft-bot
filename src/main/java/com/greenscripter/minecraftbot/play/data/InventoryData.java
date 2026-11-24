@@ -130,28 +130,30 @@ public class InventoryData implements PlayData {
 						p.changed.add(new SlotChange(screen.getSlotId(inv.getOffhand()), inv.getOffhand()));
 						specialMoved = true;
 					}
-				} else if (slot.getItemInfo().isArmor) {
-					Slot[] armor = inv.getArmor();
-					Slot target = null;
-					if (slot.getItemInfo().armorSlot.equals("HEAD")) {
-						target = armor[0];
-					}
-					if (slot.getItemInfo().armorSlot.equals("CHEST")) {
-						target = armor[1];
-					}
-					if (slot.getItemInfo().armorSlot.equals("LEGS")) {
-						target = armor[2];
-					}
-					if (slot.getItemInfo().armorSlot.equals("FEET")) {
-						target = armor[3];
-					}
-					if (target != null && !target.present) {
-						target.become(slot);
-						slot.setCount(0);
-						p.changed.add(new SlotChange(screen.getSlotId(target), target));
-						specialMoved = true;
-					}
 				}
+				// TODO: Read component since armor type is no longer static.
+				//				else if (slot.getItemInfo().isArmor) {
+				//					Slot[] armor = inv.getArmor();
+				//					Slot target = null;
+				//					if (slot.getItemInfo().armorSlot.equals("HEAD")) {
+				//						target = armor[0];
+				//					}
+				//					if (slot.getItemInfo().armorSlot.equals("CHEST")) {
+				//						target = armor[1];
+				//					}
+				//					if (slot.getItemInfo().armorSlot.equals("LEGS")) {
+				//						target = armor[2];
+				//					}
+				//					if (slot.getItemInfo().armorSlot.equals("FEET")) {
+				//						target = armor[3];
+				//					}
+				//					if (target != null && !target.present) {
+				//						target.become(slot);
+				//						slot.setCount(0);
+				//						p.changed.add(new SlotChange(screen.getSlotId(target), target));
+				//						specialMoved = true;
+				//					}
+				//				}
 				//if no special move, move normally
 				if (!specialMoved) {
 					if (screen.getSlotId(slot) > 35) {

@@ -14,6 +14,9 @@ public class TeleportRequestPacket extends Packet {
 	public double x;
 	public double y;
 	public double z;
+	public double dx;
+	public double dy;
+	public double dz;
 	public float yaw;
 	public float pitch;
 	public byte flags;
@@ -24,23 +27,29 @@ public class TeleportRequestPacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
+		out.writeVarInt(teleportID);
 		out.writeDouble(x);
 		out.writeDouble(y);
 		out.writeDouble(z);
+		out.writeDouble(dx);
+		out.writeDouble(dy);
+		out.writeDouble(dz);
 		out.writeFloat(yaw);
 		out.writeFloat(pitch);
 		out.writeByte(flags);
-		out.writeVarInt(teleportID);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
+		teleportID = in.readVarInt();
 		x = in.readDouble();
 		y = in.readDouble();
 		z = in.readDouble();
+		dx = in.readDouble();
+		dy = in.readDouble();
+		dz = in.readDouble();
 		yaw = in.readFloat();
 		pitch = in.readFloat();
 		flags = in.readByte();
-		teleportID = in.readVarInt();
 	}
 
 	public void makeNotRelative(double x, double y, double z, float pitch, float yaw) {

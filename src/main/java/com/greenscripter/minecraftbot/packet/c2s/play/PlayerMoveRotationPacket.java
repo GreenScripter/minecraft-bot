@@ -14,7 +14,7 @@ public class PlayerMoveRotationPacket extends Packet {
 
 	public float yaw;
 	public float pitch;
-	public boolean onGround = true;
+	public int flags = 0;
 
 	public PlayerMoveRotationPacket() {}
 
@@ -34,13 +34,13 @@ public class PlayerMoveRotationPacket extends Packet {
 	public void toBytes(MCOutputStream out) throws IOException {
 		out.writeFloat(yaw);
 		out.writeFloat(pitch);
-		out.writeBoolean(onGround);
+		out.writeByte(flags);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
 		yaw = in.readFloat();
 		pitch = in.readFloat();
-		onGround = in.readBoolean();
+		flags = in.readByte();
 	}
 
 }

@@ -226,7 +226,6 @@ public class PathFinder {
 
 		long start = System.currentTimeMillis();
 		BlockBox box = new BlockBox(startBlock, endBlock == null ? startBlock : endBlock).expand(restrictRadius);
-
 		List<AStarNode> next = new ArrayList<>();
 		loop: while (nodes.size() > 0) {
 			if (System.currentTimeMillis() - start > timeout) {
@@ -239,7 +238,6 @@ public class PathFinder {
 				continue;
 			}
 			aStarNeighbors(current, next, endPoints);
-
 			for (AStarNode node : next) {
 				if (endBlock != null) node.cost += node.pos.getManhattanDistance(endBlock);
 
@@ -317,7 +315,6 @@ public class PathFinder {
 		if (isPassible(current.x - 1, current.y, current.z)) blocks.add(new AStarNode(new Position(current.x - 1, current.y, current.z), parent, -basePriority));
 		//		if ((basePriority = world.getState(current.x, current.y - 1, current.z)) >= 1) blocks.add(new AStarNode(new BlockPos(current.x, current.y - 1, current.z), parent, -basePriority));
 		if (isPassible(current.x, current.y, current.z - 1)) blocks.add(new AStarNode(new Position(current.x, current.y, current.z - 1), parent, -basePriority));
-
 		for (int i = -maxSpeed; i <= maxSpeed; i += 1) {
 			if (isPassible(current.x, current.y + i, current.z)) {
 				basePriority = 1;

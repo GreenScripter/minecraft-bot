@@ -1,6 +1,8 @@
 package com.greenscripter.minecraftbot.utils.data;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.InflaterInputStream;
 
@@ -227,6 +229,38 @@ public class MCInputStream extends DataInputStream {
 			longs[i] = readLong();
 		}
 		return BitSet.valueOf(longs);
+	}
+
+	public <T> List<T> readPrefixedArray(IOFunction<MCInputStream, T> value) throws IOException {
+		List<T> items = new ArrayList<>();
+		int length = readVarInt();
+		for (int i = 0; i < length; i++) {
+			items.add(value.apply(this));
+		}
+		return items;
+	}
+
+	public <T> List<T> readPrefixedArray(IOSupplier<T> value) throws IOException {
+		List<T> items = new ArrayList<>();
+		int length = readVarInt();
+		for (int i = 0; i < length; i++) {
+			items.add(value.get());
+		}
+		return items;
+	}
+
+	public <T> T readPrefixedOptional(IOFunction<MCInputStream, T> value) throws IOException {
+		if (readBoolean()) {
+			return value.apply(this);
+		}
+		return null;
+	}
+
+	public <T> T readPrefixedOptional(IOSupplier<T> value) throws IOException {
+		if (readBoolean()) {
+			return value.get();
+		}
+		return null;
 	}
 
 	public InputStream wrapped() {

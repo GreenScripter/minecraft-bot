@@ -140,14 +140,14 @@ public class ViewerConnection extends PlayHandler {
 		if (p.id == PlayerMovePacket.packetId) {
 			PlayerMovePacket move = p.convert(new PlayerMovePacket());
 
-			pos.onGround = move.onGround;
+			pos.flags = move.flags;
 			return true;
 		}
 
 		if (p.id == PlayerMovePositionPacket.packetId) {
 			PlayerMovePositionPacket move = p.convert(new PlayerMovePositionPacket());
 
-			pos.onGround = move.onGround;
+			pos.flags = move.flags;
 			pos.pos.x = move.x;
 			pos.pos.y = move.y;
 			pos.pos.z = move.z;
@@ -157,7 +157,7 @@ public class ViewerConnection extends PlayHandler {
 		if (p.id == PlayerMoveRotationPacket.packetId) {
 			PlayerMoveRotationPacket move = p.convert(new PlayerMoveRotationPacket());
 
-			pos.onGround = move.onGround;
+			pos.flags = move.flags;
 			pos.pitch = move.pitch;
 			pos.yaw = move.yaw;
 			return true;
@@ -166,7 +166,7 @@ public class ViewerConnection extends PlayHandler {
 		if (p.id == PlayerMovePositionRotationPacket.packetId) {
 			PlayerMovePositionRotationPacket move = p.convert(new PlayerMovePositionRotationPacket());
 
-			pos.onGround = move.onGround;
+			pos.flags = move.flags;
 			pos.pitch = move.pitch;
 			pos.yaw = move.yaw;
 			pos.pos.x = move.x;

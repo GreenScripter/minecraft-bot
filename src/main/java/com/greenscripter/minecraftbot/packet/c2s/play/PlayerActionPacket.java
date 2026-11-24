@@ -47,11 +47,13 @@ public class PlayerActionPacket extends Packet {
 	}
 
 	public static final int START_MINING = 0;
-	public static final int CANCEL_MINING = 1;
-	public static final int FINISH_MINING = 2;
-	public static final int DROP_STACK = 3;
-	public static final int DROP_ITEM = 4;
-	public static final int FINISH_USE = 5;
-	public static final int SWAP_HANDS = 6;
+	public static final int CHANGE_MINING = 1;
+	public static final int CANCEL_MINING = 2;
+	public static final int FINISH_MINING = 3;
+	public static final int DROP_STACK = 4;
+	public static final int DROP_ITEM = 5;
+	public static final int FINISH_USE = 6;
+	public static final int SWAP_HANDS = 7;
+	public static final int STAB = 8;
 
 }

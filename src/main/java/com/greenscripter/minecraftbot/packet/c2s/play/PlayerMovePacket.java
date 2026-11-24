@@ -12,16 +12,16 @@ public class PlayerMovePacket extends Packet {
 
 	public static final int packetId = PacketIds.getC2SPlayId("minecraft:move_player_status_only");
 
-	public boolean onGround = true;
+	public int flags = 0;
 
 	public PlayerMovePacket() {}
 
 	public PlayerMovePacket(PlayerData data) {
-		this(data.pos.onGround);
+		this(data.pos.flags);
 	}
 
-	public PlayerMovePacket(boolean onGround) {
-		this.onGround = onGround;
+	public PlayerMovePacket(int flags) {
+		this.flags = flags;
 	}
 
 	public int id() {
@@ -29,11 +29,11 @@ public class PlayerMovePacket extends Packet {
 	}
 
 	public void toBytes(MCOutputStream out) throws IOException {
-		out.writeBoolean(onGround);
+		out.writeByte(flags);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
-		onGround = in.readBoolean();
+		flags = in.readByte();
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.greenscripter.minecraftbot.utils.data;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.UUID;
@@ -198,6 +199,38 @@ public class MCOutputStream extends DataOutputStream {
 		for (int i = 0; i < longs.length; i++) {
 			writeLong(longs[i]);
 		}
+	}
+
+	public <T> void writePrefixedArray(List<T> items, IOBiConsumer<MCOutputStream, T> value) throws IOException {
+		writeVarInt(items.size());
+		for (T t : items) {
+			value.accept(this, t);
+		}
+	}
+
+	public <T> void writePrefixedArray(List<T> items, IOConsumer<T> value) throws IOException {
+		writeVarInt(items.size());
+		for (T t : items) {
+			value.accept(t);
+		}
+	}
+
+	public <T> void writePrefixedOptional(T item, IOBiConsumer<MCOutputStream, T> value) throws IOException {
+		if (item == null) {
+			writeBoolean(false);
+			return;
+		}
+		writeBoolean(true);
+		value.accept(this, item);
+	}
+
+	public <T> void writePrefixedOptional(T item, IOConsumer<T> value) throws IOException {
+		if (item == null) {
+			writeBoolean(false);
+			return;
+		}
+		writeBoolean(true);
+		value.accept(item);
 	}
 
 	public OutputStream wrapped() {

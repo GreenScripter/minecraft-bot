@@ -20,8 +20,13 @@ public class TeleportConfirmPacket extends Packet {
 
 	public TeleportConfirmPacket() {}
 
-	public TeleportConfirmPacket(int value) {
+	public TeleportConfirmPacket(int value, double x, double y, double z, float yaw, float pitch) {
 		this.value = value;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.yaw = yaw;
+		this.pitch = pitch;
 	}
 
 	public int id() {

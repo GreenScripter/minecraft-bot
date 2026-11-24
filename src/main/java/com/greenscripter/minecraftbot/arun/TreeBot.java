@@ -60,7 +60,7 @@ public class TreeBot {
 			}));
 		};
 		controller.start();
-		controller.connect(100, 40);
+		controller.connect(1, 40);
 
 	}
 

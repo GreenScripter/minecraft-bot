@@ -96,7 +96,6 @@ class BreakTreeState extends PlayerState {
 
 			if (target != null && world.world.getBlock(target) != 0) {
 				var searcher = world.world.worlds.getSearchFor(null, TreeBot.logs, false, false);
-
 				searcher.foundBlocks.remove(target.getEncoded());
 				e.push(new BreakBlockState(TreeBot.render, target));
 			}

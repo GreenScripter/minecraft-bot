@@ -2,6 +2,7 @@ package com.greenscripter.minecraftbot.play.data;
 
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.packet.Packet;
+import com.greenscripter.minecraftbot.packet.c2s.play.ClientEndTick;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionRotationPacket;
@@ -13,7 +14,7 @@ public class PositionData implements PlayData {
 	public Vector pos = new Vector();
 	public float pitch;
 	public float yaw;
-	public boolean onGround;
+	public int flags;
 
 	public String dimension;
 
@@ -42,7 +43,7 @@ public class PositionData implements PlayData {
 		PlayerMoveRotationPacket p = new PlayerMoveRotationPacket();
 		p.pitch = pitch;
 		p.yaw = yaw;
-		p.onGround = onGround;
+		p.flags = flags;
 		setRotation(sc, p);
 	}
 
@@ -53,7 +54,7 @@ public class PositionData implements PlayData {
 		p.z = v.z;
 		p.pitch = pitch;
 		p.yaw = yaw;
-		p.onGround = onGround;
+		p.flags = flags;
 		setPosRotation(sc, p);
 	}
 
@@ -62,7 +63,7 @@ public class PositionData implements PlayData {
 		p.x = v.x;
 		p.y = v.y;
 		p.z = v.z;
-		p.onGround = onGround;
+		p.flags = flags;
 		setPos(sc, p);
 	}
 
@@ -71,7 +72,7 @@ public class PositionData implements PlayData {
 		pos.x = p.x;
 		pos.y = p.y;
 		pos.z = p.z;
-		onGround = p.onGround;
+		flags = p.flags;
 	}
 
 	public void setPosRotation(ServerConnection sc, PlayerMovePositionRotationPacket p) {
@@ -81,27 +82,28 @@ public class PositionData implements PlayData {
 		pos.z = p.z;
 		pitch = p.pitch;
 		yaw = p.yaw;
-		onGround = p.onGround;
+		flags = p.flags;
 	}
 
 	public void setRotation(ServerConnection sc, PlayerMoveRotationPacket p) {
 		sendMove(sc, p);
 		pitch = p.pitch;
 		yaw = p.yaw;
-		onGround = p.onGround;
+		flags = p.flags;
 	}
 
 	public void setOnGround(ServerConnection sc, PlayerMovePacket p) {
 		sendMove(sc, p);
-		onGround = p.onGround;
+		flags = p.flags;
 	}
 
 	protected void sendMove(ServerConnection sc, Packet p) {
 		sc.sendPacket(p);
+		sc.sendPacket(new ClientEndTick());
 	}
 
 	public String toString() {
-		return "PositionData [" + (pos != null ? "pos=" + pos + ", " : "") + "pitch=" + pitch + ", yaw=" + yaw + ", onGround=" + onGround + ", " + (dimension != null ? "dimension=" + dimension : "") + "]";
+		return "PositionData [" + (pos != null ? "pos=" + pos + ", " : "") + "pitch=" + pitch + ", yaw=" + yaw + ", flags=" + flags + ", " + (dimension != null ? "dimension=" + dimension : "") + "]";
 	}
 
 }

@@ -74,18 +74,22 @@ public class EntityPlayHandler extends PlayHandler {
 				}
 
 			} else if (up.id == EntityMetaDataPacket.packetId) {
-				EntityMetaDataPacket p = up.convert(new EntityMetaDataPacket());
-				Entity e = world.getEntity(p.entityID);
-				if (e != null) {
-					if (p.meta == null) {
-						System.err.println("Error setting entity " + e.type + " " + e.uuid + " metadata.");
-					} else {
-						for (int i = 0; i < p.meta.length; i++) {
-							if (p.meta[i] != null) {
-								e.metadata[i] = p.meta[i];
+				try {
+					EntityMetaDataPacket p = up.convert(new EntityMetaDataPacket());
+					Entity e = world.getEntity(p.entityID);
+					if (e != null) {
+						if (p.meta == null) {
+							System.err.println("Error setting entity " + e.type + " " + e.uuid + " metadata.");
+						} else {
+							for (int i = 0; i < p.meta.length; i++) {
+								if (p.meta[i] != null) {
+									e.metadata[i] = p.meta[i];
+								}
 							}
 						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			} else if (up.id == positionId) {
 				EntityPositionPacket p = up.convert(new EntityPositionPacket());

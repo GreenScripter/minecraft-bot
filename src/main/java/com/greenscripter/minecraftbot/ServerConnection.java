@@ -161,7 +161,6 @@ public class ServerConnection {
 			}
 			case LOGIN -> {
 				out.writePacket(new LoginStartPacket(name, uuid));
-
 				UnknownPacket p = in.readGeneralPacket();
 				int compression = -1;
 				if (p.id() == SetCompressionPacket.packetId) {
@@ -190,6 +189,7 @@ public class ServerConnection {
 			}
 			case CONFIGURATION -> {
 				out.writePacket(new ClientInfoConfigPacket());
+				if (!blocking && !peeker.peekPacket()) return;
 				UnknownPacket p = in.readGeneralPacket();
 
 				if (p.id == PingConfigPacket.packetId) {

@@ -12,7 +12,7 @@ import com.greenscripter.minecraftbot.play.data.PositionData;
 
 public class TeleportRequestPlayHandler extends PlayHandler {
 
-	static int teleportPacketId = new TeleportRequestPacket().id();
+	static int teleportPacketId = TeleportRequestPacket.packetId;
 
 	public void handlePacket(UnknownPacket p, ServerConnection sc) throws IOException {
 		if (p.id == teleportPacketId) {
@@ -24,7 +24,8 @@ public class TeleportRequestPlayHandler extends PlayHandler {
 			pos.pos.z = req.z;
 			pos.pitch = req.pitch;
 			pos.yaw = req.yaw;
-			sc.sendPacket(new TeleportConfirmPacket(req.teleportID));
+
+			sc.sendPacket(new TeleportConfirmPacket(req.teleportID, pos.pos.x, pos.pos.y, pos.pos.z, pos.yaw, pos.pitch));
 		}
 	}
 

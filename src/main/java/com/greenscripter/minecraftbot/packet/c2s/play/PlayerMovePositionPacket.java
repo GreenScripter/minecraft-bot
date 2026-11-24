@@ -14,7 +14,7 @@ public class PlayerMovePositionPacket extends Packet {
 	public double x;
 	public double y;
 	public double z;
-	public boolean onGround = true;
+	public int flags = 0;
 
 	public PlayerMovePositionPacket() {}
 
@@ -26,14 +26,14 @@ public class PlayerMovePositionPacket extends Packet {
 		out.writeDouble(x);
 		out.writeDouble(y);
 		out.writeDouble(z);
-		out.writeBoolean(onGround);
+		out.writeByte(flags);
 	}
 
 	public void fromBytes(MCInputStream in) throws IOException {
 		x = in.readDouble();
 		y = in.readDouble();
 		z = in.readDouble();
-		onGround = in.readBoolean();
+		flags = in.readByte();
 	}
 
 }

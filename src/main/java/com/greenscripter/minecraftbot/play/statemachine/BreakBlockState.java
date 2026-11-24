@@ -3,11 +3,8 @@ package com.greenscripter.minecraftbot.play.statemachine;
 import com.greenscripter.minecraftbot.gameinfo.BlockStates;
 import com.greenscripter.minecraftbot.gameinfo.BlockStates.BlockState;
 import com.greenscripter.minecraftbot.gameinfo.RegistryTags;
-import com.greenscripter.minecraftbot.play.data.InventoryData;
 import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.data.WorldData;
-import com.greenscripter.minecraftbot.play.inventory.ItemId;
-import com.greenscripter.minecraftbot.play.inventory.Slot;
 import com.greenscripter.minecraftbot.utils.play.Position;
 import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.remoteindicators.IndicatorServer;
@@ -51,33 +48,34 @@ public class BreakBlockState extends PlayerState {
 			}
 			targetting = blockId;
 			if (render != null) shapeId = render.addCuboid(data.world.id, new Vector(block.x, block.y, block.z), new Vector(block.x + 1, block.y + 1, block.z + 1), IndicatorServer.getColor(255, 0, 0, 255));
-			InventoryData inv = e.value.getData(InventoryData.class);
-			String target = getBlockItemTag(data.world.getBlock(block));
-			Slot current = inv.getActiveScreen().getHotbarSlot(inv.hotbarSlot);
-			if ((target == null && (!current.present || !current.getItemInfo().isTool)) //
-					|| (target != null && current.present && ItemId.tags(target).contains(current.itemId))) {
-				//slot already reasonable
-			} else {
-				var it = inv.getActiveScreen().getHotbarIterator();
-				while (it.hasNext()) {
-					var next = it.next();
-					if (target == null) {
-						if (!next.present || !next.getItemInfo().isTool) {
-							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
-							break;
-						}
-					} else {
-						if (next.present && !next.getItemInfo().isTool) {
-							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
-						}
-
-						if (next.present && ItemId.tags(target).contains(next.itemId)) {
-							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
-							break;
-						}
-					}
-				}
-			}
+			// TODO: Update autotool.
+			//			InventoryData inv = e.value.getData(InventoryData.class);
+			//			String target = getBlockItemTag(data.world.getBlock(block));
+			//			Slot current = inv.getActiveScreen().getHotbarSlot(inv.hotbarSlot);
+			//			if ((target == null && (!current.present || !current.getItemInfo().isTool)) //
+			//					|| (target != null && current.present && ItemId.tags(target).contains(current.itemId))) {
+			//				//slot already reasonable
+			//			} else {
+			//				var it = inv.getActiveScreen().getHotbarIterator();
+			//				while (it.hasNext()) {
+			//					var next = it.next();
+			//					if (target == null) {
+			//						if (!next.present || !next.getItemInfo().isTool) {
+			//							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
+			//							break;
+			//						}
+			//					} else {
+			//						if (next.present && !next.getItemInfo().isTool) {
+			//							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
+			//						}
+			//
+			//						if (next.present && ItemId.tags(target).contains(next.itemId)) {
+			//							inv.setHotbarSlot(inv.getActiveScreen().getHotbarIndex(next));
+			//							break;
+			//						}
+			//					}
+			//				}
+			//			}
 			data.startBreaking(e.value, block);
 			data.finishBreaking(e.value, block);
 			if (pos.getEyePos().distanceTo(new Vector(block)) >= 6) {
@@ -145,3 +143,4 @@ public class BreakBlockState extends PlayerState {
 		return super.toString() + " " + block + " " + BlockStates.getState(targetting);
 	}
 }
+//

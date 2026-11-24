@@ -149,7 +149,6 @@ public class BlockStates {
 			String collidesString = ResourceExtractor.getResourceString("com/greenscripter/minecraftbot/collides.json");
 			Map<String, JsonElement> collides = JsonParser.parseString(collidesString).getAsJsonObject().asMap();
 			Set<Integer> noCollide = new HashSet<>(collides.keySet().stream().map(i -> Integer.parseInt(i)).toList());
-
 			String registriesString = ResourceExtractor.getResourceString("com/greenscripter/minecraftbot/reports/blocks.json");
 			Map<String, JsonElement> registries = JsonParser.parseString(registriesString).getAsJsonObject().asMap();
 			for (var e : registries.entrySet()) {
@@ -222,19 +221,21 @@ public class BlockStates {
 
 	/*
 	 * Extract collidables from fabric.
-	 JsonObject obj = new JsonObject();
-		for (Block block : Registries.BLOCK) {
-			Identifier identifier = Registries.BLOCK.getId(block);
-			StateManager<Block, BlockState> stateManager = block.getStateManager();
-			for (BlockState blockState : stateManager.getStates()) {
+		JsonObject obj = new JsonObject();
+		var registry = ClientRegistryLayer.createRegistryAccess().compositeAccess();
+		var blocks = registry.lookup(Registries.BLOCK).get();
+		for (Block block : blocks) {
+			Identifier identifier = blocks.getKey(block);
+			var stateManager = block.getStateDefinition();
+			for (BlockState blockState : stateManager.getPossibleStates()) {
 				List<String> states = new ArrayList<>();
 				for (Property<?> property2 : stateManager.getProperties()) {
-					states.add(property2.getName() + "=" + Util.getValueAsString(property2, blockState.get(property2)));
+					var o = blockState.getOptionalValue(property2).get();
+					states.add(property2.getName() + "=" + Util.getPropertyName(property2, o));
 				}
-				int id = Block.getRawIdFromState(blockState);
-	//				System.out.println(identifier + " " + id + blockState.toString());
-				if (checkLegalPos(blockState))
-				obj.add(id+"", new JsonPrimitive(identifier.toString()));
+				int id = Block.getId(blockState);
+				//				System.out.println(identifier + " " + id + blockState.toString());
+				if (checkLegalPos(blockState)) obj.add(id + "", new JsonPrimitive(identifier.toString()));
 			}
 		}
 		try {
@@ -244,15 +245,14 @@ public class BlockStates {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
 	
 	public static boolean checkLegalPos(BlockState state) {
 		try {
 			VoxelShape shape = state.getCollisionShape(null, null);
-			if (shape == VoxelShapes.fullCube()) {
+			if (shape == Shapes.block()) {
 				return false;
 			}
-			if (shape == VoxelShapes.empty() || shape.simplify().isEmpty()) {
+			if (shape == Shapes.empty() || shape.optimize().isEmpty()) {
 				return true;
 			}
 		} catch (Exception e) {
