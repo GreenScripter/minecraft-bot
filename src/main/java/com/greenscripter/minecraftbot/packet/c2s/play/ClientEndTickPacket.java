@@ -7,11 +7,11 @@ import com.greenscripter.minecraftbot.packet.Packet;
 import com.greenscripter.minecraftbot.utils.data.MCInputStream;
 import com.greenscripter.minecraftbot.utils.data.MCOutputStream;
 
-public class ClientEndTick extends Packet {
+public class ClientEndTickPacket extends Packet {
 
 	public static final int packetId = PacketIds.getC2SPlayId("minecraft:client_tick_end");
 
-	public ClientEndTick() {}
+	public ClientEndTickPacket() {}
 
 	public int id() {
 		return packetId;

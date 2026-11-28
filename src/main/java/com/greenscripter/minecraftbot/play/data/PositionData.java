@@ -1,8 +1,10 @@
 package com.greenscripter.minecraftbot.play.data;
 
+import java.io.IOException;
+
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.packet.Packet;
-import com.greenscripter.minecraftbot.packet.c2s.play.ClientEndTick;
+import com.greenscripter.minecraftbot.packet.c2s.play.ClientEndTickPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.PlayerMovePositionRotationPacket;
@@ -17,6 +19,7 @@ public class PositionData implements PlayData {
 	public int flags;
 
 	public String dimension;
+	public boolean initialized;
 
 	public Vector getEyePos() {
 		return pos.copy().add(0, 1.62, 0);
@@ -99,7 +102,7 @@ public class PositionData implements PlayData {
 
 	protected void sendMove(ServerConnection sc, Packet p) {
 		sc.sendPacket(p);
-		sc.sendPacket(new ClientEndTick());
+		sc.sendPacket(new ClientEndTickPacket());
 	}
 
 	public String toString() {

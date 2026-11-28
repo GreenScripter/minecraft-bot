@@ -829,4 +829,21 @@ public class PathFinder {
 		return path;
 	}
 
+	public List<Vector> antiFlyKickUp(List<Vector> path) {
+		int up = 1;
+		double y = path.getFirst().y;
+		for (int i = 1; i < path.size(); i++) {
+			if (path.get(i).y > y) {
+				y = path.get(i).y;
+				up++;
+			} else if (path.get(i).y < y) {
+				up = 0;
+			}
+			if (up >= 20) {
+				path.add(i + 1, path.get(i).copy().add(0, -0.02, 0));
+				path.add(i + 2, path.get(i).copy().add(0, -0.04, 0));
+			}
+		}
+		return path;
+	}
 }

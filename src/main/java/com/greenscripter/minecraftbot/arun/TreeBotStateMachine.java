@@ -10,6 +10,7 @@ import com.greenscripter.minecraftbot.play.data.PositionData;
 import com.greenscripter.minecraftbot.play.data.WorldData;
 import com.greenscripter.minecraftbot.play.statemachine.BreakBlockState;
 import com.greenscripter.minecraftbot.play.statemachine.ItemPickupState;
+import com.greenscripter.minecraftbot.play.statemachine.LandState;
 import com.greenscripter.minecraftbot.play.statemachine.PathFollowState;
 import com.greenscripter.minecraftbot.play.statemachine.PathfindState;
 import com.greenscripter.minecraftbot.play.statemachine.PlayerMachine;
@@ -25,6 +26,7 @@ public class TreeBotStateMachine extends PlayerMachine {
 	public TreeBotStateMachine(ServerConnection t) {
 		super(t);
 		setState(new FindTreeState());
+		pushPrepare(new LandState());
 	}
 
 }

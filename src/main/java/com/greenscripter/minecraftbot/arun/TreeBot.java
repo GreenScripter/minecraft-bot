@@ -13,6 +13,8 @@ import com.greenscripter.minecraftbot.play.data.WorldData;
 import com.greenscripter.minecraftbot.play.handler.PlayHandler;
 import com.greenscripter.minecraftbot.play.handler.PlayTickHandler;
 import com.greenscripter.minecraftbot.play.handler.WorldPlayHandler;
+import com.greenscripter.minecraftbot.play.statemachine.LandState;
+import com.greenscripter.minecraftbot.play.statemachine.WaitForPongState;
 import com.greenscripter.minecraftbot.utils.play.BlockBox;
 import com.greenscripter.minecraftbot.utils.play.Vector;
 import com.greenscripter.minecraftbot.world.PathFinder;
@@ -39,7 +41,11 @@ public class TreeBot {
 
 		AsyncSwarmController controller = new AsyncSwarmController("localhost", 20255, handlers);
 		controller.joinCallback = sc -> {
-			if (sc.id % 10 == 0) sc.sendPacket(new ClientInfoPacket(10));
+			if (sc.id % 10 == 0) {
+				sc.sendPacket(new ClientInfoPacket(10));
+			} else {
+				sc.sendPacket(new ClientInfoPacket(2));
+			}
 			sc.setData(TreeBotGlobalData.class, global);
 			sc.setData(TreeBotLocalData.class, new TreeBotLocalData());
 		};
@@ -49,7 +55,7 @@ public class TreeBot {
 			TreeBotStateMachine state = new TreeBotStateMachine(sc);
 			//			state.profiling = true;
 			return List.of(new PlayTickHandler(sc2 -> {
-				if (System.currentTimeMillis() - start < 3000) return;
+				if (System.currentTimeMillis() - start < 1000) return;
 				if (sc2.getData(WorldData.class).world == null) return;
 				//				long startTick = System.currentTimeMillis();
 				state.tick();
@@ -60,7 +66,7 @@ public class TreeBot {
 			}));
 		};
 		controller.start();
-		controller.connect(1, 40);
+		controller.connect(100, 40);
 
 	}
 
@@ -79,6 +85,7 @@ public class TreeBot {
 		{
 			pathfinder.infiniteVClipAllowed = false;
 			pathfinder.timeout = 200;
+			pathfinder.maxSpeed = 5;
 		}
 
 	}

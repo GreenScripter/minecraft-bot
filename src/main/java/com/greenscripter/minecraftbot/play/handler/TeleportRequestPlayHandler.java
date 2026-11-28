@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import com.greenscripter.minecraftbot.ServerConnection;
 import com.greenscripter.minecraftbot.packet.UnknownPacket;
+import com.greenscripter.minecraftbot.packet.c2s.play.PlayerLoadedPacket;
 import com.greenscripter.minecraftbot.packet.c2s.play.TeleportConfirmPacket;
 import com.greenscripter.minecraftbot.packet.s2c.play.self.TeleportRequestPacket;
 import com.greenscripter.minecraftbot.play.data.PositionData;
@@ -24,8 +25,11 @@ public class TeleportRequestPlayHandler extends PlayHandler {
 			pos.pos.z = req.z;
 			pos.pitch = req.pitch;
 			pos.yaw = req.yaw;
-
 			sc.sendPacket(new TeleportConfirmPacket(req.teleportID, pos.pos.x, pos.pos.y, pos.pos.z, pos.yaw, pos.pitch));
+			if (!pos.initialized) {
+				pos.initialized = true;
+				sc.sendPacket(new PlayerLoadedPacket());
+			}
 		}
 	}
 

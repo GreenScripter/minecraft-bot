@@ -47,10 +47,11 @@ public class PathfindState extends PlayerState {
 
 		var future = exec.submit(() -> {
 			if (target != null) {
-				followPath = finder.pathfind(start, target);
+				followPath = finder.antiFlyKickUp(finder.pathfind(start, target));
 			} else if (targetFunction != null) {
-				followPath = finder.pathfind(start, targetFunction);
+				followPath = finder.antiFlyKickUp(finder.pathfind(start, targetFunction));
 			}
+
 		});
 
 		onTick(e -> {
